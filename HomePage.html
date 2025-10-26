@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Page</title>
+  <link rel="stylesheet" href="mainpage1.css">
+</head>
+<body>
+
+<header>
+  <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
+  <h2>Home Page</h2>
+  <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
+</header>
+
+<!-- ✅ Sidebar Menu -->
+<nav id="sideMenu" class="side-menu" aria-hidden="true">
+  <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
+  <h3>Menu</h3>
+  <a href="mainpage.html">🏠 Home Page</a>
+  <a href="services.html">🛠️ Services</a>
+  <a href="settings.html">⚙️ Settings</a>
+  <a href="logout.html">🚪 Log Out</a>
+</nav>
+
+<section class="hero">
+  <h1>Home</h1>
+  <p>Your companion for a successful and balanced study experience</p>
+  <div class="carousel">
+    <button>&lt;</button>
+    <p>This Week’s Event</p>
+    <button>&gt;</button>
+  </div>
+  <a href="moreinfo.html" class="btn">More Info</a>
+</section>
+
+<!-- 📞 Emergency Button (popup alert) -->
+<button id="emergencyBtn" class="emergency-btn" title="Emergency Contact">📞</button>
+
+<script>
+(function() {
+  const menuBtn = document.getElementById('menuBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const closeMenu = document.getElementById('closeMenu');
+  const chatBtn = document.getElementById('chatBtn');
+  const emergencyBtn = document.getElementById('emergencyBtn');
+
+  // === Chat button popup ===
+  chatBtn.addEventListener('click', () => {
+    alert('Chat feature coming soon!');
+  });
+
+  // === Emergency button popup ===
+  emergencyBtn.addEventListener('click', () => {
+    alert('Emergency assistance feature coming soon!');
+  });
+})();
+</script>
+
+</body>
+</html>
