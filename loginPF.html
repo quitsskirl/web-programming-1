@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Belissa Space | Professor Login</title>
+  <link rel="stylesheet" href="loginPF.css"/>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Professor Login</h2>
+    <p>Access your Belissa Space 🌿 account.</p>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="login-username">Professor ID / Username</label>
+        <div class="input-group">
+          <input type="text" id="login-username" placeholder="Enter your professor ID or username" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <div class="input-group">
+          <input type="password" id="login-password" placeholder="Enter your password" required />
+        </div>
+      </div>
+
+      <button class="login-btn" type="submit">LOGIN</button>
+
+      <div class="links">
+        <p>New professor? <a href="register.html">Create an account</a></p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const username = document.getElementById("login-username").value.trim();
+      const password = document.getElementById("login-password").value.trim();
+
+      const stored = localStorage.getItem("belissaUser");
+      if (stored) {
+        try {
+          const { username: su, password: sp } = JSON.parse(stored);
+          if (username === su && password === sp) {
+            alert("Login successful! Redirecting...");
+            window.location.href = "HomePage.html"; // ✅ adjust if homepage filename differs
+          } else {
+            alert("Invalid username or password.");
+          }
+        } catch {
+          alert("There was a problem reading your saved account. Please re-register.");
+          window.location.href = "register.html";
+        }
+      } else {
+        alert("No registered professor found. Please register first.");
+        window.location.href = "register.html";
+      }
+    });
+  </script>
+</body>
+</html>
