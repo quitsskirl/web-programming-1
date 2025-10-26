@@ -46,6 +46,25 @@
   const chatBtn = document.getElementById('chatBtn');
   const emergencyBtn = document.getElementById('emergencyBtn');
 
+  // === Sidebar toggle ===
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.add('open');
+    sideMenu.setAttribute('aria-hidden', 'false');
+  });
+
+  closeMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.remove('open');
+    sideMenu.setAttribute('aria-hidden', 'true');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!sideMenu.contains(e.target) && e.target !== menuBtn) {
+      sideMenu.classList.remove('open');
+      sideMenu.setAttribute('aria-hidden', 'true');
+    }
+  });
   // === Chat button popup ===
   chatBtn.addEventListener('click', () => {
     alert('Chat feature coming soon!');
