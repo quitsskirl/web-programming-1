@@ -1,0 +1,62 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #f6f6f0;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  background-color: #8a9562;
+  color: white;
+  text-align: center;
+  padding: 30px 10px;
+}
+
+header h1 {
+  font-size: 36px;
+  margin: 0;
+}
+
+.choice-section {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  padding: 50px 20px;
+}
+
+.choice-card {
+  background-color: white;
+  width: 250px;
+  height: 200px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.choice-card a {
+  text-decoration: none;
+  color: #4b5431;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.choice-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+footer {
+  background-color: #4b5431;
+  color: white;
+  text-align: center;
+  padding: 15px;
+}
