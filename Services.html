@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Belissa Space | Services</title>
+  <link rel="stylesheet" href="Services1.css" />
+</head>
+<body>
+
+<!-- ✅ Header (same as Home Page) -->
+<header>
+  <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
+  <h2>Services</h2>
+  <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
+</header>
+
+<!-- ✅ Sidebar Menu -->
+<nav id="sideMenu" class="side-menu" aria-hidden="true">
+  <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
+  <h3>Menu</h3>
+  <a href="HomePage.html">🏠 Home Page</a>
+  <a class="active" href="services.html">🛠️ Services</a>
+  <a href="settings.html">⚙️ Settings</a>
+  <a href="logout.html">🚪 Log Out</a>
+</nav>
+
+<!-- ✅ Main Content -->
+<main class="container">
+  <div class="section-header">
+    <h1>CHAT NOW!</h1>
+
+    <div class="toolbar">
+      <div class="tags">
+        <button class="tag"></button>
+        <button class="tag"></button>
+        <button class="tag"></button>
+        <button class="tag"></button>
+      </div>
+
+      <div class="searchbar">
+        <input type="search" placeholder="Search" aria-label="Search services or counselors"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Cards Grid -->
+  <section class="cards">
+    <article class="card">
+      <div class="avatar"><span>👤</span></div>
+      <h3>Username</h3>
+      <p>Start a chat session instantly.</p>
+      <button class="primary">Start Chat</button>
+    </article>
+
+    <article class="card">
+      <div class="avatar"><span>👤</span></div>
+      <h3>Username</h3>
+      <p>Start a chat session instantly.</p>
+      <button class="primary">Start Chat</button>
+    </article>
+
+    <article class="card">
+      <div class="avatar"><span>👤</span></div>
+      <h3>Username</h3>
+      <p>Start a chat session instantly.</p>
+      <button class="primary">Start Chat</button>
+    </article>
+  </section>
+</main>
+
+<!-- 📞 Emergency Button -->
+<button id="emergencyBtn" class="emergency-btn" title="Emergency Contact">📞</button>
+
+<script>
+(function() {
+  const menuBtn = document.getElementById('menuBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const closeMenu = document.getElementById('closeMenu');
+  const chatBtn = document.getElementById('chatBtn');
+  const emergencyBtn = document.getElementById('emergencyBtn');
+
+  // === Sidebar toggle ===
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.add('open');
+    sideMenu.setAttribute('aria-hidden', 'false');
+  });
+
+  closeMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.remove('open');
+    sideMenu.setAttribute('aria-hidden', 'true');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!sideMenu.contains(e.target) && e.target !== menuBtn) {
+      sideMenu.classList.remove('open');
+      sideMenu.setAttribute('aria-hidden', 'true');
+    }
+  });
+
+  // === Chat button popup ===
+  chatBtn.addEventListener('click', () => {
+    alert('Chat feature coming soon!');
+  });
+
+  // === Emergency button popup ===
+  emergencyBtn.addEventListener('click', () => {
+    alert('Emergency assistance feature coming soon!');
+  });
+})();
+</script>
+
+</body>
+</html>
