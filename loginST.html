@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Belissa Space | Login</title>
+  <link rel="stylesheet" href="loginST.css"/>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Welcome Back</h2>
+    <p>Slip into Belissa Space 🌿 and continue your journey.</p>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="login-username">Username</label>
+        <div class="input-group">
+          <input type="text" id="login-username" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <div class="input-group">
+          <input type="password" id="login-password" required />
+        </div>
+      </div>
+
+      <button class="login-btn" type="submit">LOGIN</button>
+
+      <div class="links">
+        <p>New here? <a href="registerST.html">Create an account</a></p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    (function () {
+      const HOME_PAGE = "HomePage.html"; // <-- your actual homepage file
+
+      const form = document.getElementById("loginForm");
+      const u = document.getElementById("login-username");
+      const p = document.getElementById("login-password");
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const username = u.value.trim();
+        const password = p.value.trim();
+        const stored = localStorage.getItem("belissaUser");
+
+        if (!stored) {
+          alert("No registered user found. Please register first.");
+          window.location.href = "registerST.html";
+          return;
+        }
+
+        try {
+          const { username: su, password: sp } = JSON.parse(stored);
+          if (username === su && password === sp) {
+            alert("Login successful! Redirecting…");
+            window.location.href = HOME_PAGE;
+          } else {
+            alert("Invalid username or password.");
+          }
+        } catch {
+          alert("Saved account is corrupted. Please re-register.");
+          window.location.href = "registerST.html";
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

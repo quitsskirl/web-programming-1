@@ -1,0 +1,95 @@
+/* Base reset & green palette */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root{
+  --green-900:#1b4332;
+  --green-700:#2d6a4f;
+  --green-600:#40916c;
+  --green-500:#52b788;
+  --green-400:#74c69d;
+}
+
+/* Page */
+body{
+  min-height:100vh;
+  display:flex; justify-content:center; align-items:center;
+  font-family:"Poppins", sans-serif;
+  color:#163a2a;
+  background: radial-gradient(1200px 60% at 50% 0%, #e8fff2 0%, #e9fbf1 45%, #e9f7ef 100%);
+}
+
+/* Card */
+.login-container{
+  background: rgba(255,255,255,0.9);
+  width: min(92vw, 430px);
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.6);
+}
+
+.login-container h2{
+  color: var(--green-700);
+  font-size: 26px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.login-container p{
+  color:#52796f;
+  font-size:14px;
+  margin-bottom:24px;
+  text-align:center;
+}
+
+/* Form */
+.form-group{ margin-bottom:18px; }
+label{ display:block; color:var(--green-700); font-weight:500; margin-bottom:6px; }
+
+.input-group{ position:relative; display:flex; align-items:center; }
+input{
+  width:100%;
+  padding:12px 15px;
+  border:1px solid #cce3de;
+  border-radius:10px;
+  font-size:14px;
+  background:#fff;
+}
+input:focus{ border-color: var(--green-400); outline:none; }
+
+/* Meta row */
+.form-meta{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin: 4px 0 10px;
+  gap:10px;
+  font-size:13px;
+}
+.remember{ display:flex; align-items:center; gap:8px; color:#52796f; }
+.forgot{ color:#52796f; text-decoration:none; }
+.forgot:hover{ color: var(--green-600); }
+
+/* Button */
+.login-btn{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background: linear-gradient(135deg, var(--green-400), var(--green-500));
+  color:#fff;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:10px;
+}
+.login-btn:hover{ background: linear-gradient(135deg, var(--green-500), var(--green-600)); }
+
+/* Links */
+.links{ margin-top:15px; text-align:center; }
+.links a{ color:#52796f; text-decoration:none; }
+.links a:hover{ color: var(--green-600); }
+
+/* Responsive */
+@media (max-width:480px){
+  .login-container{ padding:30px 20px; }
+}
