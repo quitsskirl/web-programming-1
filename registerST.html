@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Belissa Space | Register</title>
+  <link rel="stylesheet" href="registerST.css"/>
+</head>
+<body>
+  <div class="register-container">
+    <h2>Create Your Account</h2>
+    <p>Join Belissa Space 🌿 and start your journey toward balance.</p>
+
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-group">
+          <input type="text" id="username" placeholder="Enter a username" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <div class="input-group">
+          <input type="password" id="password" placeholder="Enter a strong password" required />
+        </div>
+      </div>
+
+      <button class="register-btn" type="submit">REGISTER</button>
+
+      <div class="links">
+        <p>Already have an account? <a href="login.html">Login here</a></p>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (username && password) {
+        // Save credentials to localStorage (demo only!)
+        localStorage.setItem("belissaUser", JSON.stringify({ username, password }));
+        alert("Registration successful! Please log in.");
+        window.location.href = "login.html";
+      }
+    });
+  </script>
+</body>
+</html>
