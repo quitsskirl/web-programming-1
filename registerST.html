@@ -3,27 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Belissa Space | Register</title>
+  <title>Belissa Space | Student Register</title>
   <link rel="stylesheet" href="registerST.css"/>
 </head>
 <body>
-  <div class="register-container">
-    <h2>Create Your Account</h2>
-    <p>Join Belissa Space 🌿 and start your journey toward balance.</p>
+  <!-- Background with leaves -->
+  <div class="scenery" aria-hidden="true">
+    <div class="layer treeline-back"></div>
+    <div class="layer treeline-front"></div>
+    <div class="vines"></div>
+    <div class="leaf" style="left:10%; --dur:18s; --delay:-2s;"></div>
+    <div class="leaf" style="left:30%; --dur:15s; --delay:-6s;"></div>
+    <div class="leaf" style="left:55%; --dur:16s; --delay:-4s;"></div>
+    <div class="leaf" style="left:80%; --dur:20s; --delay:-10s;"></div>
+  </div>
 
-    <form id="registerForm">
+  <div class="register-container">
+    <h2>Create Student Account</h2>
+    <p>Join Belissa Space 🌿 and start your journey.</p>
+
+    <form id="registerFormST">
       <div class="form-group">
-        <label for="username">Username</label>
-        <div class="input-group">
-          <input type="text" id="username" placeholder="Enter a username" required />
-        </div>
+        <label for="username">Student ID / Username</label>
+        <input type="text" id="username" placeholder="Enter your student ID" required />
       </div>
 
       <div class="form-group">
         <label for="password">Password</label>
-        <div class="input-group">
-          <input type="password" id="password" placeholder="Enter a strong password" required />
-        </div>
+        <input type="password" id="password" placeholder="Enter a strong password" required />
       </div>
 
       <button class="register-btn" type="submit">REGISTER</button>
@@ -35,15 +42,14 @@
   </div>
 
   <script>
-    document.getElementById("registerForm").addEventListener("submit", function(e){
+    document.getElementById("registerFormST").addEventListener("submit", function(e){
       e.preventDefault();
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      if (username && password) {
-        // Save credentials to localStorage (demo only!)
-        localStorage.setItem("belissaUser", JSON.stringify({ username, password }));
-        alert("Registration successful! Please log in.");
+      if(username && password){
+        localStorage.setItem("belissaStudent", JSON.stringify({ username, password }));
+        alert("Student registration successful! Please log in.");
         window.location.href = "loginST.html";
       }
     });

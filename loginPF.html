@@ -7,56 +7,62 @@
   <link rel="stylesheet" href="loginPF.css"/>
 </head>
 <body>
+  <div class="scenery" aria-hidden="true">
+    <div class="layer treeline-back"></div>
+    <div class="layer treeline-front"></div>
+    <div class="vines"></div>
+    <div class="leaf" style="left:18%; --dur:18s; --delay:-2s;"></div>
+    <div class="leaf" style="left:45%; --dur:15s; --delay:-6s;"></div>
+    <div class="leaf" style="left:70%; --dur:16s; --delay:-4s;"></div>
+    <div class="leaf" style="left:88%; --dur:20s; --delay:-10s;"></div>
+  </div>
+
   <div class="login-container">
     <h2>Professor Login</h2>
-    <p>Access your Belissa Space 🌿 account.</p>
+    <p>Welcome back to Belissa Space 🌿</p>
 
-    <form id="loginForm">
+    <form id="loginFormPF">
       <div class="form-group">
         <label for="login-username">Professor ID / Username</label>
-        <div class="input-group">
-          <input type="text" id="login-username" placeholder="Enter your professor ID or username" required />
-        </div>
+        <input type="text" id="login-username" placeholder="Enter your professor ID" required />
       </div>
 
       <div class="form-group">
         <label for="login-password">Password</label>
-        <div class="input-group">
-          <input type="password" id="login-password" placeholder="Enter your password" required />
-        </div>
+        <input type="password" id="login-password" placeholder="Enter your password" required />
       </div>
 
       <button class="login-btn" type="submit">LOGIN</button>
 
       <div class="links">
-        <p>New professor? <a href="register.html">Create an account</a></p>
+        <p>New professor? <a href="registerPF.html">Create an account</a></p>
       </div>
     </form>
   </div>
 
   <script>
-    document.getElementById("loginForm").addEventListener("submit", function(e){
+    document.getElementById("loginFormPF").addEventListener("submit", function(e){
       e.preventDefault();
       const username = document.getElementById("login-username").value.trim();
       const password = document.getElementById("login-password").value.trim();
 
-      const stored = localStorage.getItem("belissaUser");
-      if (stored) {
-        try {
-          const { username: su, password: sp } = JSON.parse(stored);
-          if (username === su && password === sp) {
-            alert("Login successful! Redirecting...");
-            window.location.href = "HomePage.html"; // ✅ adjust if homepage filename differs
-          } else {
-            alert("Invalid username or password.");
-          }
-        } catch {
-          alert("There was a problem reading your saved account. Please re-register.");
-          window.location.href = "register.html";
-        }
-      } else {
+      const stored = localStorage.getItem("belissaProfessor");
+      if(!stored){
         alert("No registered professor found. Please register first.");
-        window.location.href = "register.html";
+        window.location.href = "registerPF.html";
+        return;
+      }
+
+      try{
+        const { username: su, password: sp } = JSON.parse(stored);
+        if(username === su && password === sp){
+          alert("Login successful!");
+          window.location.href = "HomePage.html";
+        } else {
+          alert("Invalid credentials.");
+        }
+      } catch {
+        alert("Error reading account. Please re-register.");
       }
     });
   </script>
