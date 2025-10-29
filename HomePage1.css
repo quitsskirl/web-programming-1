@@ -5,13 +5,25 @@ body {
   color: #333;
 }
 
+/* === HEADER === */
 header {
   background-color: #8a9562;
   color: white;
-  padding: 15px;
+  padding: 10px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+/* Header groups */
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-left h2 {
+  margin: 0;
 }
 
 /* 🧭 Menu button */
@@ -44,6 +56,85 @@ header {
   background-color: #eaeedc;
 }
 
+/* 👤 User icon */
+.user-icon {
+  font-size: 22px;
+  background-color: #8a9663;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+}
+
+.user-icon:hover {
+  background-color: #7c8a56;
+  transform: scale(1.05);
+}
+
+/* === USER POPUP === */
+.user-popup {
+  position: absolute;
+  top: 65px;
+  right: 20px;
+  background-color: #e3e5d6;
+  padding: 14px 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  min-width: 190px;
+  text-align: left;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: all 0.3s ease-out;
+}
+
+.user-popup.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  animation: popupGlow 1.2s ease-in-out;
+}
+
+/* Popup text */
+.user-popup h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #444;
+}
+
+.user-popup p {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/* ✨ Subtle glow */
+@keyframes popupGlow {
+  0% { box-shadow: 0 0 0 rgba(138, 150, 99, 0); }
+  50% { box-shadow: 0 0 12px rgba(138, 150, 99, 0.3); }
+  100% { box-shadow: 0 0 0 rgba(138, 150, 99, 0); }
+}
+
+/* Cute arrow tip */
+.user-popup::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 20px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent #e3e5d6 transparent;
+}
+
+/* === SIDEBAR === */
 .side-menu {
   position: fixed;
   top: 0;
@@ -100,6 +191,7 @@ header {
   margin-bottom: 10px;
 }
 
+/* === HERO SECTION === */
 .hero {
   text-align: center;
   padding: 80px 20px 50px;

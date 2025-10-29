@@ -1,17 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home Page</title>
-  <link rel="stylesheet" href="HomePage1.css">
+  <link rel="stylesheet" href="HomePage1.css" />
 </head>
 <body>
 
 <header>
-  <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
-  <h2>Home Page</h2>
-  <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
+  <!-- LEFT SIDE -->
+  <div class="header-left">
+    <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
+    <h2>Home Page</h2>
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="header-right">
+    <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
+    <button id="userBtn" class="user-icon" title="View Account">👤</button>
+
+    <!-- User Info Popup -->
+    <div id="userPopup" class="user-popup">
+      <h3 id="username">Username: Guest</h3>
+      <p id="userTags">Tags: Student, Planner</p>
+    </div>
+  </div>
 </header>
 
 <!-- ✅ Sidebar Menu -->
@@ -24,6 +38,7 @@
   <a href="logout.html">🚪 Log Out</a>
 </nav>
 
+<!-- 🏠 Hero Section -->
 <section class="hero">
   <h1>Home</h1>
   <p>Your companion for a successful and balanced study experience</p>
@@ -35,7 +50,7 @@
   <a href="moreinfo.html" class="btn">More Info</a>
 </section>
 
-<!-- 📞 Emergency Button (popup alert) -->
+<!-- 📞 Emergency Button -->
 <button id="emergencyBtn" class="emergency-btn" title="Emergency Contact">📞</button>
 
 <script>
@@ -45,6 +60,8 @@
   const closeMenu = document.getElementById('closeMenu');
   const chatBtn = document.getElementById('chatBtn');
   const emergencyBtn = document.getElementById('emergencyBtn');
+  const userBtn = document.getElementById('userBtn');
+  const userPopup = document.getElementById('userPopup');
 
   // === Sidebar toggle ===
   menuBtn.addEventListener('click', (e) => {
@@ -65,18 +82,36 @@
       sideMenu.setAttribute('aria-hidden', 'true');
     }
   });
+
   // === Chat button popup ===
   chatBtn.addEventListener('click', () => {
     alert('Chat feature coming soon!');
   });
 
-  <div class="user-icon" onclick="toggleUserPopup()">👤
-    <i class="fas fa-user-circle"></i>
-  </div>
+  // === User popup toggle ===
+  userBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    userPopup.classList.toggle('active');
+  });
+
+  // Close popup when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!userPopup.contains(e.target) && e.target !== userBtn) {
+      userPopup.classList.remove('active');
+    }
+  });
 
   // === Emergency button popup ===
   emergencyBtn.addEventListener('click', () => {
     alert('Emergency assistance feature coming soon!');
+  });
+
+  // === Example dynamic user info ===
+  document.addEventListener('DOMContentLoaded', () => {
+    const username = localStorage.getItem('username') || 'JohnDoe';
+    const tags = localStorage.getItem('tags') || 'Student, Planner';
+    document.getElementById('username').textContent = `Username: ${username}`;
+    document.getElementById('userTags').textContent = `Tags: ${tags}`;
   });
 })();
 </script>
