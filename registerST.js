@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const select = document.getElementById("characteristics");
+  const form     = document.getElementById("registerFormST");   // <— grab the form
+  const select   = document.getElementById("characteristics");
   const clearBtn = document.getElementById("clearSelections");
 
   // Add dropdown options dynamically
@@ -17,20 +18,26 @@ document.addEventListener("DOMContentLoaded", () => {
     select.appendChild(opt);
   });
 
-  // Clear selections
+  // CLEAR button — reset everything + ensure multi-select is cleared
   clearBtn.addEventListener("click", () => {
-    Array.from(select.options).forEach(o => o.selected = false);
+    form.reset(); // clears inputs/placeholders/checkboxes/single selects
+    Array.from(select.options).forEach(o => (o.selected = false)); // clear multi-select explicitly
   });
 
   // Register form
-  document.getElementById("registerFormST").addEventListener("submit", e => {
+  form.addEventListener("submit", e => {
     e.preventDefault();
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
     const selectedTags = Array.from(select.selectedOptions).map(opt => opt.value);
 
-    if(username && password){
-      const student = { username, password, tags: selectedTags };
+    if (username && password) {
+      const student = {
+        username,
+        password,
+        tags: selectedTags,
+        createdAt: new Date().toISOString()
+      };
       localStorage.setItem("belissaStudent", JSON.stringify(student));
       alert("Student registration successful! Please log in.");
       window.location.href = "loginST.html";
