@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const select = document.getElementById("characteristics");
+  const form     = document.getElementById("registerFormST");   // <— grab the form
+  const select   = document.getElementById("characteristics");
   const clearBtn = document.getElementById("clearSelections");
 
   // Add dropdown options dynamically
@@ -17,41 +18,25 @@ document.addEventListener("DOMContentLoaded", () => {
     select.appendChild(opt);
   });
 
-  // Clear selections
+  // CLEAR button — reset everything + ensure multi-select is cleared
   clearBtn.addEventListener("click", () => {
-    Array.from(select.options).forEach(o => o.selected = false);
+    form.reset(); // clears inputs/placeholders/checkboxes/single selects
+    Array.from(select.options).forEach(o => (o.selected = false)); // clear multi-select explicitly
   });
 
-  // Register form submission
-  document.getElementById("registerFormST").addEventListener("submit", async e => {
+  // Register form
+  document.getElementById("registerFormST").addEventListener("submit", e => {
     e.preventDefault();
 
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
     const selectedTags = Array.from(select.selectedOptions).map(opt => opt.value);
 
-    if (username && password) {
+    if(username && password){
       const student = { username, password, tags: selectedTags };
-
-      try {
-        const response = await fetch("http://127.0.0.1:5000/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(student)
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          alert(data.message);
-          window.location.href = "loginST.html";
-        } else {
-          alert("❌ Error: " + data.message);
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        alert("⚠️ Could not connect to the server.");
-      }
+      localStorage.setItem("belissaStudent", JSON.stringify(student));
+      alert("Student registration successful! Please log in.");
+      window.location.href = "loginST.html";
     } else {
       alert("Please fill in all required fields before registering.");
     }
