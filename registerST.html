@@ -5,19 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Belissa Space | Student Register</title>
   <link rel="stylesheet" href="registerST.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
+
 <body>
-  <!-- Background with leaves -->
+  <!-- Animated background -->
   <div class="scenery" aria-hidden="true">
     <div class="layer treeline-back"></div>
     <div class="layer treeline-front"></div>
-    <div class="vines"></div>
     <div class="leaf" style="left:10%; --dur:18s; --delay:-2s;"></div>
     <div class="leaf" style="left:30%; --dur:15s; --delay:-6s;"></div>
     <div class="leaf" style="left:55%; --dur:16s; --delay:-4s;"></div>
     <div class="leaf" style="left:80%; --dur:20s; --delay:-10s;"></div>
   </div>
 
+  <!-- Registration Card -->
   <div class="register-container">
     <h2>Create Student Account</h2>
     <p>Join Belissa Space 🌿 and start your journey.</p>
@@ -33,7 +35,16 @@
         <input type="password" id="password" placeholder="Enter a strong password" required />
       </div>
 
-      <button class="register-btn" type="submit">REGISTER</button>
+      <div class="form-group">
+        <label for="characteristics">Select Characteristics</label>
+        <select id="characteristics" multiple></select>
+        <small>Hold Ctrl (Windows) or Cmd (Mac) to select multiple.</small>
+      </div>
+
+      <div class="btn-group">
+        <button class="register-btn" type="submit">REGISTER</button>
+        <button class="clear-btn" type="button" id="clearSelections">CLEAR</button>
+      </div>
 
       <div class="links">
         <p>Already have an account? <a href="loginST.html">Login here</a></p>
@@ -41,18 +52,6 @@
     </form>
   </div>
 
-  <script>
-    document.getElementById("registerFormST").addEventListener("submit", function(e){
-      e.preventDefault();
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-
-      if(username && password){
-        localStorage.setItem("belissaStudent", JSON.stringify({ username, password }));
-        alert("Student registration successful! Please log in.");
-        window.location.href = "loginST.html";
-      }
-    });
-  </script>
+  <script src="registerST.js"></script>
 </body>
 </html>
