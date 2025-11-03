@@ -8,8 +8,9 @@ CORS(app)  # 🔥 this is critical for your browser to connect!
 
 # 🟢 Connect to MongoDB
 client = MongoClient("mongodb://127.0.0.1:27017/")
-db = client["belissaDB"]
+db = client["healthDB"]
 students = db["students"]
+
 
 print("✅ Connected to MongoDB!")
 
