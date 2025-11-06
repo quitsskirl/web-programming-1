@@ -52,6 +52,44 @@
     </form>
   </div>
 
+  <!-- your old JS that loads the characteristics list -->
   <script src="registerST.js"></script>
+
+  <!-- new code: sends data to Flask -->
+  <script>
+    document.getElementById("registerFormST").addEventListener("submit", function(e){
+      e.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // tags selected
+      const select = document.getElementById("characteristics");
+      const tags = [...select.selectedOptions].map(o => o.value);
+
+      if(username && password){
+        fetch("http://127.0.0.1:5000/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            username: username,
+            password: password,
+            tags: tags
+          })
+        })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message);
+          if (data.message === "Student registered successfully!") {
+            window.location.href = "loginST.html";
+          }
+        })
+        .catch(err => console.error(err));
+      }
+    });
+  </script>
+
 </body>
 </html>
