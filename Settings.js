@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Load user info from localStorage
+  const username = localStorage.getItem('username') || 'Guest';
+  const tags = localStorage.getItem('tags') || 'No tags set';
+  
+  document.getElementById('profileUsername').textContent = username;
+  document.getElementById('profileTags').textContent = tags;
+
   const menuBtn = document.getElementById('menuBtn');
   const sideMenu = document.getElementById('sideMenu');
   const closeMenu = document.getElementById('closeMenu');
