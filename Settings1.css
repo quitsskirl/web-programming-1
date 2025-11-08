@@ -1,0 +1,179 @@
+/* reuse your body, header, sidebar styles - you might copy from Services1.css */
+/* Example: */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #f6f6f0;
+  color: #333;
+}
+
+header {
+  background-color: #8a9562;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-icon {
+  font-size: 26px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.chat-icon {
+  background-color: white;
+  color: #8a9562;
+  border-radius: 50%;
+  padding: 8px;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.chat-icon:hover {
+  background-color: #eaeedc;
+}
+
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translateX(-100%);
+  width: 250px;
+  height: 100%;
+  background-color: #4b5431;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.25);
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.side-menu.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.side-menu h3 {
+  margin-top: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 20px;
+}
+
+.side-menu a {
+  color: white;
+  text-decoration: none;
+  padding: 12px 0;
+  font-size: 16px;
+  display: block;
+  transition: background 0.3s;
+}
+
+.side-menu a:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.side-menu a.active {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.close-btn {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.profile-box, .account-settings, .danger-zone {
+  background-color: #fff;
+  border: 1px solid #d4d8c4;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.profile-box h3,
+.account-settings h3,
+.danger-zone h3 {
+  color: #4b5431;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 8px;
+}
+
+.hidden-form {
+  display: none;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.primary {
+  background-color: #6f7843;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 15px;
+  margin: 10px 5px 0 0;
+}
+
+.primary:hover {
+  background-color: #8a9562;
+}
+
+.delete-btn {
+  background-color: #b84141;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #d95353;
+}
+
+.logout-btn {
+  background-color: #6f7843;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .container {
+    margin: 20px auto;
+    padding: 0 15px;
+  }
+}

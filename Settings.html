@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Belissa Space | Settings</title>
+  <link rel="stylesheet" href="Settings1.css" />
+</head>
+<body>
+
+  <!-- Header (same as your other pages) -->
+  <header>
+    <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
+    <h2>Settings</h2>
+    <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
+  </header>
+
+  <!-- Sidebar Menu -->
+  <nav id="sideMenu" class="side-menu" aria-hidden="true">
+    <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
+    <h3>Menu</h3>
+    <a href="HomePage.html">🏠 Home Page</a>
+    <a href="services.html">🛠️ Services</a>
+    <a class="active" href="settings.html">⚙️ Settings</a>
+    <a href="logout.html">🚪 Log Out</a>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container">
+    <section class="profile-box">
+      <h3>Account Info</h3>
+      <p><strong>Username:</strong> JohnDoe</p>
+      <p><strong>Tags:</strong> depression, stress, anxiety</p>
+    </section>
+
+    <section class="account-settings">
+      <h3>Security & Preferences</h3>
+      <button class="primary" id="btnChangePass">Change Password</button>
+      <button class="primary" id="btnNotifications">Notifications Preferences</button>
+      <button class="primary" id="btnBlocked">Manage Blocked Users</button>
+
+      <!-- hidden forms for each -->
+      <div class="hidden-form" id="formChangePass">
+        <h4>Change Password</h4>
+        <form>
+          <label for="oldPass">Old Password:</label><br>
+          <input type="password" id="oldPass" name="oldPass" required><br><br>
+          <label for="newPass">New Password:</label><br>
+          <input type="password" id="newPass" name="newPass" required><br><br>
+          <button type="submit" class="primary">Submit</button>
+        </form>
+      </div>
+
+      <div class="hidden-form" id="formNotifications">
+        <h4>Notifications</h4>
+        <form>
+          <label><input type="checkbox" name="emailNot" checked> Email notifications</label><br>
+          <label><input type="checkbox" name="smsNot"> SMS notifications</label><br><br>
+          <button type="submit" class="primary">Save</button>
+        </form>
+      </div>
+
+      <div class="hidden-form" id="formBlocked">
+        <h4>Blocked Users</h4>
+        <p>You currently have no blocked users.</p>
+        <button type="button" class="primary">Manage</button>
+      </div>
+    </section>
+
+    <section class="danger-zone">
+      <h3>Danger Zone</h3>
+      <button class="delete-btn" id="btnDeleteAccount">Delete Account</button>
+      <button class="logout-btn" id="btnLogOut">Log Out</button>
+    </section>
+  </main>
+
+  <script src="settings.js"></script>
+</body>
+</html>
