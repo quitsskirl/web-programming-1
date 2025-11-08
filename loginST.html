@@ -54,8 +54,15 @@
       }
 
       try{
-        const { username: su, password: sp } = JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        const su = parsed.username;
+        const sp = parsed.password;
+        const tags = Array.isArray(parsed.tags) ? parsed.tags : (typeof parsed.tags === "string" ? parsed.tags.split(",").map(t=>t.trim()) : []);
+
         if(username === su && password === sp){
+          // persist the simple keys HomePage expects
+          localStorage.setItem('username', su);
+          localStorage.setItem('tags', tags.length ? tags.join(", ") : "");
           alert("Login successful!");
           window.location.href = "HomePage.html"; // change to your homepage
         } else {

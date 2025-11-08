@@ -68,25 +68,34 @@
       const tags = [...select.selectedOptions].map(o => o.value);
 
       if(username && password){
+        const payload = { username, password, tags };
+
         fetch("http://127.0.0.1:5000/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            username: username,
-            password: password,
-            tags: tags
-          })
+          body: JSON.stringify(payload)
         })
         .then(res => res.json())
         .then(data => {
-          alert(data.message);
-          if (data.message === "Student registered successfully!") {
-            window.location.href = "loginST.html";
-          }
+          alert(data.message || "Registered.");
+          // Save locally so login and homepage can read username/tags
+          localStorage.setItem("belissaStudent", JSON.stringify(payload));
+          localStorage.setItem("username", username);
+          localStorage.setItem("tags", Array.isArray(tags) ? tags.join(", ") : "");
+          // redirect to login
+          window.location.href = "loginST.html";
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+          console.error(err);
+          // fallback: save locally even if server is not reachable
+          localStorage.setItem("belissaStudent", JSON.stringify(payload));
+          localStorage.setItem("username", username);
+          localStorage.setItem("tags", Array.isArray(tags) ? tags.join(", ") : "");
+          alert("Saved locally. Redirecting to login.");
+          window.location.href = "loginST.html";
+        });
       }
     });
   </script>
