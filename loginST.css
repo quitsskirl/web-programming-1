@@ -14,6 +14,7 @@
 
 html,body{height:100%}
 body{
+  margin:0;
   min-height:100vh;
   display:flex; align-items:center; justify-content:center;
   font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
@@ -22,8 +23,11 @@ body{
     radial-gradient(1200px 60% at 50% 0%, #e8fff2 0%, #e9fbf1 45%, #e9f7ef 100%) fixed;
 }
 
+/* keep content above scenery */
+header, footer, main, .login-container, .register-container{ position:relative; z-index:1 }
+
 /* behind-the-card scene */
-.scenery{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
+.scenery{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
 
 /* distant treeline */
 .layer.treeline-back{
@@ -107,26 +111,111 @@ body{
 </svg>") right bottom / 42vmin no-repeat;
 }
 
-/* floating leaves */
+/* ---------- Floating leaves (windy: left -> right + rotation) ---------- */
 .leaf{
-  position:fixed; top:-8vh; width:22px; height:22px; opacity:.85; z-index:-1;
-  background: radial-gradient(circle at 30% 30%, #fff 0 20%, transparent 21%),
-              radial-gradient(closest-side, var(--leaf-1), var(--leaf-2));
+  position:fixed;
+  left:-12vw;                      /* start off-screen left */
+  top:var(--startY, 12vh);         /* randomized per leaf */
+  width:var(--size, 22px);
+  height:var(--size, 22px);
+  opacity:.9; z-index:0;
+
+  background:
+    radial-gradient(circle at 30% 30%, #fff 0 20%, transparent 21%),
+    radial-gradient(closest-side, var(--leaf-1), var(--leaf-2));
   border-radius: 40% 60% 40% 60%;
-  transform: rotate(0deg);
   filter: drop-shadow(0 2px 4px rgba(0,0,0,.12));
-  animation: fall var(--dur, 16s) linear var(--delay, 0s) infinite,
-             sway 4.5s ease-in-out infinite alternate;
+
+  /* main wind (translateX) + spin + subtle bob + gust */
+  animation:
+    blowSpin var(--dur, 18s) linear var(--delay, 0s) infinite,
+    bob 3.8s ease-in-out infinite alternate,
+    gust 9s ease-in-out infinite;
 }
+
+/* central vein */
 .leaf::after{
   content:""; position:absolute; left:50%; top:15%; width:2px; height:70%;
   background: rgba(27,67,50,.35); transform:translateX(-50%);
 }
-@keyframes fall{ to{ transform: translateY(110vh) rotate(360deg); } }
-@keyframes sway{ from{ margin-left:-15px } to{ margin-left:15px } }
+
+/* Horizontal wind across viewport + steady spin */
+@keyframes blowSpin{
+  0%{
+    transform: translateX(0) rotate(0deg);
+  }
+  100%{
+    transform: translateX(120vw) rotate(720deg);
+  }
+}
+
+/* Gentle vertical bob without conflicting with transform */
+@keyframes bob{ from{ margin-top:-12px } to{ margin-top:12px } }
+
+/* Occasional stronger push left->right for “gusty” feel */
+@keyframes gust{
+  0%,100%{ margin-left:0 }
+  40%{    margin-left:10px }
+  60%{    margin-left:18px }
+}
+
+/* ---------- Special leaf: makes a circle at screen center ---------- */
+/* The 10th leaf will perform a quick loop near the center,
+   then continue flying to the right (no HTML change needed). */
+.scenery .leaf:nth-of-type(10){
+  --size: 28px;
+  --startY: 48vh;
+  animation:
+    loopRide 22s linear var(--delay, -3s) infinite,
+    bob 3.8s ease-in-out infinite alternate,
+    gust 9s ease-in-out infinite;
+}
+
+/* Timeline:
+   0%   : left off-screen
+   40%  : reaches ~40vw (approaching center)
+   45%–60% : performs a circular loop (≈ 6vh radius) while spinning faster
+   100% : exits off right edge
+*/
+@keyframes loopRide{
+  0%   { transform: translateX(0) rotate(0deg); }
+
+  /* cruise in */
+  20%  { transform: translateX(24vw) rotate(260deg); }
+  40%  { transform: translateX(40vw) rotate(380deg); }
+
+  /* circular loop (approx with waypoints) around current Y */
+  45%  { transform: translateX(45vw) translateY(0)    rotate(450deg); }
+  48%  { transform: translateX(47vw) translateY(-6vh) rotate(540deg); } /* top */
+  52%  { transform: translateX(50vw) translateY(0)    rotate(640deg); } /* right */
+  56%  { transform: translateX(47vw) translateY(6vh)  rotate(740deg); } /* bottom */
+  60%  { transform: translateX(45vw) translateY(0)    rotate(840deg); } /* left */
+
+  /* continue to the right, resume normal path */
+  80%  { transform: translateX(85vw) rotate(980deg); }
+  100% { transform: translateX(120vw) rotate(1080deg); }
+}
+
+/* Light devices: slightly reduce opacity */
 @media (max-width:480px){ .leaf{ opacity:.75 } }
 
-/* ---------- Shared card styling (login & register) ---------- */
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce){
+  .leaf{
+    animation: blowSpin var(--dur, 18s) linear var(--delay, 0s) infinite;
+  }
+}
+
+/* ---------- Optional: variety via nth-child ---------- */
+/* Add ~20 leaves in the HTML. These rules randomize starts. */
+.leaf:nth-child(3n){   --size:18px; --dur:20s; --delay:-4s;  --startY:15vh }
+.leaf:nth-child(4n){   --size:24px; --dur:17s; --delay:-7s;  --startY:28vh }
+.leaf:nth-child(5n){   --size:20px; --dur:22s; --delay:-2s;  --startY:42vh }
+.leaf:nth-child(6n){   --size:26px; --dur:16s; --delay:-10s; --startY:55vh }
+.leaf:nth-child(7n){   --size:22px; --dur:19s; --delay:-12s; --startY:68vh }
+.leaf:nth-child(8n){   --size:28px; --dur:15s; --delay:-5s;  --startY:80vh }
+
+/* ---------- Login / Register card styling (kept as requested) ---------- */
 .login-container,
 .register-container{
   position:relative;

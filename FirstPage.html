@@ -1,36 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Are You..?</title>
-  <link rel="stylesheet" href="FirstPage1.css">
+
+  <!-- Make sure this CSS file contains the windy leaves styles I gave you -->
+  <link rel="stylesheet" href="FirstPage1.css" />
 </head>
 <body>
 
-<header>
-  <h1>Are you..?</h1>
-</header>
+  <!-- Scenic background (behind everything) -->
+  <div class="scenery">
+    <div class="layer treeline-back"></div>
+    <div class="layer treeline-front"></div>
+    <div class="vines"></div>
 
-<section class="choice-section">
-  <!-- ✅ This now opens the student registration page -->
-  <div class="choice-card">
-    <a href="registerST.html">
-      <h2>A Student</h2>
-    </a>
+    <!-- Windy leaves (add/remove to taste) -->
+    <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
+    <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
+    <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
+    <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
+    <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
   </div>
 
-  <!-- You can make this link go to a teacher registration or info page later -->
-  <div class="choice-card">
-    <a href="registrationPF.html">
-      <h2>A Teacher</h2>
-    </a>
-  </div>
-</section>
+  <!-- Main content -->
+  <header>
+    <h1>Are you..?</h1>
+  </header>
 
-<footer>
-  <p>&copy; 2025 Student Wellbeing Center</p>
-</footer>
+  <section class="choice-section">
+    <!-- Student -->
+    <div class="choice-card">
+      <a href="registerST.html">
+        <h2>A Student</h2>
+      </a>
+    </div>
+
+    <!-- Teacher -->
+    <div class="choice-card">
+      <a href="registrationPF.html">
+        <h2>A Teacher</h2>
+      </a>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Student Wellbeing Center</p>
+  </footer>
 
 </body>
 </html>
