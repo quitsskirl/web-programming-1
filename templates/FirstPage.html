@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Are You..?</title>
 
-  <!-- Make sure this CSS file contains the windy leaves styles I gave you -->
-  <link rel="stylesheet" href="FirstPage1.css" />
+  <!-- CSS file -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='FirstPage1.css') }}">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
     <div class="layer treeline-front"></div>
     <div class="vines"></div>
 
-    <!-- Windy leaves (add/remove to taste) -->
+    <!-- Windy leaves -->
     <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
     <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
     <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
@@ -32,16 +32,12 @@
   <section class="choice-section">
     <!-- Student -->
     <div class="choice-card">
-      <a href="registerST.html">
-        <h2>A Student</h2>
-      </a>
+      <a href="{{ url_for('register_student_page') }}">A Student</a>
     </div>
 
     <!-- Teacher -->
     <div class="choice-card">
-      <a href="registrationPF.html">
-        <h2>A Teacher</h2>
-      </a>
+      <a href="{{ url_for('register_professional_page') }}">A Teacher</a>
     </div>
   </section>
 

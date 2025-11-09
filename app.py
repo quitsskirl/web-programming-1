@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash
@@ -19,6 +19,43 @@ except Exception as e:
     print(f"❌ Error connecting to MongoDB: {e}")
     # You may want to exit the app or handle the error differently
     raise
+
+# ---------- HTML ROUTES ---------- #
+@app.route("/")
+def first_page():
+    return render_template("FirstPage.html")
+
+@app.route("/home")
+def home_page():
+    return render_template("HomePage.html")
+
+@app.route("/login-student")
+def login_student_page():
+    return render_template("loginST.html")
+
+@app.route("/login-professional")
+def login_professional_page():
+    return render_template("loginPF.html")
+
+@app.route("/more-info")
+def more_info_page():
+    return render_template("MoreInfo.html")
+
+@app.route("/register-student")
+def register_student_page():
+    return render_template("registerST.html")
+
+@app.route("/register-professional")
+def register_professional_page():
+    return render_template("registrationPF.html")
+
+@app.route("/services")
+def services_page():
+    return render_template("Services.html")
+
+@app.route("/settings")
+def settings_page():
+    return render_template("Settings.html")
 
 # ---------- ROUTES ---------- #
 

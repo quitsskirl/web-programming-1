@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Belissa Space | Student Register</title>
-  <link rel="stylesheet" href="registerST.css"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='RegisterST.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -47,13 +47,14 @@
       </div>
 
       <div class="links">
-        <p>Already have an account? <a href="loginST.html">Login here</a></p>
+        <p>Already have an account? 
+          <a href="{{ url_for('login_student_page') }}">Login here</a>
+        </p>
       </div>
     </form>
   </div>
 
-  <!-- your old JS that loads the characteristics list -->
-  <script src="registerST.js"></script>
+  <script src="{{ url_for('static', filename='registerST.js') }}"></script>
 
   <!-- new code: sends data to Flask -->
   <script>
@@ -63,7 +64,6 @@
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
 
-      // tags selected
       const select = document.getElementById("characteristics");
       const tags = [...select.selectedOptions].map(o => o.value);
 
@@ -80,21 +80,18 @@
         .then(res => res.json())
         .then(data => {
           alert(data.message || "Registered.");
-          // Save locally so login and homepage can read username/tags
           localStorage.setItem("belissaStudent", JSON.stringify(payload));
           localStorage.setItem("username", username);
           localStorage.setItem("tags", Array.isArray(tags) ? tags.join(", ") : "");
-          // redirect to login
-          window.location.href = "loginST.html";
+          window.location.href = "{{ url_for('login_student_page') }}";
         })
         .catch(err => {
           console.error(err);
-          // fallback: save locally even if server is not reachable
           localStorage.setItem("belissaStudent", JSON.stringify(payload));
           localStorage.setItem("username", username);
           localStorage.setItem("tags", Array.isArray(tags) ? tags.join(", ") : "");
           alert("Saved locally. Redirecting to login.");
-          window.location.href = "loginST.html";
+          window.location.href = "{{ url_for('login_student_page') }}";
         });
       }
     });

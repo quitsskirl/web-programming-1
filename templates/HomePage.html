@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home Page</title>
-  <link rel="stylesheet" href="HomePage1.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='HomePage1.css') }}">
 </head>
 <body>
 
@@ -32,9 +32,9 @@
 <nav id="sideMenu" class="side-menu" aria-hidden="true">
   <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
   <h3>Menu</h3>
-  <a href="HomePage.html">🏠 Home Page</a>
-  <a href="services.html">🛠️ Services</a>
-  <a href="settings.html">⚙️ Settings</a>
+  <a href="{{ url_for('home_page') }}">🏠 Home Page</a>
+  <a href="{{ url_for('services_page') }}">🛠️ Services</a>
+  <a href="{{ url_for('settings_page') }}">⚙️ Settings</a>
 </nav>
 
 <!-- 🏠 Hero Section -->
@@ -46,7 +46,7 @@
     <p>This Week’s Event</p>
     <button>&gt;</button>
   </div>
-  <a href="moreinfo.html" class="btn">More Info</a>
+  <a href="{{ url_for('more_info_page') }}" class="btn">More Info</a>
 </section>
 
 <!-- 📞 Emergency Button -->
