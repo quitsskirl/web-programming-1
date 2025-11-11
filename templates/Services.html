@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<!-- ✅ Header (same as Home Page) -->
+<!-- ✅ Header -->
 <header>
   <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
   <h2>Services</h2>
@@ -22,7 +22,6 @@
   <a href="{{ url_for('home_page') }}">🏠 Home Page</a>
   <a class="active" href="{{ url_for('services_page') }}">🛠️ Services</a>
   <a href="{{ url_for('settings_page') }}">⚙️ Settings</a>
-  <a href="{{ url_for('first_page') }}">🚪 Log Out</a>
 </nav>
 
 <!-- ✅ Main Content -->
@@ -44,7 +43,7 @@
     </div>
   </div>
 
-  <!-- ✅ Cards Grid -->
+  <!-- ✅ Cards -->
   <section class="cards">
     <article class="card">
       <div class="avatar"><span>👤</span></div>
@@ -80,7 +79,6 @@
   const chatBtn = document.getElementById('chatBtn');
   const emergencyBtn = document.getElementById('emergencyBtn');
 
-  // === Sidebar toggle ===
   menuBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     sideMenu.classList.add('open');
@@ -100,12 +98,10 @@
     }
   });
 
-  // === Chat button popup ===
   chatBtn.addEventListener('click', () => {
     alert('Chat feature coming soon!');
   });
 
-  // === Emergency button popup ===
   emergencyBtn.addEventListener('click', () => {
     alert('Emergency assistance feature coming soon!');
   });

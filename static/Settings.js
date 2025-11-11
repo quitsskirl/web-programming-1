@@ -62,10 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
     formBlocked.style.display = 'block';
   });
 
-  // log out / delete account placeholders
+  // Update logout functionality
   document.getElementById('btnLogOut').addEventListener('click', () => {
-    alert('Logging out...');
-    // here redirect or do logout logic
+    // no more clearing localStorage!
+    window.location.href = 'FirstPage.html'; // <--- change if first page is different
   });
 
   document.getElementById('btnDeleteAccount').addEventListener('click', () => {

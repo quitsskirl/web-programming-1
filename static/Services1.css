@@ -21,7 +21,7 @@ header h2 {
   font-size: 20px;
 }
 
-/* 🧭 Menu button */
+/* Menu button */
 .menu-icon {
   font-size: 26px;
   background: none;
@@ -30,7 +30,7 @@ header h2 {
   cursor: pointer;
 }
 
-/* 💬 Chat button */
+/* Chat button */
 .chat-icon {
   background-color: white;
   color: #8a9562;
@@ -51,7 +51,7 @@ header h2 {
   background-color: #eaeedc;
 }
 
-/* 🧭 Sidebar */
+/* Sidebar */
 .side-menu {
   position: fixed;
   top: 0;
@@ -113,7 +113,7 @@ header h2 {
   margin-bottom: 10px;
 }
 
-/* 📄 Page Layout */
+/* Layout */
 .container {
   max-width: 1100px;
   margin: 40px auto;
@@ -140,7 +140,7 @@ header h2 {
   border: 1px solid #ccc;
 }
 
-/* 💬 Cards */
+/* Cards */
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -187,7 +187,7 @@ header h2 {
   background-color: #8a9562;
 }
 
-/* 📞 Emergency Button */
+/* Emergency Button */
 .emergency-btn {
   position: fixed;
   bottom: 20px;
@@ -206,7 +206,7 @@ header h2 {
   box-shadow: 0 6px 18px rgba(0,0,0,0.18);
 }
 
-/* 📱 Responsive */
+/* Responsive */
 @media (max-width: 600px) {
   .cards {
     grid-template-columns: 1fr;
