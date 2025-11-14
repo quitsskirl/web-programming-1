@@ -9,18 +9,15 @@
 <body>
 
 <header>
-  <!-- LEFT SIDE -->
   <div class="header-left">
     <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
     <h2>Home Page</h2>
   </div>
 
-  <!-- RIGHT SIDE -->
   <div class="header-right">
     <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
     <button id="userBtn" class="user-icon" title="View Account">👤</button>
 
-    <!-- User Info Popup -->
     <div id="userPopup" class="user-popup">
       <h3 id="username">Username: Guest</h3>
       <p id="userTags">Tags: Student, Planner</p>
@@ -28,16 +25,14 @@
   </div>
 </header>
 
-<!-- ✅ Sidebar Menu -->
 <nav id="sideMenu" class="side-menu" aria-hidden="true">
   <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
   <h3>Menu</h3>
-  <a href="{{ url_for('home_page') }}">🏠 Home Page</a>
-  <a href="{{ url_for('services_page') }}">🛠️ Services</a>
-  <a href="{{ url_for('settings_page') }}">⚙️ Settings</a>
+  <a href="{{ url_for('home.home_page') }}">🏠 Home Page</a>
+  <a href="{{ url_for('services.services_page') }}">🛠️ Services</a>
+  <a href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
 </nav>
 
-<!-- 🏠 Hero Section -->
 <section class="hero">
   <h1>Home</h1>
   <p>Your companion for a successful and balanced study experience</p>
@@ -46,10 +41,9 @@
     <p>This Week’s Event</p>
     <button>&gt;</button>
   </div>
-  <a href="{{ url_for('more_info_page') }}" class="btn">More Info</a>
+  <a href="{{ url_for('info.more_info_page') }}" class="btn">More Info</a>
 </section>
 
-<!-- 📞 Emergency Button -->
 <button id="emergencyBtn" class="emergency-btn" title="Emergency Contact">📞</button>
 
 <script>
@@ -62,7 +56,6 @@
   const userBtn = document.getElementById('userBtn');
   const userPopup = document.getElementById('userPopup');
 
-  // === Sidebar toggle ===
   menuBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     sideMenu.classList.add('open');
@@ -82,30 +75,25 @@
     }
   });
 
-  // === Chat button popup ===
   chatBtn.addEventListener('click', () => {
     alert('Chat feature coming soon!');
   });
 
-  // === User popup toggle ===
   userBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     userPopup.classList.toggle('active');
   });
 
-  // Close popup when clicking outside
   document.addEventListener('click', (e) => {
     if (!userPopup.contains(e.target) && e.target !== userBtn) {
       userPopup.classList.remove('active');
     }
   });
 
-  // === Emergency button popup ===
   emergencyBtn.addEventListener('click', () => {
     alert('Emergency assistance feature coming soon!');
   });
 
-  // === Example dynamic user info ===
   document.addEventListener('DOMContentLoaded', () => {
     const username = localStorage.getItem('username') || 'JohnDoe';
     const tags = localStorage.getItem('tags') || 'Student, Planner';

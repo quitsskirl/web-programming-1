@@ -35,7 +35,9 @@
       <button class="register-btn" type="submit">REGISTER</button>
 
       <div class="links">
-        <p>Already have an account? <a href="{{ url_for('login_professional_page') }}">Login here</a></p>
+        <p>Already have an account? 
+          <a href="{{ url_for('login_pf.login_professional_page') }}">Login here</a>
+        </p>
       </div>
     </form>
   </div>
@@ -49,7 +51,7 @@
       if(username && password){
         localStorage.setItem("belissaProfessor", JSON.stringify({ username, password }));
         alert("Professor registration successful! Please log in.");
-        window.location.href = "{{ url_for('login_professional_page') }}";
+        window.location.href = "{{ url_for('login_pf.login_professional_page') }}";
       }
     });
   </script>

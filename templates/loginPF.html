@@ -35,7 +35,9 @@
       <button class="login-btn" type="submit">LOGIN</button>
 
       <div class="links">
-        <p>New professor? <a href="{{ url_for('register_professional_page') }}">Create an account</a></p>
+        <p>New professor? 
+          <a href="{{ url_for('register_pf.register_professional_page') }}">Create an account</a>
+        </p>
       </div>
     </form>
   </div>
@@ -49,7 +51,7 @@
       const stored = localStorage.getItem("belissaProfessor");
       if(!stored){
         alert("No registered professor found. Please register first.");
-        window.location.href = "{{ url_for('register_professional_page') }}";
+        window.location.href = "{{ url_for('register_pf.register_professional_page') }}";
         return;
       }
 
@@ -57,7 +59,7 @@
         const { username: su, password: sp } = JSON.parse(stored);
         if(username === su && password === sp){
           alert("Login successful!");
-          window.location.href = "{{ url_for('home_page') }}";
+          window.location.href = "{{ url_for('home.home_page') }}";
         } else {
           alert("Invalid credentials.");
         }

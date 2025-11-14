@@ -11,17 +11,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeMenu = document.getElementById('closeMenu');
   const chatBtn = document.getElementById('chatBtn');
 
-  // sidebar toggle
+  // === Sidebar toggle ===
   menuBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     sideMenu.classList.add('open');
     sideMenu.setAttribute('aria-hidden', 'false');
   });
+
   closeMenu.addEventListener('click', (e) => {
     e.stopPropagation();
     sideMenu.classList.remove('open');
     sideMenu.setAttribute('aria-hidden', 'true');
   });
+
   document.addEventListener('click', (e) => {
     if (!sideMenu.contains(e.target) && e.target !== menuBtn) {
       sideMenu.classList.remove('open');
@@ -29,11 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // === Chat button ===
   chatBtn.addEventListener('click', () => {
     alert('Chat feature coming soon!');
   });
 
-  // show/hide forms
+  // === Show/hide forms ===
   const btnChangePass = document.getElementById('btnChangePass');
   const formChangePass = document.getElementById('formChangePass');
   const btnNotifications = document.getElementById('btnNotifications');
@@ -62,17 +65,22 @@ document.addEventListener('DOMContentLoaded', () => {
     formBlocked.style.display = 'block';
   });
 
-  // Update logout functionality
+  // === Logout button ===
   document.getElementById('btnLogOut').addEventListener('click', () => {
-    // no more clearing localStorage!
-    window.location.href = 'FirstPage.html'; // <--- change if first page is different
+    // You can clear localStorage here if you want to fully log out:
+    // localStorage.clear();
+    // Redirect to the Flask first page ("/" -> first.first_page)
+    window.location.href = '/';
   });
 
+  // === Delete account button ===
   document.getElementById('btnDeleteAccount').addEventListener('click', () => {
-    const confirmDelete = confirm('Are you sure you want to delete your account? This cannot be undone.');
+    const confirmDelete = confirm(
+      'Are you sure you want to delete your account? This cannot be undone.'
+    );
     if (confirmDelete) {
       alert('Account will be deleted (placeholder).');
-      // do deletion logic here
+      // Add real deletion logic here if you implement backend support.
     }
   });
 });

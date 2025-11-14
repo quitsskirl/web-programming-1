@@ -8,23 +8,20 @@
 </head>
 <body>
 
-<!-- ✅ Header -->
 <header>
   <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
   <h2>Services</h2>
   <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
 </header>
 
-<!-- ✅ Sidebar Menu -->
 <nav id="sideMenu" class="side-menu" aria-hidden="true">
   <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
   <h3>Menu</h3>
-  <a href="{{ url_for('home_page') }}">🏠 Home Page</a>
-  <a class="active" href="{{ url_for('services_page') }}">🛠️ Services</a>
-  <a href="{{ url_for('settings_page') }}">⚙️ Settings</a>
+  <a href="{{ url_for('home.home_page') }}">🏠 Home Page</a>
+  <a class="active" href="{{ url_for('services.services_page') }}">🛠️ Services</a>
+  <a href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
 </nav>
 
-<!-- ✅ Main Content -->
 <main class="container">
   <div class="section-header">
     <h1>CHAT NOW!</h1>
@@ -43,7 +40,6 @@
     </div>
   </div>
 
-  <!-- ✅ Cards -->
   <section class="cards">
     <article class="card">
       <div class="avatar"><span>👤</span></div>
@@ -68,7 +64,6 @@
   </section>
 </main>
 
-<!-- 📞 Emergency Button -->
 <button id="emergencyBtn" class="emergency-btn" title="Emergency Contact">📞</button>
 
 <script>

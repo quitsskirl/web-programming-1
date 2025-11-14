@@ -5,12 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Are You..?</title>
 
-  <!-- CSS file -->
   <link rel="stylesheet" href="{{ url_for('static', filename='FirstPage1.css') }}">
 </head>
 <body>
-
-  <!-- Scenic background (behind everything) -->
   <div class="scenery">
     <div class="layer treeline-back"></div>
     <div class="layer treeline-front"></div>
@@ -24,19 +21,18 @@
     <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
   </div>
 
-  <!-- Main content -->
   <header>
     <h1>Are you..?</h1>
   </header>
 
   <section class="choice-section">
     <!-- Student -->
-    <a class="choice-card" href="{{ url_for('register_student_page') }}">
+    <a class="choice-card" href="{{ url_for('register_st.register_student_page') }}">
       <span>A Student</span>
     </a>
 
-    <!-- Teacher -->
-    <a class="choice-card" href="{{ url_for('register_professional_page') }}">
+    <!-- Teacher / Professional -->
+    <a class="choice-card" href="{{ url_for('register_pf.register_professional_page') }}">
       <span>A Teacher</span>
     </a>
   </section>
@@ -44,6 +40,5 @@
   <footer>
     <p>&copy; 2025 Student Wellbeing Center</p>
   </footer>
-
 </body>
 </html>

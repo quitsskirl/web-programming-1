@@ -36,7 +36,7 @@
 
       <div class="links">
         <p>New student? 
-          <a href="{{ url_for('login_student_page') }}">login</a>
+          <a href="{{ url_for('register_st.register_student_page') }}">Register here</a>
         </p>
       </div>
     </form>
@@ -51,7 +51,7 @@
       const stored = localStorage.getItem("belissaStudent");
       if(!stored){
         alert("No registered student found. Please register first.");
-        window.location.href = "{{ url_for('register_student_page') }}";
+        window.location.href = "{{ url_for('register_st.register_student_page') }}";
         return;
       }
 
@@ -59,7 +59,7 @@
         const { username: su, password: sp } = JSON.parse(stored);
         if(username === su && password === sp){
           alert("Login successful!");
-          window.location.href = "{{ url_for('home_page') }}";
+          window.location.href = "{{ url_for('home.home_page') }}";
         } else {
           alert("Invalid credentials.");
         }

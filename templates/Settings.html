@@ -8,23 +8,20 @@
 </head>
 <body>
 
-  <!-- Header (same as your other pages) -->
   <header>
     <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
     <h2>Settings</h2>
     <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
   </header>
 
-  <!-- Sidebar Menu -->
   <nav id="sideMenu" class="side-menu" aria-hidden="true">
     <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
     <h3>Menu</h3>
-    <a href="{{ url_for('home_page') }}">🏠 Home Page</a>
-    <a href="{{ url_for('services_page') }}">🛠️ Services</a>
-    <a class="active" href="{{ url_for('settings_page') }}">⚙️ Settings</a>
+    <a href="{{ url_for('home.home_page') }}">🏠 Home Page</a>
+    <a href="{{ url_for('services.services_page') }}">🛠️ Services</a>
+    <a class="active" href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
   </nav>
 
-  <!-- Main Content -->
   <main class="container">
     <section class="profile-box">
       <h3>Account Info</h3>
@@ -38,7 +35,6 @@
       <button class="primary" id="btnNotifications">Notifications Preferences</button>
       <button class="primary" id="btnBlocked">Manage Blocked Users</button>
 
-      <!-- hidden forms for each -->
       <div class="hidden-form" id="formChangePass">
         <h4>Change Password</h4>
         <form>
