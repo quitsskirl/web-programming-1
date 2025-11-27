@@ -1,0 +1,138 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background-color: #f6f6f0;
+  color: #333;
+}
+
+/* HEADER */
+header {
+  background-color: #8a9562;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.menu-icon {
+  font-size: 26px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.chat-icon {
+  background-color: white;
+  color: #8a9562;
+  border-radius: 50%;
+  padding: 8px;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-icon {
+  font-size: 22px;
+  background-color: #8a9663;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* USER POPUP */
+.user-popup {
+  position: absolute;
+  top: 65px;
+  right: 20px;
+  background-color: #e3e5d6;
+  padding: 14px 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  min-width: 190px;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: all 0.3s ease-out;
+}
+
+.user-popup.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.user-popup::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 20px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent #e3e5d6 transparent;
+}
+
+/* SIDEBAR */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translateX(-100%);
+  width: 250px;
+  height: 100%;
+  background-color: #4b5431;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  transition: 0.35s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.side-menu.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.side-menu a {
+  color: white;
+  text-decoration: none;
+  padding: 12px 0;
+  display: block;
+  font-size: 16px;
+}
+
+.side-menu a:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 30px;
+  cursor: pointer;
+  align-self: flex-end;
+  margin-bottom: 10px;
+}
