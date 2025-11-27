@@ -2,41 +2,54 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash
-from dotenv import load_dotenv     # ✅ CORRECT
+from dotenv import load_dotenv
 import os
 from routs import all_blueprints
 
 app = Flask(__name__)
 CORS(app)
 
-# ----- Load Environment Variables -----
+# Load Environment Variables
 load_dotenv()
 
-# ----- MongoDB Atlas Connection -----
-client = MongoClient(os.getenv("MONGO_URI"), serverSelectionTimeoutMS=5000)
+# MongoDB Connection
+client = MongoClient(
+    os.getenv("MONGO_URI"),
+    tls=True,
+    tlsAllowInvalidCertificates=True
+)
 db = client["healthDB"]
 students = db["students"]
 
-print("✅ Connected to MongoDB Atlas via .env!")
+# Test Connection
+try:
+    client.admin.command("ping")
+    print("✅ MongoDB connection OK!")
+except Exception as e:
+    print("❌ MongoDB connection failed:", e)
 
-# ----- Register Blueprints -----
+# Register Blueprints
 for bp in all_blueprints:
     app.register_blueprint(bp)
 
-# ===== API ROUTES =====
+# ===== ROUTES =====
 @app.route("/register", methods=["POST"])
 def register_student():
-    data = request.get_json(silent=True) or request.form
+    data = request.get_json(silent=True)
+    if not data:
+        data = request.form.to_dict()
 
     username = data.get("username")
     password = data.get("password")
     tags = data.get("tags", [])
 
+    if not isinstance(tags, list):
+        tags = [tags]
+
     if not username or not password:
         return jsonify({"message": "Username and password are required"}), 400
 
-    existing = students.find_one({"username": username})
-    if existing:
+    if students.find_one({"username": username}):
         return jsonify({"message": "Username already exists"}), 400
 
     hashed_pw = generate_password_hash(password)
@@ -47,8 +60,11 @@ def register_student():
 
 @app.route("/students", methods=["GET"])
 def get_students():
-    all_students = list(students.find({}, {"_id": 0}))
-    return jsonify(all_students)
+    all_students = []
+    for s in students.find():
+        s["_id"] = str(s["_id"])
+        all_students.append(s)
+    return jsonify(all_students), 200
 
 
 if __name__ == "__main__":
