@@ -6,27 +6,37 @@ from dotenv import load_dotenv
 import os
 from routs import all_blueprints
 
-app = Flask(__name__)
-CORS(app)
-
 # Load Environment Variables
 load_dotenv()
 
-# MongoDB Connection
-client = MongoClient(
-    os.getenv("MONGO_URI"),
-    tls=True,
-    tlsAllowInvalidCertificates=True
-)
-db = client["healthDB"]
-students = db["students"]
+app = Flask(__name__)
+CORS(app)
 
-# Test Connection
-try:
-    client.admin.command("ping")
-    print("✅ MongoDB connection OK!")
-except Exception as e:
-    print("❌ MongoDB connection failed:", e)
+# MongoDB Connection
+mongo_uri = os.getenv("MONGO_URI")
+client = None
+db = None
+students = None
+
+if mongo_uri:
+    try:
+        client = MongoClient(
+            mongo_uri,
+            tls=True,
+            tlsAllowInvalidCertificates=True,
+            serverSelectionTimeoutMS=5000
+        )
+        client.admin.command("ping")
+        db = client["healthDB"]
+        students = db["students"]
+        print("✅ MongoDB connection OK!")
+    except Exception as e:
+        print("❌ MongoDB connection failed:", e)
+        client = None
+        db = None
+        students = None
+else:
+    print("⚠️ MONGO_URI not set. Database features will be unavailable.")
 
 # Register Blueprints
 for bp in all_blueprints:
@@ -35,6 +45,9 @@ for bp in all_blueprints:
 # ===== ROUTES =====
 @app.route("/register", methods=["POST"])
 def register_student():
+    if students is None:
+        return jsonify({"message": "Database unavailable"}), 503
+
     data = request.get_json(silent=True)
     if not data:
         data = request.form.to_dict()
@@ -60,6 +73,9 @@ def register_student():
 
 @app.route("/students", methods=["GET"])
 def get_students():
+    if students is None:
+        return jsonify({"message": "Database unavailable"}), 503
+
     all_students = []
     for s in students.find():
         s["_id"] = str(s["_id"])
