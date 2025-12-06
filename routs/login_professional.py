@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response
+import requests
 
 login_pf_bp = Blueprint('login_pf', __name__)
 
@@ -12,9 +13,27 @@ def login_professional_post():
     username = request.form.get("username")
     password = request.form.get("password")
 
-    # TEMPORARY EXAMPLE CREDENTIALS
-    if username == "professor" and password == "123":
-        return redirect(url_for('home.home_professor_page'))
-
-    flash("Invalid username or password")
-    return render_template('loginPF.html')
+    # Call the JWT login API
+    try:
+        response = requests.post(
+            request.url_root + 'api/login/professional',
+            json={"username": username, "password": password},
+            timeout=5
+        )
+        
+        if response.status_code == 200:
+            data = response.json()
+            token = data.get('token')
+            
+            # Create response with redirect
+            resp = make_response(redirect(url_for('home.home_professor_page')))
+            # Store token in cookie (httponly for security)
+            resp.set_cookie('jwt_token', token, httponly=True, secure=False, samesite='Lax', max_age=86400)
+            return resp
+        else:
+            flash("Invalid username or password")
+            return render_template('loginPF.html')
+    except Exception as e:
+        # Fallback for when API is unavailable
+        flash("Login service unavailable. Please try again.")
+        return render_template('loginPF.html')
