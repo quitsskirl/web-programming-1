@@ -4,21 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Professor Space</title>
+  <!-- Link to professor homepage styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='HPprofessor1.css') }}">
 </head>
 
 <body>
 
+<!-- ========== HEADER ========== -->
 <header>
+  <!-- Left side: Menu button -->
   <div class="header-left">
     <button id="menuBtn" class="menu-icon">&#9776;</button>
     <h2>Menu</h2>
   </div>
 
+  <!-- Right side: Chat and user buttons -->
   <div class="header-right">
     <button id="chatBtn" class="chat-icon">💬</button>
     <button id="userBtn" class="user-icon">👤</button>
 
+    <!-- User popup - shows username and role -->
     <div id="userPopup" class="user-popup">
       <h3 id="username">Username: Guest</h3>
       <p id="userTags">Tags: Student, Planner</p>
@@ -26,17 +31,19 @@
   </div>
 </header>
 
+<!-- ========== SIDE NAVIGATION MENU ========== -->
 <nav id="sideMenu" class="side-menu" aria-hidden="true">
   <button id="closeMenu" class="close-btn">&times;</button>
   <h3>Menu</h3>
 
-  <!-- Correct professor home link -->
+  <!-- Navigation links for professors -->
+  <!-- Home link goes to PROFESSOR home page (not student) -->
   <a href="{{ url_for('hp_professor.home_professor_page') }}">🏠 Home Page</a>
-
   <a href="{{ url_for('services.services_page') }}">🛠️ Services</a>
   <a href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
 </nav>
 
+<!-- External JS file for professor home functionality -->
 <script src="{{ url_for('static', filename='HPprofessor1.js') }}"></script>
 
 </body>

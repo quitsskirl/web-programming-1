@@ -1,119 +1,58 @@
-/* ---------- Scenic background + palette ---------- */
+/* ========== PROFESSOR LOGIN PAGE STYLES ========== */
+/* Same structure as loginST.css - for professor login page */
+
+/* ----- Color Variables ----- */
 :root{
   --green-900:#1b4332;
   --green-700:#2d6a4f;
   --green-600:#40916c;
   --green-500:#52b788;
   --green-400:#74c69d;
-
-  /* leaves */
   --leaf-1:#7cc794;
   --leaf-2:#5fb180;
   --leaf-3:#a3d9b1;
 }
 
+/* ----- Page Layout ----- */
 html,body{height:100%}
 body{
   min-height:100vh;
   display:flex; align-items:center; justify-content:center;
   font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-  color:#163a2a; overflow:hidden; /* hides drifting leaves outside */
-  background:
-    radial-gradient(1200px 60% at 50% 0%, #e8fff2 0%, #e9fbf1 45%, #e9f7ef 100%) fixed;
+  color:#163a2a; overflow:hidden;
+  background: radial-gradient(1200px 60% at 50% 0%, #e8fff2 0%, #e9fbf1 45%, #e9f7ef 100%) fixed;
 }
 
-/* behind-the-card scene */
+/* ----- Background Scenery ----- */
 .scenery{ position:fixed; inset:0; z-index:-1; pointer-events:none; overflow:hidden; }
 
-/* distant treeline */
+/* Far trees */
 .layer.treeline-back{
   position:absolute; left:0; right:0; bottom:0; height:45vh; opacity:.35;
-  background:
-    url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 400' preserveAspectRatio='none'>\
-  <defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'>\
-    <stop offset='0%' stop-color='%232d6a4f' stop-opacity='0.28'/>\
-    <stop offset='100%' stop-color='%231b4332' stop-opacity='0.38'/>\
-  </linearGradient></defs>\
-  <rect width='1200' height='400' fill='url(%23g)'/>\
-  <g fill='%231b4332' opacity='0.35'>\
-    <path d='M70 350 l40-110 40 110z'/>\
-    <path d='M170 360 l45-125 45 125z'/>\
-    <path d='M290 355 l38-100 38 100z'/>\
-    <path d='M400 360 l50-135 50 135z'/>\
-    <path d='M540 355 l42-120 42 120z'/>\
-    <path d='M660 360 l48-130 48 130z'/>\
-    <path d='M800 355 l40-110 40 110z'/>\
-    <path d='M920 360 l46-128 46 128z'/>\
-    <path d='M1040 355 l38-100 38 100z'/>\
-  </g>\
-</svg>") center bottom / cover repeat-x;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 400' preserveAspectRatio='none'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%232d6a4f' stop-opacity='0.28'/><stop offset='100%' stop-color='%231b4332' stop-opacity='0.38'/></linearGradient></defs><rect width='1200' height='400' fill='url(%23g)'/><g fill='%231b4332' opacity='0.35'><path d='M70 350 l40-110 40 110z'/><path d='M170 360 l45-125 45 125z'/><path d='M290 355 l38-100 38 100z'/><path d='M400 360 l50-135 50 135z'/><path d='M540 355 l42-120 42 120z'/><path d='M660 360 l48-130 48 130z'/><path d='M800 355 l40-110 40 110z'/><path d='M920 360 l46-128 46 128z'/><path d='M1040 355 l38-100 38 100z'/></g></svg>") center bottom / cover repeat-x;
   filter: blur(1px);
 }
 
-/* nearer treeline */
+/* Near trees */
 .layer.treeline-front{
   position:absolute; left:0; right:0; bottom:0; height:35vh; opacity:.6;
-  background:
-    url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300' preserveAspectRatio='none'>\
-  <defs><linearGradient id='h' x1='0' y1='0' x2='0' y2='1'>\
-    <stop offset='0%' stop-color='%2352b788'/>\
-    <stop offset='100%' stop-color='%232d6a4f'/>\
-  </linearGradient></defs>\
-  <rect width='1200' height='300' fill='url(%23h)'/>\
-  <g fill='%232d6a4f' opacity='0.75'>\
-    <path d='M50 270 l50-150 50 150z'/>\
-    <path d='M180 275 l55-165 55 165z'/>\
-    <path d='M330 270 l48-145 48 145z'/>\
-    <path d='M470 275 l60-170 60 170z'/>\
-    <path d='M640 270 l52-160 52 160z'/>\
-    <path d='M790 275 l58-168 58 168z'/>\
-    <path d='M950 270 l50-150 50 150z'/>\
-    <path d='M1090 275 l56-166 56 166z'/>\
-  </g>\
-</svg>") center bottom / cover repeat-x;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,.9), rgba(0,0,0,0) 70%);
-          mask-image: linear-gradient(to top, rgba(0,0,0,.9), rgba(0,0,0,0) 70%);
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300' preserveAspectRatio='none'><defs><linearGradient id='h' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%2352b788'/><stop offset='100%' stop-color='%232d6a4f'/></linearGradient></defs><rect width='1200' height='300' fill='url(%23h)'/><g fill='%232d6a4f' opacity='0.75'><path d='M50 270 l50-150 50 150z'/><path d='M180 275 l55-165 55 165z'/><path d='M330 270 l48-145 48 145z'/><path d='M470 275 l60-170 60 170z'/><path d='M640 270 l52-160 52 160z'/><path d='M790 275 l58-168 58 168z'/><path d='M950 270 l50-150 50 150z'/><path d='M1090 275 l56-166 56 166z'/></g></svg>") center bottom / cover repeat-x;
+  mask-image: linear-gradient(to top, rgba(0,0,0,.9), rgba(0,0,0,0) 70%);
 }
 
-/* corner vines */
+/* Vines decoration */
 .vines{
   position:absolute; inset:0; pointer-events:none;
-  background:
-    url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'>\
-  <g fill='none' stroke='%2352b788' stroke-width='2' stroke-linecap='round' opacity='0.6'>\
-    <path d='M20,60 C120,120 160,40 220,110 S340,200 420,120'/>\
-    <path d='M60,120 C140,180 200,120 240,180 S360,260 440,200'/>\
-  </g>\
-  <g fill='%2374c69d' opacity='0.8'>\
-    <ellipse cx='140' cy='90' rx='10' ry='18' transform='rotate(-25 140 90)'/>\
-    <ellipse cx='200' cy='150' rx='9' ry='16' transform='rotate(10 200 150)'/>\
-    <ellipse cx='260' cy='110' rx='10' ry='18' transform='rotate(20 260 110)'/>\
-  </g>\
-</svg>") left top / 40vmin no-repeat,
-    url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'>\
-  <g fill='none' stroke='%2352b788' stroke-width='2' stroke-linecap='round' opacity='0.6'>\
-    <path d='M580,540 C480,480 440,560 380,490 S260,400 180,480'/>\
-    <path d='M540,480 C460,420 400,480 360,420 S240,340 160,400'/>\
-  </g>\
-  <g fill='%2374c69d' opacity='0.8'>\
-    <ellipse cx='460' cy='510' rx='10' ry='18' transform='rotate(25 460 510)'/>\
-    <ellipse cx='400' cy='450' rx='9' ry='16' transform='rotate(-10 400 450)'/>\
-    <ellipse cx='340' cy='490' rx='10' ry='18' transform='rotate(-20 340 490)'/>\
-  </g>\
-</svg>") right bottom / 42vmin no-repeat;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'><g fill='none' stroke='%2352b788' stroke-width='2' stroke-linecap='round' opacity='0.6'><path d='M20,60 C120,120 160,40 220,110 S340,200 420,120'/><path d='M60,120 C140,180 200,120 240,180 S360,260 440,200'/></g><g fill='%2374c69d' opacity='0.8'><ellipse cx='140' cy='90' rx='10' ry='18' transform='rotate(-25 140 90)'/><ellipse cx='200' cy='150' rx='9' ry='16' transform='rotate(10 200 150)'/><ellipse cx='260' cy='110' rx='10' ry='18' transform='rotate(20 260 110)'/></g></svg>") left top / 40vmin no-repeat,
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'><g fill='none' stroke='%2352b788' stroke-width='2' stroke-linecap='round' opacity='0.6'><path d='M580,540 C480,480 440,560 380,490 S260,400 180,480'/><path d='M540,480 C460,420 400,480 360,420 S240,340 160,400'/></g><g fill='%2374c69d' opacity='0.8'><ellipse cx='460' cy='510' rx='10' ry='18' transform='rotate(25 460 510)'/><ellipse cx='400' cy='450' rx='9' ry='16' transform='rotate(-10 400 450)'/><ellipse cx='340' cy='490' rx='10' ry='18' transform='rotate(-20 340 490)'/></g></svg>") right bottom / 42vmin no-repeat;
 }
 
-/* floating leaves */
+/* ----- Floating Leaves ----- */
 .leaf{
   position:fixed; top:-8vh; width:22px; height:22px; opacity:.85; z-index:-1;
   background: radial-gradient(circle at 30% 30%, #fff 0 20%, transparent 21%),
               radial-gradient(closest-side, var(--leaf-1), var(--leaf-2));
   border-radius: 40% 60% 40% 60%;
-  transform: rotate(0deg);
   filter: drop-shadow(0 2px 4px rgba(0,0,0,.12));
   animation: fall var(--dur, 16s) linear var(--delay, 0s) infinite,
              sway 4.5s ease-in-out infinite alternate;
@@ -124,15 +63,11 @@ body{
 }
 @keyframes fall{ to{ transform: translateY(110vh) rotate(360deg); } }
 @keyframes sway{ from{ margin-left:-15px } to{ margin-left:15px } }
-@media (max-width:480px){ .leaf{ opacity:.75 } }
 
-/* ---------- Shared card styling (login & register) ---------- */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+/* ----- Login Card ----- */
+*, *::before, *::after { box-sizing: border-box; }
 
-.login-container,
-.register-container{
+.login-container, .register-container{
   position: relative;
   background: rgba(255,255,255,0.92);
   width: min(90vw, 380px);
@@ -142,94 +77,23 @@ body{
   backdrop-filter: blur(8px);
 }
 
-.login-container h2,
-.register-container h2{
-  color: var(--green-700);
-  font-size: 26px;
-  margin: 0 0 6px 0;
-  text-align: center;
-  font-weight: 600;
-}
+/* Title and subtitle */
+.login-container h2, .register-container h2{ color: var(--green-700); font-size: 26px; margin: 0 0 6px 0; text-align: center; font-weight: 600; }
+.login-container p, .register-container p{ color: #52796f; font-size: 14px; margin: 0 0 24px 0; text-align: center; }
 
-.login-container p,
-.register-container p{
-  color: #52796f;
-  font-size: 14px;
-  margin: 0 0 24px 0;
-  text-align: center;
-}
+/* ----- Form ----- */
+.form-group{ margin-bottom: 20px; }
+label{ display: block; color: var(--green-700); font-weight: 500; margin-bottom: 8px; font-size: 14px; }
+input{ width: 100%; padding: 14px 16px; border: 2px solid #d8ebe3; border-radius: 12px; font-size: 15px; background: #fff; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+input:focus{ border-color: var(--green-400); outline: none; box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.2); }
+input::placeholder{ color: #9cb8ad; }
 
-.form-group{
-  margin-bottom: 20px;
-}
+/* ----- Buttons ----- */
+.login-btn, .register-btn{ width: 100%; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, var(--green-400), var(--green-500)); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.login-btn:hover, .register-btn:hover{ background: linear-gradient(135deg, var(--green-500), var(--green-600)); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3); }
 
-label{
-  display: block;
-  color: var(--green-700);
-  font-weight: 500;
-  margin-bottom: 8px;
-  font-size: 14px;
-}
-
-input{
-  width: 100%;
-  padding: 14px 16px;
-  border: 2px solid #d8ebe3;
-  border-radius: 12px;
-  font-size: 15px;
-  background: #fff;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-input:focus{
-  border-color: var(--green-400);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.2);
-}
-
-input::placeholder{
-  color: #9cb8ad;
-}
-
-.login-btn,
-.register-btn{
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--green-400), var(--green-500));
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.login-btn:hover,
-.register-btn:hover{
-  background: linear-gradient(135deg, var(--green-500), var(--green-600));
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
-}
-
-.links{
-  margin-top: 20px;
-  text-align: center;
-}
-
-.links p{
-  margin: 0;
-}
-
-.links a{
-  color: var(--green-600);
-  font-size: 14px;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.links a:hover{
-  color: var(--green-700);
-  text-decoration: underline;
-}
+/* ----- Links ----- */
+.links{ margin-top: 20px; text-align: center; }
+.links p{ margin: 0; }
+.links a{ color: var(--green-600); font-size: 14px; text-decoration: none; font-weight: 500; }
+.links a:hover{ color: var(--green-700); text-decoration: underline; }

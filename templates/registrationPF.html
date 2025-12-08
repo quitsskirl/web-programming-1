@@ -4,29 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mental Health | Professor Register</title>
+  <!-- Link to professor registration styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='registrationPF.css') }}">
 </head>
 <body>
+
+  <!-- ========== BACKGROUND SCENERY ========== -->
+  <!-- Decorative animated forest background -->
   <div class="scenery" aria-hidden="true">
-    <div class="layer treeline-back"></div>
-    <div class="layer treeline-front"></div>
-    <div class="vines"></div>
+    <div class="layer treeline-back"></div>   <!-- Far trees -->
+    <div class="layer treeline-front"></div>  <!-- Near trees -->
+    <div class="vines"></div>                 <!-- Corner vines -->
+    <!-- Floating leaves -->
     <div class="leaf" style="left:15%; --dur:18s; --delay:-2s;"></div>
     <div class="leaf" style="left:35%; --dur:15s; --delay:-6s;"></div>
     <div class="leaf" style="left:60%; --dur:16s; --delay:-4s;"></div>
     <div class="leaf" style="left:82%; --dur:20s; --delay:-10s;"></div>
   </div>
 
+  <!-- ========== REGISTRATION FORM CARD ========== -->
   <div class="register-container">
     <h2>Create Professor Account</h2>
     <p>Join Mental Health 🌿 and guide your students.</p>
 
     <form id="registerFormPF">
+      <!-- Username input -->
       <div class="form-group">
         <label for="username">Professor ID / Username</label>
         <input type="text" id="username" placeholder="Enter your professor ID" required />
       </div>
 
+      <!-- Password input -->
       <div class="form-group">
         <label for="password">Password</label>
         <input type="password" id="password" placeholder="Enter a strong password" required />
@@ -34,6 +42,7 @@
 
       <button class="register-btn" type="submit">REGISTER</button>
 
+      <!-- Link to login page -->
       <div class="links">
         <p>Already have an account? 
           <a href="{{ url_for('login_pf.login_professional_page') }}">Login here</a>
@@ -42,18 +51,24 @@
     </form>
   </div>
 
+  <!-- ========== REGISTRATION SCRIPT ========== -->
   <script>
+    // Handle form submission
     document.getElementById("registerFormPF").addEventListener("submit", function(e){
-      e.preventDefault();
+      e.preventDefault(); // Prevent page reload
+      
+      // Get form values
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
 
       if(username && password){
+        // Save professor credentials to localStorage
         localStorage.setItem("mhProfessor", JSON.stringify({ username, password }));
         alert("Professor registration successful! Please log in.");
-        window.location.href = "{{ url_for('login_pf.login_professional_page') }}";
+        window.location.href = "{{ url_for('login_pf.login_professional_page') }}"; // Go to login
       }
     });
   </script>
+
 </body>
 </html>

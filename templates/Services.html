@@ -4,16 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mental Health | Services</title>
+  <!-- Link to services page styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='Services1.css') }}">
 </head>
 <body>
 
+<!-- ========== HEADER ========== -->
 <header>
   <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
   <h2>Services</h2>
   <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
 </header>
 
+<!-- ========== SIDE NAVIGATION MENU ========== -->
 <nav id="sideMenu" class="side-menu" aria-hidden="true">
   <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
   <h3>Menu</h3>
@@ -22,11 +25,14 @@
   <a href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
 </nav>
 
+<!-- ========== MAIN CONTENT ========== -->
 <main class="container">
+  <!-- Section header with search and filter -->
   <div class="section-header">
     <h1>CHAT NOW!</h1>
 
     <div class="toolbar">
+      <!-- Filter tags (placeholder) -->
       <div class="tags">
         <button class="tag"></button>
         <button class="tag"></button>
@@ -34,13 +40,17 @@
         <button class="tag"></button>
       </div>
 
+      <!-- Search bar -->
       <div class="searchbar">
         <input type="search" placeholder="Search" aria-label="Search services or counselors"/>
       </div>
     </div>
   </div>
 
+  <!-- ========== COUNSELOR CARDS ========== -->
+  <!-- Cards for available counselors/professionals -->
   <section class="cards">
+    <!-- Counselor card 1 -->
     <article class="card">
       <div class="avatar"><span>👤</span></div>
       <h3>Username</h3>
@@ -48,6 +58,7 @@
       <button class="primary">Start Chat</button>
     </article>
 
+    <!-- Counselor card 2 -->
     <article class="card">
       <div class="avatar"><span>👤</span></div>
       <h3>Username</h3>
@@ -55,6 +66,7 @@
       <button class="primary">Start Chat</button>
     </article>
 
+    <!-- Counselor card 3 -->
     <article class="card">
       <div class="avatar"><span>👤</span></div>
       <h3>Username</h3>
@@ -64,28 +76,34 @@
   </section>
 </main>
 
+<!-- Emergency contact button (floating) -->
 <button id="emergencyBtn" class="emergency-btn" title="Emergency Contact">📞</button>
 
+<!-- ========== PAGE SCRIPTS ========== -->
 <script>
 (function() {
+  // Get DOM elements
   const menuBtn = document.getElementById('menuBtn');
   const sideMenu = document.getElementById('sideMenu');
   const closeMenu = document.getElementById('closeMenu');
   const chatBtn = document.getElementById('chatBtn');
   const emergencyBtn = document.getElementById('emergencyBtn');
 
+  // Open side menu
   menuBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     sideMenu.classList.add('open');
     sideMenu.setAttribute('aria-hidden', 'false');
   });
 
+  // Close side menu
   closeMenu.addEventListener('click', (e) => {
     e.stopPropagation();
     sideMenu.classList.remove('open');
     sideMenu.setAttribute('aria-hidden', 'true');
   });
 
+  // Close menu when clicking outside
   document.addEventListener('click', (e) => {
     if (!sideMenu.contains(e.target) && e.target !== menuBtn) {
       sideMenu.classList.remove('open');
@@ -93,10 +111,12 @@
     }
   });
 
+  // Chat button (placeholder)
   chatBtn.addEventListener('click', () => {
     alert('Chat feature coming soon!');
   });
 
+  // Emergency button (placeholder)
   emergencyBtn.addEventListener('click', () => {
     alert('Emergency assistance feature coming soon!');
   });

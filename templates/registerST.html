@@ -4,46 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mental Health | Student Register</title>
+  <!-- Link to registration styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='RegisterST.css') }}">
+  <!-- Google Fonts - Poppins -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+
+  <!-- ========== BACKGROUND SCENERY ========== -->
+  <!-- Decorative animated forest background -->
   <div class="scenery" aria-hidden="true">
-    <div class="layer treeline-back"></div>
-    <div class="layer treeline-front"></div>
-    <div class="vines"></div>
+    <div class="layer treeline-back"></div>   <!-- Far trees -->
+    <div class="layer treeline-front"></div>  <!-- Near trees -->
+    <div class="vines"></div>                 <!-- Corner vines -->
+    <!-- Floating leaves -->
     <div class="leaf" style="left:10%; --dur:18s; --delay:-2s;"></div>
     <div class="leaf" style="left:30%; --dur:15s; --delay:-6s;"></div>
     <div class="leaf" style="left:55%; --dur:16s; --delay:-4s;"></div>
     <div class="leaf" style="left:80%; --dur:20s; --delay:-10s;"></div>
   </div>
 
+  <!-- ========== REGISTRATION FORM CARD ========== -->
   <div class="register-container">
     <h2>Create Student Account</h2>
     <p>Join Mental Health 🌿 and start your journey.</p>
 
     <form id="registerFormST" autocomplete="on" novalidate>
+      <!-- Username input -->
       <div class="form-group">
         <label for="username">Student ID / Username</label>
         <input type="text" id="username" name="username" placeholder="Enter your student ID" required />
       </div>
 
+      <!-- Password input -->
       <div class="form-group">
         <label for="password">Password</label>
         <input type="password" id="password" name="password" placeholder="Enter a strong password" required />
       </div>
 
+      <!-- Characteristics/Tags multi-select (populated by JS) -->
       <div class="form-group">
         <label for="characteristics">Select Characteristics</label>
         <select id="characteristics" name="characteristics" multiple size="6"></select>
         <small>Hold Ctrl (Windows) or Cmd (Mac) to select multiple.</small>
       </div>
 
+      <!-- Action buttons -->
       <div class="btn-group">
         <button class="register-btn" type="submit">REGISTER</button>
         <button class="clear-btn" type="button" id="clearSelections">CLEAR</button>
       </div>
 
+      <!-- Link to login page -->
       <div class="links">
         <p>Already have an account? 
           <a href="{{ url_for('login_st.login_student_page') }}">Login here</a>
@@ -52,20 +64,25 @@
     </form>
   </div>
 
+  <!-- External JS file - populates characteristics dropdown -->
   <script src="{{ url_for('static', filename='registerST.js') }}"></script>
 
+  <!-- ========== REGISTRATION SCRIPT ========== -->
   <script>
+    // Handle form submission
     document.getElementById("registerFormST").addEventListener("submit", function(e){
-      e.preventDefault();
+      e.preventDefault(); // Prevent page reload
 
+      // Get form values
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
       const select = document.getElementById("characteristics");
-      const tags = [...select.selectedOptions].map(o => o.value);
+      const tags = [...select.selectedOptions].map(o => o.value); // Get selected tags
 
       if(username && password){
         const payload = { username, password, tags };
 
+        // Send registration to backend API
         fetch("http://127.0.0.1:5000/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -74,12 +91,14 @@
         .then(res => res.json())
         .then(data => {
           alert(data.message || "Registered.");
+          // Save to localStorage as backup
           localStorage.setItem("mhStudent", JSON.stringify(payload));
           localStorage.setItem("username", username);
           localStorage.setItem("tags", Array.isArray(tags) ? tags.join(", ") : "");
-          window.location.href = "{{ url_for('login_st.login_student_page') }}";
+          window.location.href = "{{ url_for('login_st.login_student_page') }}"; // Go to login
         })
         .catch(err => {
+          // Fallback: save locally if API fails
           console.error(err);
           localStorage.setItem("mhStudent", JSON.stringify(payload));
           localStorage.setItem("username", username);
@@ -90,5 +109,6 @@
       }
     });
   </script>
+
 </body>
 </html>

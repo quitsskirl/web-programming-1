@@ -4,16 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mental Health | Settings</title>
+  <!-- Link to settings page styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='Settings1.css') }}">
 </head>
 <body>
 
+  <!-- ========== HEADER ========== -->
   <header>
     <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
     <h2>Settings</h2>
     <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
   </header>
 
+  <!-- ========== SIDE NAVIGATION MENU ========== -->
   <nav id="sideMenu" class="side-menu" aria-hidden="true">
     <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
     <h3>Menu</h3>
@@ -22,19 +25,27 @@
     <a class="active" href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
   </nav>
 
+  <!-- ========== MAIN CONTENT ========== -->
   <main class="container">
+
+    <!-- ===== PROFILE INFO BOX ===== -->
+    <!-- Displays current user's account info -->
     <section class="profile-box">
       <h3>Account Info</h3>
       <p><strong>Username:</strong> <span id="profileUsername">Loading...</span></p>
       <p><strong>Tags:</strong> <span id="profileTags">Loading...</span></p>
     </section>
 
+    <!-- ===== ACCOUNT SETTINGS ===== -->
     <section class="account-settings">
       <h3>Security & Preferences</h3>
+      
+      <!-- Setting action buttons -->
       <button class="primary" id="btnChangePass">Change Password</button>
       <button class="primary" id="btnNotifications">Notifications Preferences</button>
       <button class="primary" id="btnBlocked">Manage Blocked Users</button>
 
+      <!-- Hidden form: Change Password -->
       <div class="hidden-form" id="formChangePass">
         <h4>Change Password</h4>
         <form>
@@ -46,6 +57,7 @@
         </form>
       </div>
 
+      <!-- Hidden form: Notification Settings -->
       <div class="hidden-form" id="formNotifications">
         <h4>Notifications</h4>
         <form>
@@ -55,6 +67,7 @@
         </form>
       </div>
 
+      <!-- Hidden form: Blocked Users -->
       <div class="hidden-form" id="formBlocked">
         <h4>Blocked Users</h4>
         <p>You currently have no blocked users.</p>
@@ -62,13 +75,17 @@
       </div>
     </section>
 
+    <!-- ===== DANGER ZONE ===== -->
+    <!-- Account deletion and logout -->
     <section class="danger-zone">
       <h3>Danger Zone</h3>
       <button class="delete-btn" id="btnDeleteAccount">Delete Account</button>
       <button class="logout-btn" id="btnLogOut">Log Out</button>
     </section>
+
   </main>
 
+  <!-- External JS file for settings functionality -->
   <script src="{{ url_for('static', filename='Settings.js') }}"></script>
 
 </body>

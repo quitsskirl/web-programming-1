@@ -4,20 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home Page</title>
+  <!-- Link to homepage styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='HomePage1.css') }}">
 </head>
 <body>
 
+<!-- ========== HEADER ========== -->
 <header>
+  <!-- Left side: Menu button and title -->
   <div class="header-left">
     <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
     <h2>Home Page</h2>
   </div>
 
+  <!-- Right side: Chat and user buttons -->
   <div class="header-right">
     <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
     <button id="userBtn" class="user-icon" title="View Account">👤</button>
 
+    <!-- User popup - shows username and tags -->
     <div id="userPopup" class="user-popup">
       <h3 id="username">Username: Guest</h3>
       <p id="userTags">Tags: Student, Planner</p>
@@ -25,29 +30,39 @@
   </div>
 </header>
 
+<!-- ========== SIDE NAVIGATION MENU ========== -->
 <nav id="sideMenu" class="side-menu" aria-hidden="true">
   <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
   <h3>Menu</h3>
+  <!-- Navigation links - Flask url_for generates correct URLs -->
   <a href="{{ url_for('home.home_page') }}">🏠 Home Page</a>
   <a href="{{ url_for('services.services_page') }}">🛠️ Services</a>
   <a href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
 </nav>
 
+<!-- ========== MAIN HERO SECTION ========== -->
 <section class="hero">
   <h1>Home</h1>
   <p>Your companion for a successful and balanced study experience</p>
+  
+  <!-- Events carousel (placeholder) -->
   <div class="carousel">
     <button>&lt;</button>
-    <p>This Week’s Event</p>
+    <p>This Week's Event</p>
     <button>&gt;</button>
   </div>
+  
+  <!-- Link to more info page -->
   <a href="{{ url_for('info.more_info_page') }}" class="btn">More Info</a>
 </section>
 
+<!-- Emergency contact button (floating) -->
 <button id="emergencyBtn" class="emergency-btn" title="Emergency Contact">📞</button>
 
+<!-- ========== PAGE SCRIPTS ========== -->
 <script>
 (function() {
+  // Get DOM elements
   const menuBtn = document.getElementById('menuBtn');
   const sideMenu = document.getElementById('sideMenu');
   const closeMenu = document.getElementById('closeMenu');
@@ -56,18 +71,21 @@
   const userBtn = document.getElementById('userBtn');
   const userPopup = document.getElementById('userPopup');
 
+  // Open side menu
   menuBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     sideMenu.classList.add('open');
     sideMenu.setAttribute('aria-hidden', 'false');
   });
 
+  // Close side menu
   closeMenu.addEventListener('click', (e) => {
     e.stopPropagation();
     sideMenu.classList.remove('open');
     sideMenu.setAttribute('aria-hidden', 'true');
   });
 
+  // Close menu when clicking outside
   document.addEventListener('click', (e) => {
     if (!sideMenu.contains(e.target) && e.target !== menuBtn) {
       sideMenu.classList.remove('open');
@@ -75,25 +93,30 @@
     }
   });
 
+  // Chat button (placeholder)
   chatBtn.addEventListener('click', () => {
     alert('Chat feature coming soon!');
   });
 
+  // Toggle user popup
   userBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     userPopup.classList.toggle('active');
   });
 
+  // Close user popup when clicking outside
   document.addEventListener('click', (e) => {
     if (!userPopup.contains(e.target) && e.target !== userBtn) {
       userPopup.classList.remove('active');
     }
   });
 
+  // Emergency button (placeholder)
   emergencyBtn.addEventListener('click', () => {
     alert('Emergency assistance feature coming soon!');
   });
 
+  // Load user info from localStorage on page load
   document.addEventListener('DOMContentLoaded', () => {
     const username = localStorage.getItem('username') || 'JohnDoe';
     const tags = localStorage.getItem('tags') || 'Student, Planner';

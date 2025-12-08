@@ -4,16 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Are You..?</title>
-
+  <!-- Link to first page styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='FirstPage1.css') }}">
 </head>
 <body>
-  <div class="scenery">
-    <div class="layer treeline-back"></div>
-    <div class="layer treeline-front"></div>
-    <div class="vines"></div>
 
-    <!-- Windy leaves -->
+  <!-- ========== BACKGROUND SCENERY ========== -->
+  <!-- Animated forest background with floating leaves -->
+  <div class="scenery">
+    <div class="layer treeline-back"></div>   <!-- Far trees -->
+    <div class="layer treeline-front"></div>  <!-- Near trees -->
+    <div class="vines"></div>                 <!-- Corner vines -->
+
+    <!-- Floating leaves (24 total for dense effect) -->
     <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
     <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
     <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
@@ -21,24 +24,29 @@
     <i class="leaf"></i><i class="leaf"></i><i class="leaf"></i><i class="leaf"></i>
   </div>
 
+  <!-- ========== HEADER ========== -->
   <header>
     <h1>Are you..?</h1>
   </header>
 
+  <!-- ========== ROLE SELECTION ========== -->
+  <!-- User chooses between Student or Teacher -->
   <section class="choice-section">
-    <!-- Student -->
+    <!-- Student card - links to student registration -->
     <a class="choice-card" href="{{ url_for('register_st.register_student_page') }}">
       <span>A Student</span>
     </a>
 
-    <!-- Teacher / Professional -->
+    <!-- Teacher card - links to professional registration -->
     <a class="choice-card" href="{{ url_for('register_pf.register_professional_page') }}">
       <span>A Teacher</span>
     </a>
   </section>
 
+  <!-- ========== FOOTER ========== -->
   <footer>
     <p>&copy; 2025 Student Wellbeing Center</p>
   </footer>
+
 </body>
 </html>

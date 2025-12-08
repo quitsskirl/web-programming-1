@@ -4,25 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>More Info</title>
+  <!-- Link to more info page styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='MoreInfo1.css') }}">
 </head>
 <body>
 
+<!-- ========== HEADER ========== -->
 <header>
   <span class="menu-icon">&#9776;</span>
   <h2>More Info</h2>
+  <!-- Back button to return to home page -->
   <a href="{{ url_for('home.home_page') }}" class="back-btn">← Back</a>
 </header>
 
+<!-- ========== INFO SECTION ========== -->
 <section class="info-section">
   <h1>About Our Wellbeing Support</h1>
   <p>
     Our goal is to provide students with access to the right resources for their
-    psychological and academic wellbeing. Whether you’re feeling stressed,
-    overwhelmed, or just need someone to talk to, we’re here to help.
+    psychological and academic wellbeing. Whether you're feeling stressed,
+    overwhelmed, or just need someone to talk to, we're here to help.
   </p>
 
+  <!-- ===== INFO CARDS ===== -->
   <div class="info-cards">
+    <!-- Psychological Help card -->
     <div class="card">
       <h3>Psychological Help</h3>
       <p>
@@ -32,6 +38,7 @@
       </p>
     </div>
 
+    <!-- Staff info card -->
     <div class="card">
       <h3>About Our Staff</h3>
       <p>
@@ -43,6 +50,7 @@
   </div>
 </section>
 
+<!-- ========== FOOTER ========== -->
 <footer>
   <p>&copy; 2025 Student Wellbeing Center</p>
 </footer>

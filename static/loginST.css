@@ -1,238 +1,111 @@
-/* ---------- Scenic background + palette ---------- */
+/* ========== STUDENT LOGIN PAGE STYLES ========== */
+
+/* ----- Color Variables ----- */
 :root{
-  --green-900:#1b4332;
+  --green-900:#1b4332;  /* Darkest green */
   --green-700:#2d6a4f;
   --green-600:#40916c;
   --green-500:#52b788;
-  --green-400:#74c69d;
-
-  /* leaves */
-  --leaf-1:#7cc794;
+  --green-400:#74c69d;  /* Lightest green */
+  --leaf-1:#7cc794;     /* Leaf colors */
   --leaf-2:#5fb180;
   --leaf-3:#a3d9b1;
 }
 
+/* ----- Page Layout ----- */
 html,body{height:100%}
 body{
   margin:0;
   min-height:100vh;
-  display:flex; align-items:center; justify-content:center;
+  display:flex; align-items:center; justify-content:center;  /* Center the card */
   font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-  color:#163a2a; overflow:hidden; /* hides drifting leaves outside */
-  background:
-    radial-gradient(1200px 60% at 50% 0%, #e8fff2 0%, #e9fbf1 45%, #e9f7ef 100%) fixed;
+  color:#163a2a;
+  overflow:hidden;  /* Hide leaves that go off screen */
+  background: radial-gradient(1200px 60% at 50% 0%, #e8fff2 0%, #e9fbf1 45%, #e9f7ef 100%) fixed;  /* Soft green gradient */
 }
 
-/* keep content above scenery */
+/* Keep content above background */
 header, footer, main, .login-container, .register-container{ position:relative; z-index:1 }
 
-/* behind-the-card scene */
+/* ----- Background Scenery ----- */
 .scenery{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
 
-/* distant treeline */
+/* Far trees (blurry, faded) */
 .layer.treeline-back{
   position:absolute; left:0; right:0; bottom:0; height:45vh; opacity:.35;
-  background:
-    url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 400' preserveAspectRatio='none'>\
-  <defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'>\
-    <stop offset='0%' stop-color='%232d6a4f' stop-opacity='0.28'/>\
-    <stop offset='100%' stop-color='%231b4332' stop-opacity='0.38'/>\
-  </linearGradient></defs>\
-  <rect width='1200' height='400' fill='url(%23g)'/>\
-  <g fill='%231b4332' opacity='0.35'>\
-    <path d='M70 350 l40-110 40 110z'/>\
-    <path d='M170 360 l45-125 45 125z'/>\
-    <path d='M290 355 l38-100 38 100z'/>\
-    <path d='M400 360 l50-135 50 135z'/>\
-    <path d='M540 355 l42-120 42 120z'/>\
-    <path d='M660 360 l48-130 48 130z'/>\
-    <path d='M800 355 l40-110 40 110z'/>\
-    <path d='M920 360 l46-128 46 128z'/>\
-    <path d='M1040 355 l38-100 38 100z'/>\
-  </g>\
-</svg>") center bottom / cover repeat-x;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 400' preserveAspectRatio='none'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%232d6a4f' stop-opacity='0.28'/><stop offset='100%' stop-color='%231b4332' stop-opacity='0.38'/></linearGradient></defs><rect width='1200' height='400' fill='url(%23g)'/><g fill='%231b4332' opacity='0.35'><path d='M70 350 l40-110 40 110z'/><path d='M170 360 l45-125 45 125z'/><path d='M290 355 l38-100 38 100z'/><path d='M400 360 l50-135 50 135z'/><path d='M540 355 l42-120 42 120z'/><path d='M660 360 l48-130 48 130z'/><path d='M800 355 l40-110 40 110z'/><path d='M920 360 l46-128 46 128z'/><path d='M1040 355 l38-100 38 100z'/></g></svg>") center bottom / cover repeat-x;
   filter: blur(1px);
 }
 
-/* nearer treeline */
+/* Near trees (clearer) */
 .layer.treeline-front{
   position:absolute; left:0; right:0; bottom:0; height:35vh; opacity:.6;
-  background:
-    url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300' preserveAspectRatio='none'>\
-  <defs><linearGradient id='h' x1='0' y1='0' x2='0' y2='1'>\
-    <stop offset='0%' stop-color='%2352b788'/>\
-    <stop offset='100%' stop-color='%232d6a4f'/>\
-  </linearGradient></defs>\
-  <rect width='1200' height='300' fill='url(%23h)'/>\
-  <g fill='%232d6a4f' opacity='0.75'>\
-    <path d='M50 270 l50-150 50 150z'/>\
-    <path d='M180 275 l55-165 55 165z'/>\
-    <path d='M330 270 l48-145 48 145z'/>\
-    <path d='M470 275 l60-170 60 170z'/>\
-    <path d='M640 270 l52-160 52 160z'/>\
-    <path d='M790 275 l58-168 58 168z'/>\
-    <path d='M950 270 l50-150 50 150z'/>\
-    <path d='M1090 275 l56-166 56 166z'/>\
-  </g>\
-</svg>") center bottom / cover repeat-x;
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,.9), rgba(0,0,0,0) 70%);
-          mask-image: linear-gradient(to top, rgba(0,0,0,.9), rgba(0,0,0,0) 70%);
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300' preserveAspectRatio='none'><defs><linearGradient id='h' x1='0' y1='0' x2='0' y2='1'><stop offset='0%' stop-color='%2352b788'/><stop offset='100%' stop-color='%232d6a4f'/></linearGradient></defs><rect width='1200' height='300' fill='url(%23h)'/><g fill='%232d6a4f' opacity='0.75'><path d='M50 270 l50-150 50 150z'/><path d='M180 275 l55-165 55 165z'/><path d='M330 270 l48-145 48 145z'/><path d='M470 275 l60-170 60 170z'/><path d='M640 270 l52-160 52 160z'/><path d='M790 275 l58-168 58 168z'/><path d='M950 270 l50-150 50 150z'/><path d='M1090 275 l56-166 56 166z'/></g></svg>") center bottom / cover repeat-x;
+  mask-image: linear-gradient(to top, rgba(0,0,0,.9), rgba(0,0,0,0) 70%);  /* Fade at top */
 }
 
-/* corner vines */
+/* Decorative vines in corners */
 .vines{
   position:absolute; inset:0; pointer-events:none;
-  background:
-    url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'>\
-  <g fill='none' stroke='%2352b788' stroke-width='2' stroke-linecap='round' opacity='0.6'>\
-    <path d='M20,60 C120,120 160,40 220,110 S340,200 420,120'/>\
-    <path d='M60,120 C140,180 200,120 240,180 S360,260 440,200'/>\
-  </g>\
-  <g fill='%2374c69d' opacity='0.8'>\
-    <ellipse cx='140' cy='90' rx='10' ry='18' transform='rotate(-25 140 90)'/>\
-    <ellipse cx='200' cy='150' rx='9' ry='16' transform='rotate(10 200 150)'/>\
-    <ellipse cx='260' cy='110' rx='10' ry='18' transform='rotate(20 260 110)'/>\
-  </g>\
-</svg>") left top / 40vmin no-repeat,
-    url("data:image/svg+xml;utf8,\
-<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'>\
-  <g fill='none' stroke='%2352b788' stroke-width='2' stroke-linecap='round' opacity='0.6'>\
-    <path d='M580,540 C480,480 440,560 380,490 S260,400 180,480'/>\
-    <path d='M540,480 C460,420 400,480 360,420 S240,340 160,400'/>\
-  </g>\
-  <g fill='%2374c69d' opacity='0.8'>\
-    <ellipse cx='460' cy='510' rx='10' ry='18' transform='rotate(25 460 510)'/>\
-    <ellipse cx='400' cy='450' rx='9' ry='16' transform='rotate(-10 400 450)'/>\
-    <ellipse cx='340' cy='490' rx='10' ry='18' transform='rotate(-20 340 490)'/>\
-  </g>\
-</svg>") right bottom / 42vmin no-repeat;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'><g fill='none' stroke='%2352b788' stroke-width='2' stroke-linecap='round' opacity='0.6'><path d='M20,60 C120,120 160,40 220,110 S340,200 420,120'/><path d='M60,120 C140,180 200,120 240,180 S360,260 440,200'/></g><g fill='%2374c69d' opacity='0.8'><ellipse cx='140' cy='90' rx='10' ry='18' transform='rotate(-25 140 90)'/><ellipse cx='200' cy='150' rx='9' ry='16' transform='rotate(10 200 150)'/><ellipse cx='260' cy='110' rx='10' ry='18' transform='rotate(20 260 110)'/></g></svg>") left top / 40vmin no-repeat,
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'><g fill='none' stroke='%2352b788' stroke-width='2' stroke-linecap='round' opacity='0.6'><path d='M580,540 C480,480 440,560 380,490 S260,400 180,480'/><path d='M540,480 C460,420 400,480 360,420 S240,340 160,400'/></g><g fill='%2374c69d' opacity='0.8'><ellipse cx='460' cy='510' rx='10' ry='18' transform='rotate(25 460 510)'/><ellipse cx='400' cy='450' rx='9' ry='16' transform='rotate(-10 400 450)'/><ellipse cx='340' cy='490' rx='10' ry='18' transform='rotate(-20 340 490)'/></g></svg>") right bottom / 42vmin no-repeat;
 }
 
-/* ---------- Floating leaves (windy: left -> right + rotation) ---------- */
+/* ----- Animated Floating Leaves ----- */
 .leaf{
   position:fixed;
-  left:-12vw;                      /* start off-screen left */
-  top:var(--startY, 12vh);         /* randomized per leaf */
+  left:-12vw;  /* Start off-screen */
+  top:var(--startY, 12vh);
   width:var(--size, 22px);
   height:var(--size, 22px);
   opacity:.9; z-index:0;
-
-  background:
-    radial-gradient(circle at 30% 30%, #fff 0 20%, transparent 21%),
-    radial-gradient(closest-side, var(--leaf-1), var(--leaf-2));
-  border-radius: 40% 60% 40% 60%;
+  background: radial-gradient(circle at 30% 30%, #fff 0 20%, transparent 21%),
+              radial-gradient(closest-side, var(--leaf-1), var(--leaf-2));
+  border-radius: 40% 60% 40% 60%;  /* Leaf shape */
   filter: drop-shadow(0 2px 4px rgba(0,0,0,.12));
-
-  /* main wind (translateX) + spin + subtle bob + gust */
-  animation:
-    blowSpin var(--dur, 18s) linear var(--delay, 0s) infinite,
-    bob 3.8s ease-in-out infinite alternate,
-    gust 9s ease-in-out infinite;
+  animation: blowSpin var(--dur, 18s) linear var(--delay, 0s) infinite,
+             bob 3.8s ease-in-out infinite alternate,
+             gust 9s ease-in-out infinite;
 }
 
-/* central vein */
+/* Leaf vein line */
 .leaf::after{
   content:""; position:absolute; left:50%; top:15%; width:2px; height:70%;
   background: rgba(27,67,50,.35); transform:translateX(-50%);
 }
 
-/* Horizontal wind across viewport + steady spin */
-@keyframes blowSpin{
-  0%{
-    transform: translateX(0) rotate(0deg);
-  }
-  100%{
-    transform: translateX(120vw) rotate(720deg);
-  }
-}
+/* Leaf animations */
+@keyframes blowSpin{ 0%{ transform: translateX(0) rotate(0deg); } 100%{ transform: translateX(120vw) rotate(720deg); } }  /* Blow across screen */
+@keyframes bob{ from{ margin-top:-12px } to{ margin-top:12px } }  /* Up/down bob */
+@keyframes gust{ 0%,100%{ margin-left:0 } 40%{ margin-left:10px } 60%{ margin-left:18px } }  /* Wind gusts */
 
-/* Gentle vertical bob without conflicting with transform */
-@keyframes bob{ from{ margin-top:-12px } to{ margin-top:12px } }
+/* Leaf size variations */
+.leaf:nth-child(3n){ --size:18px; --dur:20s; --delay:-4s; --startY:15vh }
+.leaf:nth-child(4n){ --size:24px; --dur:17s; --delay:-7s; --startY:28vh }
+.leaf:nth-child(5n){ --size:20px; --dur:22s; --delay:-2s; --startY:42vh }
+.leaf:nth-child(6n){ --size:26px; --dur:16s; --delay:-10s; --startY:55vh }
+.leaf:nth-child(7n){ --size:22px; --dur:19s; --delay:-12s; --startY:68vh }
+.leaf:nth-child(8n){ --size:28px; --dur:15s; --delay:-5s; --startY:80vh }
 
-/* Occasional stronger push left->right for “gusty” feel */
-@keyframes gust{
-  0%,100%{ margin-left:0 }
-  40%{    margin-left:10px }
-  60%{    margin-left:18px }
-}
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce){ .leaf{ animation: blowSpin var(--dur, 18s) linear var(--delay, 0s) infinite; } }
 
-/* ---------- Special leaf: makes a circle at screen center ---------- */
-/* The 10th leaf will perform a quick loop near the center,
-   then continue flying to the right (no HTML change needed). */
-.scenery .leaf:nth-of-type(10){
-  --size: 28px;
-  --startY: 48vh;
-  animation:
-    loopRide 22s linear var(--delay, -3s) infinite,
-    bob 3.8s ease-in-out infinite alternate,
-    gust 9s ease-in-out infinite;
-}
-
-/* Timeline:
-   0%   : left off-screen
-   40%  : reaches ~40vw (approaching center)
-   45%–60% : performs a circular loop (≈ 6vh radius) while spinning faster
-   100% : exits off right edge
-*/
-@keyframes loopRide{
-  0%   { transform: translateX(0) rotate(0deg); }
-
-  /* cruise in */
-  20%  { transform: translateX(24vw) rotate(260deg); }
-  40%  { transform: translateX(40vw) rotate(380deg); }
-
-  /* circular loop (approx with waypoints) around current Y */
-  45%  { transform: translateX(45vw) translateY(0)    rotate(450deg); }
-  48%  { transform: translateX(47vw) translateY(-6vh) rotate(540deg); } /* top */
-  52%  { transform: translateX(50vw) translateY(0)    rotate(640deg); } /* right */
-  56%  { transform: translateX(47vw) translateY(6vh)  rotate(740deg); } /* bottom */
-  60%  { transform: translateX(45vw) translateY(0)    rotate(840deg); } /* left */
-
-  /* continue to the right, resume normal path */
-  80%  { transform: translateX(85vw) rotate(980deg); }
-  100% { transform: translateX(120vw) rotate(1080deg); }
-}
-
-/* Light devices: slightly reduce opacity */
-@media (max-width:480px){ .leaf{ opacity:.75 } }
-
-/* Respect reduced-motion preferences */
-@media (prefers-reduced-motion: reduce){
-  .leaf{
-    animation: blowSpin var(--dur, 18s) linear var(--delay, 0s) infinite;
-  }
-}
-
-/* ---------- Optional: variety via nth-child ---------- */
-/* Add ~20 leaves in the HTML. These rules randomize starts. */
-.leaf:nth-child(3n){   --size:18px; --dur:20s; --delay:-4s;  --startY:15vh }
-.leaf:nth-child(4n){   --size:24px; --dur:17s; --delay:-7s;  --startY:28vh }
-.leaf:nth-child(5n){   --size:20px; --dur:22s; --delay:-2s;  --startY:42vh }
-.leaf:nth-child(6n){   --size:26px; --dur:16s; --delay:-10s; --startY:55vh }
-.leaf:nth-child(7n){   --size:22px; --dur:19s; --delay:-12s; --startY:68vh }
-.leaf:nth-child(8n){   --size:28px; --dur:15s; --delay:-5s;  --startY:80vh }
-
-/* ---------- Login / Register card styling ---------- */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+/* ----- Login Card ----- */
+*, *::before, *::after { box-sizing: border-box; }  /* Include padding in width */
 
 .login-container,
 .register-container{
   position: relative;
-  background: rgba(255,255,255,0.92);
-  width: min(90vw, 380px);
+  background: rgba(255,255,255,0.92);  /* Semi-transparent white */
+  width: min(90vw, 380px);  /* Max 380px, responsive */
   padding: 32px 28px;
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);  /* Soft shadow */
+  backdrop-filter: blur(8px);  /* Blur background behind card */
 }
 
-.login-container h2,
-.register-container h2{
+/* Card title */
+.login-container h2, .register-container h2{
   color: var(--green-700);
   font-size: 26px;
   margin: 0 0 6px 0;
@@ -240,17 +113,16 @@ header, footer, main, .login-container, .register-container{ position:relative; 
   font-weight: 600;
 }
 
-.login-container p,
-.register-container p{
+/* Subtitle */
+.login-container p, .register-container p{
   color: #52796f;
   font-size: 14px;
   margin: 0 0 24px 0;
   text-align: center;
 }
 
-.form-group{
-  margin-bottom: 20px;
-}
+/* ----- Form Elements ----- */
+.form-group{ margin-bottom: 20px; }
 
 label{
   display: block;
@@ -273,20 +145,18 @@ input{
 input:focus{
   border-color: var(--green-400);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.2);
+  box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.2);  /* Green glow */
 }
 
-input::placeholder{
-  color: #9cb8ad;
-}
+input::placeholder{ color: #9cb8ad; }
 
-.login-btn,
-.register-btn{
+/* ----- Buttons ----- */
+.login-btn, .register-btn{
   width: 100%;
   padding: 14px;
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--green-400), var(--green-500));
+  background: linear-gradient(135deg, var(--green-400), var(--green-500));  /* Green gradient */
   color: #fff;
   font-size: 16px;
   font-weight: 600;
@@ -295,30 +165,14 @@ input::placeholder{
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.login-btn:hover,
-.register-btn:hover{
+.login-btn:hover, .register-btn:hover{
   background: linear-gradient(135deg, var(--green-500), var(--green-600));
-  transform: translateY(-2px);
+  transform: translateY(-2px);  /* Lift effect */
   box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
 }
 
-.links{
-  margin-top: 20px;
-  text-align: center;
-}
-
-.links p{
-  margin: 0;
-}
-
-.links a{
-  color: var(--green-600);
-  font-size: 14px;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.links a:hover{
-  color: var(--green-700);
-  text-decoration: underline;
-}
+/* ----- Links ----- */
+.links{ margin-top: 20px; text-align: center; }
+.links p{ margin: 0; }
+.links a{ color: var(--green-600); font-size: 14px; text-decoration: none; font-weight: 500; }
+.links a:hover{ color: var(--green-700); text-decoration: underline; }

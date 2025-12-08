@@ -1,3 +1,6 @@
+/* ========== STUDENT HOME PAGE STYLES ========== */
+
+/* ----- Base Styles ----- */
 body {
   margin: 0;
   font-family: "Segoe UI", Arial, sans-serif;
@@ -5,7 +8,7 @@ body {
   color: #333;
 }
 
-/* === HEADER === */
+/* ----- Header ----- */
 header {
   background-color: #8a9562;
   color: white;
@@ -15,27 +18,13 @@ header {
   align-items: center;
 }
 
-/* Header groups */
-.header-left, .header-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
+.header-left, .header-right { display: flex; align-items: center; gap: 10px; }
+.header-left h2 { margin: 0; }
 
-.header-left h2 {
-  margin: 0;
-}
+/* Menu button */
+.menu-icon { font-size: 26px; background: none; border: none; color: white; cursor: pointer; }
 
-/* 🧭 Menu button */
-.menu-icon {
-  font-size: 26px;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-
-/* 💬 Chat button */
+/* Chat button */
 .chat-icon {
   background-color: white;
   color: #8a9562;
@@ -44,45 +33,31 @@ header {
   font-size: 18px;
   border: none;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
   transition: background-color 0.3s ease;
 }
+.chat-icon:hover { background-color: #eaeedc; }
 
-.chat-icon:hover {
-  background-color: #eaeedc;
-}
-
-/* 👤 User icon */
+/* User icon */
 .user-icon {
   font-size: 22px;
   background-color: #8a9663;
   color: white;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   transition: all 0.2s ease;
 }
+.user-icon:hover { background-color: #7c8a56; transform: scale(1.05); }
 
-.user-icon:hover {
-  background-color: #7c8a56;
-  transform: scale(1.05);
-}
-
-/* === USER POPUP === */
+/* ----- User Popup ----- */
 .user-popup {
   position: absolute;
-  top: 65px;
-  right: 20px;
+  top: 65px; right: 20px;
   background-color: #e3e5d6;
   padding: 14px 20px;
   border-radius: 14px;
@@ -95,57 +70,21 @@ header {
   pointer-events: none;
   transition: all 0.3s ease-out;
 }
+.user-popup.active { opacity: 1; transform: translateY(0); pointer-events: auto; animation: popupGlow 1.2s ease-in-out; }
+.user-popup h3 { margin: 0; font-size: 16px; color: #444; }
+.user-popup p { margin: 5px 0 0; font-size: 14px; color: #666; }
+@keyframes popupGlow { 0% { box-shadow: 0 0 0 rgba(138, 150, 99, 0); } 50% { box-shadow: 0 0 12px rgba(138, 150, 99, 0.3); } 100% { box-shadow: 0 0 0 rgba(138, 150, 99, 0); } }
+.user-popup::before { content: ""; position: absolute; top: -8px; right: 20px; border-width: 8px; border-style: solid; border-color: transparent transparent #e3e5d6 transparent; }
 
-.user-popup.active {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
-  animation: popupGlow 1.2s ease-in-out;
-}
-
-/* Popup text */
-.user-popup h3 {
-  margin: 0;
-  font-size: 16px;
-  color: #444;
-}
-
-.user-popup p {
-  margin: 5px 0 0;
-  font-size: 14px;
-  color: #666;
-}
-
-/* ✨ Subtle glow */
-@keyframes popupGlow {
-  0% { box-shadow: 0 0 0 rgba(138, 150, 99, 0); }
-  50% { box-shadow: 0 0 12px rgba(138, 150, 99, 0.3); }
-  100% { box-shadow: 0 0 0 rgba(138, 150, 99, 0); }
-}
-
-/* Cute arrow tip */
-.user-popup::before {
-  content: "";
-  position: absolute;
-  top: -8px;
-  right: 20px;
-  border-width: 8px;
-  border-style: solid;
-  border-color: transparent transparent #e3e5d6 transparent;
-}
-
-/* === SIDEBAR === */
+/* ----- Sidebar Menu ----- */
 .side-menu {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 0; left: 0;
   transform: translateX(-100%);
-  width: 250px;
-  height: 100%;
+  width: 250px; height: 100%;
   background-color: #4b5431;
   color: white;
-  display: flex;
-  flex-direction: column;
+  display: flex; flex-direction: column;
   padding: 20px;
   box-shadow: 4px 0 10px rgba(0, 0, 0, 0.25);
   transition: transform 0.35s ease, opacity 0.35s ease;
@@ -153,82 +92,29 @@ header {
   opacity: 0;
   pointer-events: none;
 }
+.side-menu.open { transform: translateX(0); opacity: 1; pointer-events: auto; }
+.side-menu h3 { margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); font-size: 20px; }
+.side-menu a { color: white; text-decoration: none; padding: 12px 0; font-size: 16px; display: block; transition: background 0.3s; }
+.side-menu a:hover { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
+.close-btn { align-self: flex-end; background: none; border: none; color: white; font-size: 30px; cursor: pointer; margin-bottom: 10px; }
 
-.side-menu.open {
-  transform: translateX(0);
-  opacity: 1;
-  pointer-events: auto;
-}
+/* ----- Hero Section ----- */
+.hero { text-align: center; padding: 80px 20px 50px; }
+.hero h1 { font-size: 60px; margin: 0; color: #4b5431; }
+.hero p { margin-top: 10px; color: #666; }
 
-.side-menu h3 {
-  margin-top: 0;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 20px;
-}
-
-.side-menu a {
-  color: white;
-  text-decoration: none;
-  padding: 12px 0;
-  font-size: 16px;
-  display: block;
-  transition: background 0.3s;
-}
-
-.side-menu a:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
-}
-
-.close-btn {
-  align-self: flex-end;
-  background: none;
-  border: none;
-  color: white;
-  font-size: 30px;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-
-/* === HERO SECTION === */
-.hero {
-  text-align: center;
-  padding: 80px 20px 50px;
-}
-
-.hero h1 {
-  font-size: 60px;
-  margin: 0;
-  color: #4b5431;
-}
-
-.hero p {
-  margin-top: 10px;
-  color: #666;
-}
-
+/* Carousel */
 .carousel {
   margin: 30px auto;
-  width: 80%;
-  max-width: 600px;
-  height: 200px;
+  width: 80%; max-width: 600px; height: 200px;
   background-color: #d4d8c4;
   border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between;
   padding: 0 15px;
 }
+.carousel button { background: none; border: none; font-size: 24px; color: #4b5431; cursor: pointer; }
 
-.carousel button {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #4b5431;
-  cursor: pointer;
-}
-
+/* Button */
 .btn {
   display: inline-block;
   background-color: #6f7843;
@@ -242,19 +128,15 @@ header {
   cursor: pointer;
 }
 
-/* 📞 Emergency Button */
+/* ----- Emergency Button ----- */
 .emergency-btn {
   position: fixed;
-  bottom: 20px;
-  left: 20px;
+  bottom: 20px; left: 20px;
   background-color: #4b5431;
   color: white;
   border-radius: 50%;
-  width: 70px;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 70px; height: 70px;
+  display: flex; align-items: center; justify-content: center;
   font-size: 30px;
   cursor: pointer;
   border: none;

@@ -1,3 +1,6 @@
+/* ========== MORE INFO PAGE STYLES ========== */
+
+/* ----- Base Styles ----- */
 body {
   margin: 0;
   font-family: "Segoe UI", Arial, sans-serif;
@@ -5,6 +8,7 @@ body {
   color: #333;
 }
 
+/* ----- Header ----- */
 header {
   background-color: #8a9562;
   color: white;
@@ -14,11 +18,10 @@ header {
   align-items: center;
 }
 
-.menu-icon {
-  font-size: 24px;
-  cursor: pointer;
-}
+/* Menu button */
+.menu-icon { font-size: 24px; cursor: pointer; }
 
+/* Back button */
 .back-btn {
   color: white;
   text-decoration: none;
@@ -27,35 +30,15 @@ header {
   padding: 6px 12px;
   border-radius: 8px;
 }
+.back-btn:hover { background-color: #6f7843; }
 
-.back-btn:hover {
-  background-color: #6f7843;
-}
+/* ----- Info Section ----- */
+.info-section { padding: 60px 20px; text-align: center; }
+.info-section h1 { color: #4b5431; font-size: 36px; margin-bottom: 20px; }
+.info-section p { max-width: 700px; margin: 0 auto 40px; color: #555; line-height: 1.6; }
 
-.info-section {
-  padding: 60px 20px;
-  text-align: center;
-}
-
-.info-section h1 {
-  color: #4b5431;
-  font-size: 36px;
-  margin-bottom: 20px;
-}
-
-.info-section p {
-  max-width: 700px;
-  margin: 0 auto 40px;
-  color: #555;
-  line-height: 1.6;
-}
-
-.info-cards {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 30px;
-}
+/* ----- Info Cards ----- */
+.info-cards { display: flex; justify-content: center; flex-wrap: wrap; gap: 30px; }
 
 .card {
   background-color: white;
@@ -65,18 +48,10 @@ header {
   padding: 25px;
   text-align: left;
 }
+.card h3 { color: #4b5431; margin-top: 0; font-size: 22px; }
+.card p { color: #444; line-height: 1.5; }
 
-.card h3 {
-  color: #4b5431;
-  margin-top: 0;
-  font-size: 22px;
-}
-
-.card p {
-  color: #444;
-  line-height: 1.5;
-}
-
+/* ----- Footer ----- */
 footer {
   background-color: #4b5431;
   color: white;

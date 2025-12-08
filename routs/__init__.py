@@ -9,16 +9,20 @@ from .register_professional import register_pf_bp
 from .services import services_bp
 from .settings import settings_bp
 
-# List of all blueprints for easy registration
+# =============================================================================
+# ALL BLUEPRINTS LIST
+# =============================================================================
+# This list is imported by app.py and used to register all routes at once.
+# The order doesn't matter for functionality, but keeping it organized helps.
 all_blueprints = [
-    first_bp,
-    home_bp,
-    hp_professor_bp,
-    login_st_bp,
-    login_pf_bp,
-    info_bp,
-    register_st_bp,
-    register_pf_bp,
-    services_bp,
-    settings_bp,
+    first_bp,           # /
+    home_bp,            # /home
+    hp_professor_bp,    # /home-professor
+    login_st_bp,        # /login-student
+    login_pf_bp,        # /login-professional
+    info_bp,            # /more-info
+    register_st_bp,     # /register-student
+    register_pf_bp,     # /register-professional
+    services_bp,        # /services
+    settings_bp,        # /settings
 ]

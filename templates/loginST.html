@@ -4,29 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mental Health | Student Login</title>
+  <!-- Link to student login styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='loginST.css') }}">
 </head>
 <body>
+
+  <!-- ========== BACKGROUND SCENERY ========== -->
+  <!-- Decorative animated forest background -->
   <div class="scenery" aria-hidden="true">
-    <div class="layer treeline-back"></div>
-    <div class="layer treeline-front"></div>
-    <div class="vines"></div>
+    <div class="layer treeline-back"></div>   <!-- Far trees -->
+    <div class="layer treeline-front"></div>  <!-- Near trees -->
+    <div class="vines"></div>                 <!-- Corner vines -->
+    <!-- Floating leaves with CSS animation variables -->
     <div class="leaf" style="left:12%; --dur:18s; --delay:-2s;"></div>
     <div class="leaf" style="left:40%; --dur:15s; --delay:-6s;"></div>
     <div class="leaf" style="left:65%; --dur:16s; --delay:-4s;"></div>
     <div class="leaf" style="left:85%; --dur:20s; --delay:-10s;"></div>
   </div>
 
+  <!-- ========== LOGIN FORM CARD ========== -->
   <div class="login-container">
     <h2>Student Login</h2>
     <p>Welcome back to Mental Health 🌿</p>
 
     <form id="loginFormST">
+      <!-- Username input -->
       <div class="form-group">
         <label for="login-username">Student ID / Username</label>
         <input type="text" id="login-username" placeholder="Enter your student ID" required />
       </div>
 
+      <!-- Password input -->
       <div class="form-group">
         <label for="login-password">Password</label>
         <input type="password" id="login-password" placeholder="Enter your password" required />
@@ -34,6 +42,7 @@
 
       <button class="login-btn" type="submit">LOGIN</button>
 
+      <!-- Link to registration page -->
       <div class="links">
         <p>New student? 
           <a href="{{ url_for('register_st.register_student_page') }}">Register here</a>
@@ -42,12 +51,17 @@
     </form>
   </div>
 
+  <!-- ========== LOGIN SCRIPT ========== -->
   <script>
+    // Handle form submission
     document.getElementById("loginFormST").addEventListener("submit", function(e){
-      e.preventDefault();
+      e.preventDefault(); // Prevent page reload
+      
+      // Get input values
       const username = document.getElementById("login-username").value.trim();
       const password = document.getElementById("login-password").value.trim();
 
+      // Check if user exists in localStorage
       const stored = localStorage.getItem("mhStudent");
       if(!stored){
         alert("No registered student found. Please register first.");
@@ -55,11 +69,12 @@
         return;
       }
 
+      // Verify credentials
       try{
         const { username: su, password: sp } = JSON.parse(stored);
         if(username === su && password === sp){
           alert("Login successful!");
-          window.location.href = "{{ url_for('home.home_page') }}";
+          window.location.href = "{{ url_for('home.home_page') }}"; // Go to student home
         } else {
           alert("Invalid credentials.");
         }
@@ -68,5 +83,6 @@
       }
     });
   </script>
+
 </body>
 </html>
