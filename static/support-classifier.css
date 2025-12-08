@@ -1,0 +1,122 @@
+:root {
+  --bg: #0f172a;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --accent: #38bdf8;
+  --accent-2: #a78bfa;
+  --accent-3: #34d399;
+  --danger: #f87171;
+  --radius: 16px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.card {
+  background: #1e293b;
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 1fr;
+}
+
+textarea {
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  background: #0f172a;
+  color: var(--text);
+  border: 1px solid #334155;
+  padding: 14px;
+  font-size: 15px;
+  outline: none;
+  resize: none;
+  box-sizing: border-box;
+  margin-top: 8px;
+}
+
+button {
+  background: var(--accent);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-secondary {
+  background: #334155;
+  color: var(--text);
+}
+
+.scorebar {
+  height: 10px;
+  background: #334155;
+  border-radius: 10px;
+}
+
+.scorefill {
+  height: 100%;
+  width: 0%;
+  border-radius: 10px;
+  background: var(--accent);
+  transition: width 0.3s ease-in-out;
+}
+
+.dept-pill {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: bold;
+  margin-top: 8px;
+  margin-bottom: 10px;
+}
+
+.pill-open { background: #312e81; color: var(--accent-2); }
+.pill-idc { background: #4c0519; color: var(--danger); }
+.pill-counsel { background: #064e3b; color: var(--accent-3); }
+
+.small { font-size: 12px; color: var(--muted); }
+.muted-list { padding-left: 20px; font-size: 12px; }
+
+.result-card {
+  background: #0f172a;
+  padding: 16px;
+  border-radius: var(--radius);
+}
+
+.danger-box {
+  background: #450a0a;
+  border: 1px solid var(--danger);
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 12px;
+}
+
+.hidden { display: none; }
+
+.controls {
+  margin-top: 18px;
+  display: flex;
+  gap: 12px;
+}
+
+.scores {
+  margin-top: 20px;
+  display: grid;
+  gap: 10px;
+}

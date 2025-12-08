@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Support Classifier</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='support-classifier.css') }}" />
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Student Support Classifier</h1>
+      <div class="subtitle">
+        Please write in the text box below
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <label for="message" class="small">Student message</label>
+        <textarea id="message" placeholder="Write a student message here…"></textarea>
+
+        <div class="controls">
+          <button id="classifyBtn">Classify</button>
+          <button id="exampleBtn" class="btn-secondary">Try example</button>
+          <button id="resetBtn" class="btn-secondary">Reset</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div id="result" class="result-card hidden">
+
+          <div class="small">Result</div>
+          <span id="deptPill" class="dept-pill pill-open"></span>
+
+          <div class="small">Confidence</div>
+          <div class="scorebar">
+            <div id="scoreFill" class="scorefill"></div>
+          </div>
+
+          <div class="scores">
+            <div class="score">
+              <div class="small">IDC</div>
+              <div class="scorebar"><div id="scoreIDC" class="scorefill"></div></div>
+            </div>
+            <div class="score">
+              <div class="small">Open Office</div>
+              <div class="scorebar"><div id="scoreOpen" class="scorefill"></div></div>
+            </div>
+            <div class="score">
+              <div class="small">Counsel</div>
+              <div class="scorebar"><div id="scoreCounsel" class="scorefill"></div></div>
+            </div>
+          </div>
+
+          <div id="crisisBox" class="danger-box hidden">
+            ⚠️ Crisis risk detected. Escalate immediately.
+          </div>
+
+          <div class="small" style="margin-top:12px">Reasoning</div>
+          <ul id="reasons" class="muted-list"></ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='support-classifier.js') }}" defer></script>
+</body>
+</html>

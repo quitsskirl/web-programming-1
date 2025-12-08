@@ -8,6 +8,8 @@ from .register_student import register_st_bp
 from .register_professional import register_pf_bp
 from .services import services_bp
 from .settings import settings_bp
+from .support_classifier import classifier_bp  # <-- NEW import
+
 
 # =============================================================================
 # ALL BLUEPRINTS LIST
@@ -25,4 +27,5 @@ all_blueprints = [
     register_pf_bp,     # /register-professional
     services_bp,        # /services
     settings_bp,        # /settings
+    classifier_bp,      # /support-classifier   <-- NEW entry
 ]

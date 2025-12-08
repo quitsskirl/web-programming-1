@@ -15,16 +15,29 @@ import jwt  # jwt: create and verify JSON Web Tokens for authentication
 import datetime  # datetime: calculate token expiration times
 from routs import all_blueprints  # all_blueprints: list of all page routes (login, home, etc.)
 
+# Imports for AI classifier (OpenAI + helpers)
+from openai import OpenAI  # OpenAI: Python client to call GPT models
+import json  # json: parse/encode JSON when reading model responses
+import re  # re: regular expressions for local fallback classifier
+import unicodedata  # unicodedata: normalize unicode text (e.g. smart quotes)
+
 
 # ==================== APP SETUP ====================
-load_dotenv()  # Read .env file and load MONGO_URI, JWT_SECRET_KEY into os.environ
+load_dotenv()  # Read .env file and load MONGO_URI, JWT_SECRET_KEY, OPENAI_API_KEY into os.environ
 
 app = Flask(__name__)  # Create the Flask application instance (__name__ = current module)
 CORS(app)  # Enable Cross-Origin Resource Sharing so frontend can make API calls
 
+# ==================== JWT CONFIGURATION ====================
 # JWT Configuration - stored in app.config for easy access throughout the app
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'your-secret-key-change-in-production')  # Secret key used to sign tokens (get from .env or use default)
 app.config['JWT_EXPIRATION_HOURS'] = 24  # Tokens expire after 24 hours
+
+
+# ==================== OPENAI CONFIGURATION ====================
+# OPENAI_API_KEY is stored in .env and loaded via load_dotenv() above
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")  # Your OpenAI API key (do NOT hardcode in source)
+openai_client = OpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None  # Create OpenAI client if key present
 
 
 # ==================== JWT FUNCTIONS ====================
@@ -93,7 +106,7 @@ if mongo_uri:  # Only try to connect if MONGO_URI is set
     try:
         # Create MongoDB client with connection options
         client = MongoClient(
-            mongo_uri,  # Connection string: mongodb+srv://user:pass@cluster.mongodb.net/
+            mongo_uri,  # Connection string: mongodb+srv://user:pass@cluster.mongodb.net/ or mongodb://127.0.0.1:27017/
             tls=True,  # Use TLS encryption for secure connection
             tlsAllowInvalidCertificates=True,  # Allow self-signed certificates (development)
             serverSelectionTimeoutMS=5000  # Wait max 5 seconds to find server
@@ -120,7 +133,244 @@ for bp in all_blueprints:  # Iterate through list of blueprints
     app.register_blueprint(bp)  # Register each blueprint with the Flask app
 
 
-# ==================== API ROUTES ====================
+# ==================== LOCAL FALLBACK CLASSIFIER (NO OPENAI NEEDED) ====================
+def _normalize_text(msg):
+    """
+    Helper to normalize text:
+    - convert to string
+    - normalize unicode (NFKD)
+    - lowercase
+    - replace smart quotes with normal apostrophes
+    """
+    text = str(msg or "")
+    text = unicodedata.normalize("NFKD", text)
+    text = text.lower()
+    text = text.replace("’", "'")
+    return text
+
+
+# Pre-compiled regex patterns to match categories
+CRISIS_RE = re.compile(
+    r"\b(suicid(e|al)|end(ing)? my life|kill myself|self[-\s]?harm|harm myself|hurt myself|overdose|"
+    r"i (want|plan) to die|i don't want to live|i dont want to live)\b",
+    re.IGNORECASE,
+)
+
+IDC_RE = re.compile(
+    r"\b(racist|racial|racism|sexist|sexism|homophob(ic|ia)|transphob(ic|ia)|xenophob(ic|ia)|"
+    r"bully|bullied|bullying|harass(ed|ment)?|discriminat(e|ion|ed)|slur|hate\s*(speech|crime)|"
+    r"bigot(ed|ry)?)\b",
+    re.IGNORECASE,
+)
+
+OPEN_RE = re.compile(
+    r"\b(assignment(s)?|homework|project(s)?|report(s)?|grade(s)?|mark(s)?|exam(s)?|quiz(zes)?|"
+    r"midterm(s)?|final(s)?|deadline(s)?|extension(s)?|professor|instructor|teacher|ta\b|"
+    r"course(work)?|syllabus|submit|submission)\b",
+    re.IGNORECASE,
+)
+
+COUNSEL_RE = re.compile(
+    r"\b(alone|lonely|isolated|anxious|anxiety|stress(ed|ful)?|depress(ed|ion|ive)?|panic|"
+    r"overwhelmed|burn( |-)?out|can't focus|cant focus|can'?t focus|sad|cry(ing)?|hopeless|"
+    r"insomnia|can't sleep|cant sleep|can'?t sleep|sleepless)\b",
+    re.IGNORECASE,
+)
+
+
+def fallback_classify(msg):
+    """
+    Local rule-based classifier that mimics your Node.js fallback:
+    - Uses keyword groups to decide:
+      - IDC: identity-based harm / bullying / harassment
+      - OPEN: academic / grading / course issues
+      - COUNSEL: emotional wellbeing
+      - CRISIS: self-harm / suicide → COUNSEL + crisis=True
+
+    Returns a dictionary with:
+    {
+      "department": "IDC" | "OPEN" | "COUNSEL",
+      "confidence": float between 0 and 1,
+      "reasons": [list of short strings],
+      "crisis": bool
+    }
+    """
+    text = _normalize_text(msg)
+
+    # Crisis overrides everything
+    if CRISIS_RE.search(text):
+        print("🧭 Fallback matched: CRISIS")
+        return {
+            "department": "COUNSEL",
+            "confidence": 0.98,
+            "reasons": ["Crisis language detected"],
+            "crisis": True,
+        }
+
+    # IDC = identity-based discrimination / bullying / harassment
+    if IDC_RE.search(text):
+        print("🧭 Fallback matched: IDC")
+        return {
+            "department": "IDC",
+            "confidence": 0.9,
+            "reasons": ["Identity-based harm / bullying / harassment keywords"],
+            "crisis": False,
+        }
+
+    # OPEN = academic issues, grades, assignments, etc.
+    if OPEN_RE.search(text):
+        print("🧭 Fallback matched: OPEN")
+        return {
+            "department": "OPEN",
+            "confidence": 0.85,
+            "reasons": ["Academic / grading / course keywords"],
+            "crisis": False,
+        }
+
+    # COUNSEL = emotional distress, stress, anxiety, etc.
+    if COUNSEL_RE.search(text):
+        print("🧭 Fallback matched: COUNSEL")
+        return {
+            "department": "COUNSEL",
+            "confidence": 0.85,
+            "reasons": ["Emotional distress / wellbeing keywords"],
+            "crisis": False,
+        }
+
+    # Default when nothing matches strongly
+    print("🧭 Fallback matched: DEFAULT → OPEN")
+    return {
+        "department": "OPEN",
+        "confidence": 0.5,
+        "reasons": ["No strong signals; defaulting to Open Office"],
+        "crisis": False,
+    }
+
+
+# ==================== AI CLASSIFIER API ROUTE ====================
+@app.route("/api/classify", methods=["POST"])
+def classify_message():
+    """
+    API endpoint to classify a free-text student message.
+
+    URL: POST /api/classify
+
+    Request JSON:
+        {
+          "message": "free text from student"
+        }
+
+    Response JSON:
+        {
+          "department": "IDC" | "OPEN" | "COUNSEL",
+          "confidence": 0-1,
+          "reasons": ["short bullets"],
+          "crisis": true/false
+        }
+
+    Behavior:
+    - If OPENAI_API_KEY is not configured or the API fails, we use fallback_classify().
+    - If OpenAI works, we use GPT (gpt-4o-mini) to classify and enforce JSON output.
+    """
+    # Read JSON body (silent=True to avoid exceptions if invalid)
+    data = request.get_json(silent=True) or {}
+    message = str(data.get("message", "")).strip()
+
+    if not message:
+        return jsonify({"error": "Missing 'message' in request body."}), 400
+
+    # System prompt used with GPT model (same logic as Node version)
+    system_prompt = """
+You are the Student Support Classifier AI.
+Analyze the message and classify into one route:
+
+• IDC = discrimination, harassment, racist comments, bullying targeting identity
+• OPEN = academic issues, courses, teachers, grades
+• COUNSEL = emotional struggles, loneliness, stress, anxiety, depression
+• CRISIS = self-harm, suicide, or immediate danger
+
+Output ONLY valid JSON:
+{
+  "department": "IDC | OPEN | COUNSEL",
+  "confidence": 0-1,
+  "reasons": ["short bullets"],
+  "crisis": true/false
+}
+
+Rules:
+- Crisis overrides all → department = "COUNSEL" & crisis = true
+"""
+
+    # If no OpenAI client (no key or not installed), directly return fallback
+    if not openai_client:
+        print("No OPENAI_API_KEY detected — using fallback classifier.")
+        return jsonify(fallback_classify(message))
+
+    try:
+        # Call OpenAI Chat Completion API
+        completion = openai_client.chat.completions.create(
+            model="gpt-4o-mini",  # Lightweight, cost-effective model
+            temperature=0.1,  # Low temperature → more deterministic output
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": message},
+            ],
+        )
+
+        # Extract text from first choice
+        text = (completion.choices[0].message.content or "").strip()
+
+        # Remove ```json ... ``` wrappers if present
+        text = re.sub(r"^```json\s*|\s*```$", "", text)
+
+        # Parse JSON returned by the model
+        try:
+            result = json.loads(text)
+        except json.JSONDecodeError:
+            # If model response is not valid JSON, fall back to local classifier
+            print("Model returned invalid JSON. Using fallback. Raw:", text)
+            return jsonify(fallback_classify(message))
+
+        # Normalize and validate response structure
+        department = result.get("department")
+        confidence = result.get("confidence", 0.5)
+        reasons = result.get("reasons", [])
+        crisis = bool(result.get("crisis", False))
+
+        # Ensure department is one of the allowed values
+        if department not in ("IDC", "OPEN", "COUNSEL"):
+            department = "OPEN"
+
+        # Ensure confidence is a float between 0 and 1
+        if not isinstance(confidence, (int, float)):
+            confidence = 0.5
+        confidence = max(0.0, min(1.0, float(confidence)))
+
+        # Ensure reasons is a short list
+        if not isinstance(reasons, list):
+            reasons = []
+        reasons = reasons[:6]  # Cap at 6 reasons
+
+        # Crisis rule: if crisis is true, department is always COUNSEL
+        if crisis:
+            department = "COUNSEL"
+
+        response = {
+            "department": department,
+            "confidence": confidence,
+            "reasons": reasons,
+            "crisis": crisis,
+        }
+
+        return jsonify(response), 200
+
+    except Exception as err:
+        # Any error (network, quota, etc.) → use fallback classifier
+        print("Classifier error, using fallback:", err)
+        return jsonify(fallback_classify(message)), 200
+
+
+# ==================== API ROUTES (USER AUTH + DATA) ====================
 
 # ----- Student Registration -----
 @app.route("/register", methods=["POST"])  # Route decorator: POST requests to /register
