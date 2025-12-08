@@ -1,5 +1,6 @@
 from .first_page import first_bp
 from .home import home_bp
+from .HPprofessor import hp_professor_bp
 from .login_student import login_st_bp
 from .login_professional import login_pf_bp
 from .more_info import info_bp
@@ -12,6 +13,7 @@ from .settings import settings_bp
 all_blueprints = [
     first_bp,
     home_bp,
+    hp_professor_bp,
     login_st_bp,
     login_pf_bp,
     info_bp,

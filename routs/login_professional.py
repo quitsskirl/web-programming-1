@@ -25,8 +25,8 @@ def login_professional_post():
             data = response.json()
             token = data.get('token')
             
-            # Create response with redirect
-            resp = make_response(redirect(url_for('home.home_professor_page')))
+            # Create response with redirect to professor home page
+            resp = make_response(redirect(url_for('hp_professor.home_professor_page')))
             # Store token in cookie (httponly for security)
             resp.set_cookie('jwt_token', token, httponly=True, secure=False, samesite='Lax', max_age=86400)
             return resp

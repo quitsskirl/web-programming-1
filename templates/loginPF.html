@@ -59,7 +59,8 @@
         const { username: su, password: sp } = JSON.parse(stored);
         if(username === su && password === sp){
           alert("Login successful!");
-          window.location.href = "{{ url_for('home.home_page') }}";
+          // Redirect to PROFESSOR home page, not student
+          window.location.href = "{{ url_for('hp_professor.home_professor_page') }}";
         } else {
           alert("Invalid credentials.");
         }
