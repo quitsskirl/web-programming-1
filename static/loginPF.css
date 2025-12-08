@@ -127,40 +127,109 @@ body{
 @media (max-width:480px){ .leaf{ opacity:.75 } }
 
 /* ---------- Shared card styling (login & register) ---------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 .login-container,
 .register-container{
-  position:relative;
-  background: rgba(255,255,255,0.9);
-  width: min(92vw, 400px);
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  position: relative;
+  background: rgba(255,255,255,0.92);
+  width: min(90vw, 380px);
+  padding: 32px 28px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  backdrop-filter: blur(8px);
 }
+
 .login-container h2,
 .register-container h2{
   color: var(--green-700);
-  font-size:24px; margin-bottom:8px; text-align:center;
+  font-size: 26px;
+  margin: 0 0 6px 0;
+  text-align: center;
+  font-weight: 600;
 }
+
 .login-container p,
 .register-container p{
-  color:#52796f; font-size:14px; margin-bottom:20px; text-align:center;
+  color: #52796f;
+  font-size: 14px;
+  margin: 0 0 24px 0;
+  text-align: center;
 }
-.form-group{ margin-bottom:18px }
-label{ display:block; color:var(--green-700); font-weight:500; margin-bottom:6px }
+
+.form-group{
+  margin-bottom: 20px;
+}
+
+label{
+  display: block;
+  color: var(--green-700);
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
 input{
-  width:100%; padding:12px 15px;
-  border:1px solid #cce3de; border-radius:10px; font-size:14px;
-  background:#fff;
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #d8ebe3;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-input:focus{ border-color: var(--green-400); outline:none }
+
+input:focus{
+  border-color: var(--green-400);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.2);
+}
+
+input::placeholder{
+  color: #9cb8ad;
+}
+
 .login-btn,
 .register-btn{
-  width:100%; padding:12px; border:none; border-radius:10px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
   background: linear-gradient(135deg, var(--green-400), var(--green-500));
-  color:#fff; font-size:16px; font-weight:600; cursor:pointer; margin-top:10px
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .login-btn:hover,
-.register-btn:hover{ background: linear-gradient(135deg, var(--green-500), var(--green-600)) }
-.links{ margin-top:15px; text-align:center }
-.links a{ color:#52796f; font-size:14px; text-decoration:none }
-.links a:hover{ color: var(--green-600) }
+.register-btn:hover{
+  background: linear-gradient(135deg, var(--green-500), var(--green-600));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
+}
+
+.links{
+  margin-top: 20px;
+  text-align: center;
+}
+
+.links p{
+  margin: 0;
+}
+
+.links a{
+  color: var(--green-600);
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.links a:hover{
+  color: var(--green-700);
+  text-decoration: underline;
+}

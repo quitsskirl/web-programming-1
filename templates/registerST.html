@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Belissa Space | Student Register</title>
+  <title>Mental Health | Student Register</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='RegisterST.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
@@ -20,7 +20,7 @@
 
   <div class="register-container">
     <h2>Create Student Account</h2>
-    <p>Join Belissa Space 🌿 and start your journey.</p>
+    <p>Join Mental Health 🌿 and start your journey.</p>
 
     <form id="registerFormST" autocomplete="on" novalidate>
       <div class="form-group">
@@ -74,14 +74,14 @@
         .then(res => res.json())
         .then(data => {
           alert(data.message || "Registered.");
-          localStorage.setItem("belissaStudent", JSON.stringify(payload));
+          localStorage.setItem("mhStudent", JSON.stringify(payload));
           localStorage.setItem("username", username);
           localStorage.setItem("tags", Array.isArray(tags) ? tags.join(", ") : "");
           window.location.href = "{{ url_for('login_st.login_student_page') }}";
         })
         .catch(err => {
           console.error(err);
-          localStorage.setItem("belissaStudent", JSON.stringify(payload));
+          localStorage.setItem("mhStudent", JSON.stringify(payload));
           localStorage.setItem("username", username);
           localStorage.setItem("tags", Array.isArray(tags) ? tags.join(", ") : "");
           alert("Saved locally. Redirecting to login.");

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Belissa Space | Student Login</title>
+  <title>Mental Health | Student Login</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='loginST.css') }}">
 </head>
 <body>
@@ -19,7 +19,7 @@
 
   <div class="login-container">
     <h2>Student Login</h2>
-    <p>Welcome back to Belissa Space 🌿</p>
+    <p>Welcome back to Mental Health 🌿</p>
 
     <form id="loginFormST">
       <div class="form-group">
@@ -48,7 +48,7 @@
       const username = document.getElementById("login-username").value.trim();
       const password = document.getElementById("login-password").value.trim();
 
-      const stored = localStorage.getItem("belissaStudent");
+      const stored = localStorage.getItem("mhStudent");
       if(!stored){
         alert("No registered student found. Please register first.");
         window.location.href = "{{ url_for('register_st.register_student_page') }}";

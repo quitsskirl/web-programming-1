@@ -57,54 +57,149 @@ body{
 @keyframes sway{ from{ margin-left:-15px } to{ margin-left:15px } }
 
 /* ---------- Register Card ---------- */
-.register-container{
-  position:relative;
-  background: rgba(255,255,255,0.9);
-  width: min(92vw, 400px);
-  padding: 30px;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-h2{ color: var(--green-700); font-size:24px; margin-bottom:8px; text-align:center; }
-p{ color:#52796f; font-size:14px; margin-bottom:20px; text-align:center; }
+.register-container{
+  position: relative;
+  background: rgba(255,255,255,0.92);
+  width: min(90vw, 400px);
+  padding: 32px 28px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  backdrop-filter: blur(8px);
+}
 
-.form-group{ margin-bottom:18px; }
-label{ display:block; color:var(--green-700); font-weight:500; margin-bottom:6px; }
+h2{
+  color: var(--green-700);
+  font-size: 26px;
+  margin: 0 0 6px 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+p{
+  color: #52796f;
+  font-size: 14px;
+  margin: 0 0 24px 0;
+  text-align: center;
+}
+
+.form-group{
+  margin-bottom: 20px;
+}
+
+label{
+  display: block;
+  color: var(--green-700);
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
 
 input, select{
-  width:100%; padding:12px 15px;
-  border:1px solid #cce3de; border-radius:10px;
-  font-size:14px; background:#fff;
-  transition: border-color 0.2s ease;
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #d8ebe3;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-input:focus, select:focus{ border-color: var(--green-400); outline:none; }
-select[multiple]{ height:140px; color:#163a2a; cursor:pointer; }
+input:focus, select:focus{
+  border-color: var(--green-400);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.2);
+}
 
-select[multiple] option{ padding:6px 10px; border-radius:6px; }
-select[multiple] option:checked{ background-color: var(--green-400); color:#fff; }
+input::placeholder{
+  color: #9cb8ad;
+}
 
-small{ color:#52796f; font-size:12px; display:block; margin-top:5px; }
+select[multiple]{
+  height: 150px;
+  color: #163a2a;
+  cursor: pointer;
+  padding: 8px;
+}
+
+select[multiple] option{
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 2px;
+}
+
+select[multiple] option:checked{
+  background-color: var(--green-400);
+  color: #fff;
+}
+
+small{
+  color: #52796f;
+  font-size: 12px;
+  display: block;
+  margin-top: 6px;
+}
 
 /* ---------- Buttons ---------- */
-.btn-group{ display:flex; gap:8px; }
+.btn-group{
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
 .register-btn, .clear-btn{
-  flex:1; padding:12px; border:none; border-radius:10px;
-  font-size:16px; font-weight:600; cursor:pointer;
-  transition:all 0.3s ease;
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
+
 .register-btn{
-  background:linear-gradient(135deg, var(--green-400), var(--green-500));
-  color:#fff;
+  background: linear-gradient(135deg, var(--green-400), var(--green-500));
+  color: #fff;
 }
-.register-btn:hover{ background:linear-gradient(135deg, var(--green-500), var(--green-600)); }
+
+.register-btn:hover{
+  background: linear-gradient(135deg, var(--green-500), var(--green-600));
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(82, 183, 136, 0.3);
+}
 
 .clear-btn{
-  background:#fff; color:var(--green-700); border:1px solid var(--green-400);
+  background: #fff;
+  color: var(--green-700);
+  border: 2px solid var(--green-400);
 }
-.clear-btn:hover{ background:var(--green-400); color:#fff; }
 
-.links{ margin-top:15px; text-align:center; }
-.links a{ color:#52796f; font-size:14px; text-decoration:none; }
-.links a:hover{ color:var(--green-600); }
+.clear-btn:hover{
+  background: var(--green-400);
+  color: #fff;
+}
+
+.links{
+  margin-top: 20px;
+  text-align: center;
+}
+
+.links p{
+  margin: 0;
+}
+
+.links a{
+  color: var(--green-600);
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.links a:hover{
+  color: var(--green-700);
+  text-decoration: underline;
+}

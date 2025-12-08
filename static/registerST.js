@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if(username && password){
       const student = { username, password, tags: selectedTags };
-      localStorage.setItem("belissaStudent", JSON.stringify(student));
+      localStorage.setItem("mhStudent", JSON.stringify(student));
       alert("Student registration successful! Please log in.");
       window.location.href = "loginST.html";
     } else {
