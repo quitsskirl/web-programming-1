@@ -14,6 +14,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const crisisBox    = document.getElementById("crisisBox");
   const reasonsUl    = document.getElementById("reasons");
 
+  // Get JWT token from localStorage
+  function getToken() {
+    return localStorage.getItem("token");
+  }
+
+  // Check if user is logged in as student
+  function checkAccess() {
+    const token = getToken();
+    const role = localStorage.getItem("role");
+    
+    if (!token) {
+      alert("Please log in as a student to use the classifier.");
+      window.location.href = "/login-student";
+      return false;
+    }
+    
+    if (role !== "student") {
+      alert("Access denied. Only students can use the classifier.");
+      return false;
+    }
+    
+    return true;
+  }
+
   function render(data) {
     resultCard.classList.remove("hidden");
 
@@ -37,17 +61,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   classifyBtn.onclick = async () => {
+    // Check access before making request
+    if (!checkAccess()) return;
+
     const msg = messageEl.value.trim();
     if (!msg) return;
+
+    const token = getToken();
 
     try {
       const r = await fetch("/api/classify", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token  // Send JWT token
+        },
         body: JSON.stringify({ message: msg })
       });
 
       console.log("Response status:", r.status);
+
+      if (r.status === 401) {
+        alert("Session expired. Please log in again.");
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        window.location.href = "/login-student";
+        return;
+      }
+
+      if (r.status === 403) {
+        alert("Access denied. Only students can use the classifier.");
+        return;
+      }
 
       if (!r.ok) {
         const err = await r.json().catch(() => ({}));

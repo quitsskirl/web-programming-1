@@ -249,9 +249,11 @@ def fallback_classify(msg):
 
 # ==================== AI CLASSIFIER API ROUTE ====================
 @app.route("/api/classify", methods=["POST"])
+@token_required  # Require valid JWT token
 def classify_message():
     """
     API endpoint to classify a free-text student message.
+    PROTECTED: Only authenticated students can access this endpoint.
 
     URL: POST /api/classify
 
@@ -272,6 +274,10 @@ def classify_message():
     - If OPENAI_API_KEY is not configured or the API fails, we use fallback_classify().
     - If OpenAI works, we use GPT (gpt-4o-mini) to classify and enforce JSON output.
     """
+    # Check if user is a student (only students can use the classifier)
+    if request.current_user.get('role') != 'student':
+        return jsonify({"error": "Access denied. Only students can use the classifier."}), 403
+
     # Read JSON body (silent=True to avoid exceptions if invalid)
     data = request.get_json(silent=True) or {}
     message = str(data.get("message", "")).strip()

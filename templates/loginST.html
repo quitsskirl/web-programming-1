@@ -54,32 +54,42 @@
   <!-- ========== LOGIN SCRIPT ========== -->
   <script>
     // Handle form submission
-    document.getElementById("loginFormST").addEventListener("submit", function(e){
+    document.getElementById("loginFormST").addEventListener("submit", async function(e){
       e.preventDefault(); // Prevent page reload
       
       // Get input values
       const username = document.getElementById("login-username").value.trim();
       const password = document.getElementById("login-password").value.trim();
 
-      // Check if user exists in localStorage
-      const stored = localStorage.getItem("mhStudent");
-      if(!stored){
-        alert("No registered student found. Please register first.");
-        window.location.href = "{{ url_for('register_st.register_student_page') }}";
+      if (!username || !password) {
+        alert("Please enter both username and password.");
         return;
       }
 
-      // Verify credentials
-      try{
-        const { username: su, password: sp } = JSON.parse(stored);
-        if(username === su && password === sp){
+      try {
+        // Call the backend login API
+        const response = await fetch("/api/login/student", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Store JWT token and user info in localStorage
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("username", data.user.username);
+          localStorage.setItem("role", data.user.role);
+          
           alert("Login successful!");
           window.location.href = "{{ url_for('home.home_page') }}"; // Go to student home
         } else {
-          alert("Invalid credentials.");
+          alert(data.message || "Login failed. Please check your credentials.");
         }
-      } catch {
-        alert("Error reading account. Please re-register.");
+      } catch (error) {
+        console.error("Login error:", error);
+        alert("Could not connect to the server. Please try again.");
       }
     });
   </script>
