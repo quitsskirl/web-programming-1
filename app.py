@@ -100,29 +100,33 @@ mongo_uri = os.getenv("MONGO_URI")  # Get connection string from environment (se
 client = None  # MongoDB client object (will hold connection)
 db = None  # Database reference
 
-# ==================== MONGODB COLLECTIONS (8 total for 2 team members) ====================
-# Collection 1: students - stores student user accounts
-students = None
-# Collection 2: professionals - stores professional/counselor accounts  
-professionals = None
-# Collection 3: appointments - stores scheduled appointments between students and professionals
+# ==================== MONGODB COLLECTIONS (8 tables) ====================
+# Table 1: users - general account info (students + professionals)
+users = None
+# Table 2: user_profiles - personal details (age, department, emergency contact)
+user_profiles = None
+# Table 3: appointments - scheduled meetings between students and professionals
 appointments = None
-# Collection 4: messages - stores chat messages between users
-messages = None
-# Collection 5: resources - stores mental health resources, articles, tips
+# Table 4: mood_logs - daily mood tracking entries
+mood_logs = None
+# Table 5: assessments - self-evaluation tests and surveys
+assessments = None
+# Table 6: resources - articles, videos, coping guides
 resources = None
-# Collection 6: feedback - stores user feedback and ratings
-feedback = None
-# Collection 7: notifications - stores user notifications
-notifications = None
-# Collection 8: support_tickets - stores support requests from classifier
+# Table 7: support_tickets - confidential messages to counselors
 support_tickets = None
+# Table 8: notifications - alerts and reminders for users
+notifications = None
+
+# Legacy collections (for backward compatibility with existing code)
+students = None
+professionals = None
 
 if mongo_uri:  # Only try to connect if MONGO_URI is set
     try:
         # Create MongoDB client with connection options
         client = MongoClient(
-            mongo_uri,  # Connection string: mongodb+srv://user:pass@cluster.mongodb.net/ or mongodb://127.0.0.1:27017/
+            mongo_uri,  # Connection string: mongodb+srv://user:pass@cluster.mongodb.net/
             tls=True,  # Use TLS encryption for secure connection
             tlsAllowInvalidCertificates=True,  # Allow self-signed certificates (development)
             serverSelectionTimeoutMS=5000  # Wait max 5 seconds to find server
@@ -130,32 +134,170 @@ if mongo_uri:  # Only try to connect if MONGO_URI is set
         client.admin.command("ping")  # Send ping to test if connection works
         db = client["healthDB"]  # Select/create database named "healthDB"
         
-        # Initialize all 8 collections
-        students = db["students"]  # Collection 1: Student accounts
-        professionals = db["professionals"]  # Collection 2: Professional accounts
-        appointments = db["appointments"]  # Collection 3: Scheduled appointments
-        messages = db["messages"]  # Collection 4: Chat messages
-        resources = db["resources"]  # Collection 5: Mental health resources
-        feedback = db["feedback"]  # Collection 6: User feedback
-        notifications = db["notifications"]  # Collection 7: User notifications
-        support_tickets = db["support_tickets"]  # Collection 8: Support tickets from classifier
+        # ==================== INITIALIZE 8 COLLECTIONS ====================
+        # Table 1: users - general account info
+        users = db["users"]
+        # Table 2: user_profiles - personal details
+        user_profiles = db["user_profiles"]
+        # Table 3: appointments - scheduled meetings
+        appointments = db["appointments"]
+        # Table 4: mood_logs - daily mood tracking
+        mood_logs = db["mood_logs"]
+        # Table 5: assessments - self-evaluation tests
+        assessments = db["assessments"]
+        # Table 6: resources - mental health resources
+        resources = db["resources"]
+        # Table 7: support_tickets - confidential messages
+        support_tickets = db["support_tickets"]
+        # Table 8: notifications - user alerts
+        notifications = db["notifications"]
         
-        print("✅ MongoDB connection OK!")  # Success message
-        print("📦 8 collections initialized: students, professionals, appointments, messages, resources, feedback, notifications, support_tickets")
+        # Legacy collections (backward compatibility)
+        students = db["students"]
+        professionals = db["professionals"]
+        
+        print("✅ MongoDB connection OK!")
+        print("📦 8 tables initialized!")
+        
+        # ==================== CREATE COLLECTIONS WITH SAMPLE DATA ====================
+        # MongoDB collections only appear when they have at least 1 document
+        # This ensures all 8 tables show up in MongoDB Atlas
+        
+        def init_collections():
+            """Initialize all 8 collections with sample/schema documents"""
+            
+            # Table 1: users - sample schema
+            if users.count_documents({}) == 0:
+                users.insert_one({
+                    "_schema": True,  # Mark as schema document
+                    "user_id": "sample_user_001",
+                    "name": "Sample User",
+                    "email": "sample@example.com",
+                    "password_hash": "hashed_password_here",
+                    "role": "student",  # student or professional
+                    "created_at": datetime.datetime.utcnow(),
+                    "status": "active"  # active, inactive, suspended
+                })
+                print("   ✓ Table 1: users - created")
+            
+            # Table 2: user_profiles - sample schema
+            if user_profiles.count_documents({}) == 0:
+                user_profiles.insert_one({
+                    "_schema": True,
+                    "profile_id": "sample_profile_001",
+                    "user_id": "sample_user_001",
+                    "age": 20,
+                    "gender": "prefer_not_to_say",
+                    "department": "Computer Science",
+                    "academic_year": "2nd Year",
+                    "contact_info": "+1234567890",
+                    "emergency_contact": "+0987654321"
+                })
+                print("   ✓ Table 2: user_profiles - created")
+            
+            # Table 3: appointments - sample schema
+            if appointments.count_documents({}) == 0:
+                appointments.insert_one({
+                    "_schema": True,
+                    "appointment_id": "sample_apt_001",
+                    "student_id": "sample_user_001",
+                    "professional_id": "sample_prof_001",
+                    "appointment_date": datetime.datetime.utcnow(),
+                    "status": "pending",  # pending, confirmed, completed, cancelled
+                    "notes": "Initial consultation"
+                })
+                print("   ✓ Table 3: appointments - created")
+            
+            # Table 4: mood_logs - sample schema
+            if mood_logs.count_documents({}) == 0:
+                mood_logs.insert_one({
+                    "_schema": True,
+                    "entry_id": "sample_mood_001",
+                    "user_id": "sample_user_001",
+                    "mood_level": 7,  # 1-10 scale
+                    "notes": "Feeling okay today",
+                    "logged_at": datetime.datetime.utcnow()
+                })
+                print("   ✓ Table 4: mood_logs - created")
+            
+            # Table 5: assessments - sample schema
+            if assessments.count_documents({}) == 0:
+                assessments.insert_one({
+                    "_schema": True,
+                    "assessment_id": "sample_assess_001",
+                    "user_id": "sample_user_001",
+                    "date_taken": datetime.datetime.utcnow(),
+                    "score": 75,
+                    "assessment_type": "anxiety_screening",  # anxiety_screening, depression_screening, stress_test
+                    "comments": "Mild anxiety detected"
+                })
+                print("   ✓ Table 5: assessments - created")
+            
+            # Table 6: resources - sample schema
+            if resources.count_documents({}) == 0:
+                resources.insert_one({
+                    "_schema": True,
+                    "resource_id": "sample_resource_001",
+                    "title": "Coping with Stress",
+                    "resource_type": "article",  # article, video, guide
+                    "description": "Tips for managing academic stress",
+                    "link_url": "https://example.com/stress-tips",
+                    "created_by": "sample_prof_001",
+                    "created_at": datetime.datetime.utcnow()
+                })
+                print("   ✓ Table 6: resources - created")
+            
+            # Table 7: support_tickets - sample schema
+            if support_tickets.count_documents({}) == 0:
+                support_tickets.insert_one({
+                    "_schema": True,
+                    "ticket_id": "sample_ticket_001",
+                    "sender_user_id": "sample_user_001",
+                    "receiver_user_id": "sample_prof_001",
+                    "subject": "Need someone to talk to",
+                    "message_text": "I've been feeling overwhelmed lately...",
+                    "sent_at": datetime.datetime.utcnow(),
+                    "status": "open",  # open, in_progress, resolved
+                    "department": "COUNSEL",  # IDC, OPEN, COUNSEL
+                    "crisis": False
+                })
+                print("   ✓ Table 7: support_tickets - created")
+            
+            # Table 8: notifications - sample schema
+            if notifications.count_documents({}) == 0:
+                notifications.insert_one({
+                    "_schema": True,
+                    "notification_id": "sample_notif_001",
+                    "user_id": "sample_user_001",
+                    "title": "Welcome to Mental Health Support",
+                    "message": "Thank you for joining our platform!",
+                    "type": "welcome",  # welcome, appointment, reminder, message
+                    "read": False,
+                    "created_at": datetime.datetime.utcnow()
+                })
+                print("   ✓ Table 8: notifications - created")
+            
+            print("📊 All 8 tables are now visible in MongoDB Atlas!")
+        
+        # Run initialization
+        init_collections()
+        
     except Exception as e:  # Catch any connection errors
         print("❌ MongoDB connection failed:", e)  # Print error message
-        client = None  # Reset all variables to None
+        client = None
         db = None
+        users = None
+        user_profiles = None
+        appointments = None
+        mood_logs = None
+        assessments = None
+        resources = None
+        support_tickets = None
+        notifications = None
         students = None
         professionals = None
-        appointments = None
-        messages = None
-        resources = None
-        feedback = None
-        notifications = None
-        support_tickets = None
 else:
-    print("⚠️ MONGO_URI not set. Database features will be unavailable.")  # Warning if no connection string
+    print("⚠️ MONGO_URI not set. Database features will be unavailable.")
 
 
 # ==================== REGISTER BLUEPRINTS ====================
@@ -857,33 +999,6 @@ def get_appointments():
     return jsonify(user_appointments), 200
 
 
-# ----- Submit Feedback (CREATE for feedback collection) -----
-@app.route("/api/feedback", methods=["POST"])
-@token_required
-def submit_feedback():
-    """
-    CREATE operation for feedback collection.
-    Allows users to submit feedback about the platform.
-    """
-    if feedback is None:
-        return jsonify({"message": "Database unavailable"}), 503
-    
-    current_user = request.current_user
-    data = request.get_json(silent=True) or {}
-    
-    feedback_doc = {
-        "username": current_user.get('username'),
-        "rating": data.get("rating", 5),  # 1-5 stars
-        "comment": data.get("comment", ""),
-        "category": data.get("category", "general"),  # general, bug, suggestion
-        "created_at": datetime.datetime.utcnow()
-    }
-    
-    feedback.insert_one(feedback_doc)
-    
-    return jsonify({"message": "Thank you for your feedback!"}), 201
-
-
 # ----- Get Resources (READ for resources collection) -----
 @app.route("/api/resources", methods=["GET"])
 def get_resources():
@@ -947,12 +1062,14 @@ def create_support_ticket():
     data = request.get_json(silent=True) or {}
     
     ticket = {
-        "student_username": current_user.get('username'),
-        "message": data.get("message"),
+        "ticket_id": f"ticket_{datetime.datetime.utcnow().timestamp()}",
+        "sender_user_id": current_user.get('username'),
+        "subject": data.get("subject", "Support Request"),
+        "message_text": data.get("message"),
         "department": data.get("department"),  # IDC, OPEN, COUNSEL
         "crisis": data.get("crisis", False),
         "status": "open",  # open, in_progress, resolved
-        "created_at": datetime.datetime.utcnow()
+        "sent_at": datetime.datetime.utcnow()
     }
     
     result = support_tickets.insert_one(ticket)
@@ -961,6 +1078,234 @@ def create_support_ticket():
         "message": "Support ticket created",
         "ticket_id": str(result.inserted_id)
     }), 201
+
+
+# ==================== MOOD LOGS API (Table 4) ====================
+
+# ----- Create Mood Log Entry -----
+@app.route("/api/mood-logs", methods=["POST"])
+@token_required
+def create_mood_log():
+    """
+    CREATE: Log a daily mood entry.
+    Students can track their mood over time.
+    """
+    if mood_logs is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    data = request.get_json(silent=True) or {}
+    
+    entry = {
+        "entry_id": f"mood_{datetime.datetime.utcnow().timestamp()}",
+        "user_id": current_user.get('username'),
+        "mood_level": data.get("mood_level", 5),  # 1-10 scale
+        "notes": data.get("notes", ""),
+        "logged_at": datetime.datetime.utcnow()
+    }
+    
+    mood_logs.insert_one(entry)
+    return jsonify({"message": "Mood logged successfully!"}), 201
+
+
+# ----- Get Mood Logs -----
+@app.route("/api/mood-logs", methods=["GET"])
+@token_required
+def get_mood_logs():
+    """
+    READ: Get all mood logs for the current user.
+    """
+    if mood_logs is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    
+    # Find all mood logs for this user, sorted by date (newest first)
+    logs = []
+    for log in mood_logs.find({"user_id": username}).sort("logged_at", -1):
+        log["_id"] = str(log["_id"])
+        log["logged_at"] = str(log.get("logged_at", ""))
+        logs.append(log)
+    
+    return jsonify(logs), 200
+
+
+# ==================== ASSESSMENTS API (Table 5) ====================
+
+# ----- Submit Assessment -----
+@app.route("/api/assessments", methods=["POST"])
+@token_required
+def submit_assessment():
+    """
+    CREATE: Submit a mental health assessment/survey.
+    """
+    if assessments is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    data = request.get_json(silent=True) or {}
+    
+    assessment = {
+        "assessment_id": f"assess_{datetime.datetime.utcnow().timestamp()}",
+        "user_id": current_user.get('username'),
+        "date_taken": datetime.datetime.utcnow(),
+        "score": data.get("score", 0),
+        "assessment_type": data.get("type", "general"),  # anxiety, depression, stress
+        "answers": data.get("answers", []),  # Store individual answers
+        "comments": data.get("comments", "")
+    }
+    
+    assessments.insert_one(assessment)
+    return jsonify({"message": "Assessment submitted successfully!"}), 201
+
+
+# ----- Get Assessments -----
+@app.route("/api/assessments", methods=["GET"])
+@token_required
+def get_assessments():
+    """
+    READ: Get all assessments for the current user.
+    """
+    if assessments is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    
+    user_assessments = []
+    for a in assessments.find({"user_id": username}).sort("date_taken", -1):
+        a["_id"] = str(a["_id"])
+        a["date_taken"] = str(a.get("date_taken", ""))
+        user_assessments.append(a)
+    
+    return jsonify(user_assessments), 200
+
+
+# ==================== USER PROFILES API (Table 2) ====================
+
+# ----- Create/Update User Profile -----
+@app.route("/api/profile", methods=["POST", "PUT"])
+@token_required
+def update_user_profile():
+    """
+    CREATE/UPDATE: Create or update user profile with personal details.
+    """
+    if user_profiles is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    data = request.get_json(silent=True) or {}
+    
+    profile_data = {
+        "user_id": current_user.get('username'),
+        "age": data.get("age"),
+        "gender": data.get("gender"),
+        "department": data.get("department"),
+        "academic_year": data.get("academic_year"),
+        "contact_info": data.get("contact_info"),
+        "emergency_contact": data.get("emergency_contact"),
+        "updated_at": datetime.datetime.utcnow()
+    }
+    
+    # Remove None values
+    profile_data = {k: v for k, v in profile_data.items() if v is not None}
+    
+    # Upsert: update if exists, insert if not
+    user_profiles.update_one(
+        {"user_id": current_user.get('username')},
+        {"$set": profile_data},
+        upsert=True
+    )
+    
+    return jsonify({"message": "Profile updated successfully!"}), 200
+
+
+# ----- Get User Profile -----
+@app.route("/api/profile", methods=["GET"])
+@token_required
+def get_user_profile():
+    """
+    READ: Get the current user's profile.
+    """
+    if user_profiles is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    profile = user_profiles.find_one({"user_id": current_user.get('username')})
+    
+    if profile:
+        profile["_id"] = str(profile["_id"])
+        return jsonify(profile), 200
+    else:
+        return jsonify({"message": "Profile not found"}), 404
+
+
+# ==================== NOTIFICATIONS API (Table 8) ====================
+
+# ----- Get Notifications -----
+@app.route("/api/notifications", methods=["GET"])
+@token_required
+def get_notifications():
+    """
+    READ: Get all notifications for the current user.
+    """
+    if notifications is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    
+    user_notifications = []
+    for n in notifications.find({"user_id": username}).sort("created_at", -1):
+        n["_id"] = str(n["_id"])
+        n["created_at"] = str(n.get("created_at", ""))
+        user_notifications.append(n)
+    
+    return jsonify(user_notifications), 200
+
+
+# ----- Mark Notification as Read -----
+@app.route("/api/notifications/<notification_id>/read", methods=["PUT"])
+@token_required
+def mark_notification_read(notification_id):
+    """
+    UPDATE: Mark a notification as read.
+    """
+    if notifications is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    result = notifications.update_one(
+        {"_id": ObjectId(notification_id)},
+        {"$set": {"read": True}}
+    )
+    
+    if result.modified_count > 0:
+        return jsonify({"message": "Notification marked as read"}), 200
+    else:
+        return jsonify({"message": "Notification not found"}), 404
+
+
+# ----- Create Notification (Internal use) -----
+def create_notification(user_id, title, message, notif_type="general"):
+    """
+    Helper function to create notifications.
+    Called internally when events happen (appointments, messages, etc.)
+    """
+    if notifications is None:
+        return None
+    
+    notif = {
+        "notification_id": f"notif_{datetime.datetime.utcnow().timestamp()}",
+        "user_id": user_id,
+        "title": title,
+        "message": message,
+        "type": notif_type,
+        "read": False,
+        "created_at": datetime.datetime.utcnow()
+    }
+    
+    return notifications.insert_one(notif)
 
 
 # ==================== START SERVER ====================
