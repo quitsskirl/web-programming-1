@@ -101,8 +101,8 @@ client = None  # MongoDB client object (will hold connection)
 db = None  # Database reference
 
 # ==================== MONGODB COLLECTIONS (8 tables) ====================
-# Table 1: users - general account info (students + professionals)
-users = None
+# Table 1: professors - stores professor/counselor account info from sign-in
+professors_table = None
 # Table 2: user_profiles - personal details (age, department, emergency contact)
 user_profiles = None
 # Table 3: appointments - scheduled meetings between students and professionals
@@ -135,8 +135,8 @@ if mongo_uri:  # Only try to connect if MONGO_URI is set
         db = client["healthDB"]  # Select/create database named "healthDB"
         
         # ==================== INITIALIZE 8 COLLECTIONS ====================
-        # Table 1: users - general account info
-        users = db["users"]
+        # Table 1: professors - professor account info (from sign-in page)
+        professors_table = db["professors"]
         # Table 2: user_profiles - personal details
         user_profiles = db["user_profiles"]
         # Table 3: appointments - scheduled meetings
@@ -166,19 +166,10 @@ if mongo_uri:  # Only try to connect if MONGO_URI is set
         def init_collections():
             """Initialize all 8 collections with sample/schema documents"""
             
-            # Table 1: users - sample schema
-            if users.count_documents({}) == 0:
-                users.insert_one({
-                    "_schema": True,  # Mark as schema document
-                    "user_id": "sample_user_001",
-                    "name": "Sample User",
-                    "email": "sample@example.com",
-                    "password_hash": "hashed_password_here",
-                    "role": "student",  # student or professional
-                    "created_at": datetime.datetime.utcnow(),
-                    "status": "active"  # active, inactive, suspended
-                })
-                print("   ✓ Table 1: users - created")
+            # Table 1: professors - this collection stores professor accounts
+            # Data comes from professor registration at /register-professional
+            # No sample data needed - real professors will register through the form
+            print("   ✓ Table 1: professors - ready")
             
             # Table 2: user_profiles - sample schema
             if user_profiles.count_documents({}) == 0:
@@ -247,19 +238,16 @@ if mongo_uri:  # Only try to connect if MONGO_URI is set
                 })
                 print("   ✓ Table 6: resources - created")
             
-            # Table 7: support_tickets - sample schema
+            # Table 7: support_tickets - sample schema (stores classifier results)
             if support_tickets.count_documents({}) == 0:
                 support_tickets.insert_one({
                     "_schema": True,
-                    "ticket_id": "sample_ticket_001",
-                    "sender_user_id": "sample_user_001",
-                    "receiver_user_id": "sample_prof_001",
-                    "subject": "Need someone to talk to",
-                    "message_text": "I've been feeling overwhelmed lately...",
-                    "sent_at": datetime.datetime.utcnow(),
-                    "status": "open",  # open, in_progress, resolved
+                    "user_id": "sample_user_001",
+                    "message": "I've been feeling overwhelmed lately and can't focus on my studies...",
                     "department": "COUNSEL",  # IDC, OPEN, COUNSEL
-                    "crisis": False
+                    "confidence": 0.85,
+                    "crisis": False,
+                    "created_at": datetime.datetime.utcnow()
                 })
                 print("   ✓ Table 7: support_tickets - created")
             
@@ -286,7 +274,7 @@ if mongo_uri:  # Only try to connect if MONGO_URI is set
         print("❌ MongoDB connection failed:", e)  # Print error message
         client = None
         db = None
-        users = None
+        professors_table = None
         user_profiles = None
         appointments = None
         mood_logs = None
@@ -481,10 +469,30 @@ Rules:
 - Crisis overrides all → department = "COUNSEL" & crisis = true
 """
 
+    # Helper function to save classification to support_tickets
+    def save_to_support_tickets(msg, classification_result):
+        """Save the message and classification to support_tickets collection"""
+        if support_tickets is not None:
+            try:
+                ticket = {
+                    "user_id": request.current_user.get('username'),
+                    "message": msg,
+                    "department": classification_result.get('department'),
+                    "confidence": classification_result.get('confidence'),
+                    "crisis": classification_result.get('crisis', False),
+                    "created_at": datetime.datetime.utcnow()
+                }
+                support_tickets.insert_one(ticket)
+                print(f"📝 Saved to support_tickets: {classification_result.get('department')}")
+            except Exception as e:
+                print(f"⚠️ Failed to save to support_tickets: {e}")
+
     # If no OpenAI client (no key or not installed), directly return fallback
     if not openai_client:
         print("No OPENAI_API_KEY detected — using fallback classifier.")
-        return jsonify(fallback_classify(message))
+        result = fallback_classify(message)
+        save_to_support_tickets(message, result)  # Save to database
+        return jsonify(result)
 
     try:
         # Call OpenAI Chat Completion API
@@ -509,7 +517,9 @@ Rules:
         except json.JSONDecodeError:
             # If model response is not valid JSON, fall back to local classifier
             print("Model returned invalid JSON. Using fallback. Raw:", text)
-            return jsonify(fallback_classify(message))
+            result = fallback_classify(message)
+            save_to_support_tickets(message, result)  # Save to database
+            return jsonify(result)
 
         # Normalize and validate response structure
         department = result.get("department")
@@ -542,11 +552,16 @@ Rules:
             "crisis": crisis,
         }
 
+        # Save to support_tickets collection
+        save_to_support_tickets(message, response)
+
         return jsonify(response), 200
 
     except Exception as err:
         # Any error (network, quota, etc.) → use fallback classifier
         print("Classifier error, using fallback:", err)
+        result = fallback_classify(message)
+        save_to_support_tickets(message, result)  # Save to database
         return jsonify(fallback_classify(message)), 200
 
 

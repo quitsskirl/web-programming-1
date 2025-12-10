@@ -65,39 +65,8 @@
   <a href="{{ url_for('info.more_info_page') }}" class="btn">More Info</a>
 </section>
 
-<!-- Emergency contact button (floating) -->
-<button id="emergencyBtn" class="emergency-btn" title="Emergency Contact">📞</button>
-
 <!-- ==================== BOOTSTRAP COMPONENTS ==================== -->
-<!-- Component 1: Modal - Emergency Contact Information -->
-<!-- Bootstrap Modal: popup dialog that appears over the page content -->
-<div class="modal fade" id="emergencyModal" tabindex="-1" aria-labelledby="emergencyModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content bg-dark text-white">
-      <!-- Modal Header with title and close button -->
-      <div class="modal-header border-danger">
-        <h5 class="modal-title text-danger" id="emergencyModalLabel">
-          <i class="bi bi-exclamation-triangle-fill"></i> Emergency Contacts
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <!-- Modal Body with emergency numbers -->
-      <div class="modal-body">
-        <p><strong>National Crisis Hotline:</strong> 988</p>
-        <p><strong>Campus Security:</strong> 555-0123</p>
-        <p><strong>Counseling Center:</strong> 555-0456</p>
-        <p class="text-muted small">If you are in immediate danger, please call 911.</p>
-      </div>
-      <!-- Modal Footer with action buttons -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <a href="tel:988" class="btn btn-danger">Call Now</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Component 2: Toast Notification - Welcome message -->
+<!-- Component 1: Toast Notification - Welcome message -->
 <!-- Bootstrap Toast: small notification that auto-hides -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
   <div id="welcomeToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -130,7 +99,6 @@
   const sideMenu = document.getElementById('sideMenu');
   const closeMenu = document.getElementById('closeMenu');
   const chatBtn = document.getElementById('chatBtn');
-  const emergencyBtn = document.getElementById('emergencyBtn');
   const userBtn = document.getElementById('userBtn');
   const userPopup = document.getElementById('userPopup');
 
@@ -172,13 +140,6 @@
     if (!userPopup.contains(e.target) && e.target !== userBtn) {
       userPopup.classList.remove('active');
     }
-  });
-
-  // Emergency button - now opens Bootstrap Modal instead of alert
-  emergencyBtn.addEventListener('click', () => {
-    // Use Bootstrap's Modal API to show the emergency modal
-    const modal = new bootstrap.Modal(document.getElementById('emergencyModal'));
-    modal.show();
   });
 
   // Load user info from localStorage on page load

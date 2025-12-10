@@ -53,33 +53,45 @@
 
   <!-- ========== LOGIN SCRIPT ========== -->
   <script>
-    // Handle form submission
-    document.getElementById("loginFormPF").addEventListener("submit", function(e){
+    // Handle form submission - authenticates with database
+    document.getElementById("loginFormPF").addEventListener("submit", async function(e){
       e.preventDefault(); // Prevent page reload
       
       // Get input values
       const username = document.getElementById("login-username").value.trim();
       const password = document.getElementById("login-password").value.trim();
 
-      // Check if professor exists in localStorage
-      const stored = localStorage.getItem("mhProfessor");
-      if(!stored){
-        alert("No registered professor found. Please register first.");
-        window.location.href = "{{ url_for('register_pf.register_professional_page') }}";
+      if(!username || !password){
+        alert("Please enter both username and password.");
         return;
       }
 
-      // Verify credentials
-      try{
-        const { username: su, password: sp } = JSON.parse(stored);
-        if(username === su && password === sp){
+      try {
+        // Send login request to backend API
+        const response = await fetch('/api/login/professional', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+        
+        const data = await response.json();
+        
+        if(response.ok){
+          // Success - save token and redirect
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("username", username);
+          localStorage.setItem("role", "professional");
           alert("Login successful!");
-          window.location.href = "{{ url_for('hp_professor.home_professor_page') }}"; // Go to professor home
+          window.location.href = "{{ url_for('hp_professor.home_professor_page') }}";
         } else {
-          alert("Invalid credentials.");
+          // Show error message from server
+          alert(data.message || "Invalid credentials.");
         }
-      } catch {
-        alert("Error reading account. Please re-register.");
+      } catch(error){
+        console.error("Login error:", error);
+        alert("Could not connect to server. Please try again.");
       }
     });
   </script>

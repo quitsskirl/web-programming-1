@@ -84,9 +84,6 @@
   </section>
 </main>
 
-<!-- Emergency contact button (floating) -->
-<button id="emergencyBtn" class="emergency-btn" title="Emergency Contact">📞</button>
-
 <!-- ========== PAGE SCRIPTS ========== -->
 <script>
 (function() {
@@ -95,7 +92,6 @@
   const sideMenu = document.getElementById('sideMenu');
   const closeMenu = document.getElementById('closeMenu');
   const chatBtn = document.getElementById('chatBtn');
-  const emergencyBtn = document.getElementById('emergencyBtn');
 
   // Open side menu
   menuBtn.addEventListener('click', (e) => {
@@ -122,11 +118,6 @@
   // Chat button (placeholder)
   chatBtn.addEventListener('click', () => {
     alert('Chat feature coming soon!');
-  });
-
-  // Emergency button (placeholder)
-  emergencyBtn.addEventListener('click', () => {
-    alert('Emergency assistance feature coming soon!');
   });
 })();
 </script>
