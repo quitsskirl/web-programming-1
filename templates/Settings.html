@@ -4,6 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mental Health | Settings</title>
+  
+  <!-- ==================== BOOTSTRAP CSS ==================== -->
+  <!-- Bootstrap 5: provides form styling, buttons, modals, cards -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  
   <!-- Link to settings page styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='Settings1.css') }}">
 </head>
@@ -87,6 +94,57 @@
 
   <!-- External JS file for settings functionality -->
   <script src="{{ url_for('static', filename='Settings.js') }}"></script>
+  
+  <!-- ==================== BOOTSTRAP JAVASCRIPT ==================== -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- ==================== DELETE ACCOUNT FUNCTIONALITY ==================== -->
+  <!-- This script handles the account deletion using the DELETE API endpoint -->
+  <script>
+    document.getElementById('btnDeleteAccount').addEventListener('click', async () => {
+      // Bootstrap-style confirm using window.confirm (could use a modal instead)
+      if (!confirm('Are you sure you want to delete your account? This action cannot be undone!')) {
+        return;
+      }
+      
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role') || 'student';
+      
+      if (!token) {
+        alert('You must be logged in to delete your account.');
+        return;
+      }
+      
+      // Determine the correct endpoint based on user role
+      const endpoint = role === 'professional' 
+        ? '/api/professional/delete' 
+        : '/api/student/delete';
+      
+      try {
+        // Call the DELETE API endpoint
+        const response = await fetch(endpoint, {
+          method: 'DELETE',  // HTTP DELETE method for removing resources
+          headers: {
+            'Authorization': 'Bearer ' + token  // JWT token for authentication
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          alert(data.message);
+          // Clear localStorage and redirect to login
+          localStorage.clear();
+          window.location.href = '/login-student';
+        } else {
+          alert('Error: ' + data.message);
+        }
+      } catch (error) {
+        console.error('Delete error:', error);
+        alert('Could not delete account. Please try again.');
+      }
+    });
+  </script>
 
 </body>
 </html>

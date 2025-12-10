@@ -4,7 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home Page</title>
-  <!-- Link to homepage styles -->
+  
+  <!-- ==================== BOOTSTRAP CSS ==================== -->
+  <!-- Bootstrap 5: CSS framework for responsive design and pre-built components -->
+  <!-- This provides: buttons, cards, modals, forms, grid system, etc. -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons: icon library for common UI icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <!-- Link to homepage styles (loads after Bootstrap to override if needed) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='HomePage1.css') }}">
 </head>
 <body>
@@ -60,6 +68,60 @@
 <!-- Emergency contact button (floating) -->
 <button id="emergencyBtn" class="emergency-btn" title="Emergency Contact">📞</button>
 
+<!-- ==================== BOOTSTRAP COMPONENTS ==================== -->
+<!-- Component 1: Modal - Emergency Contact Information -->
+<!-- Bootstrap Modal: popup dialog that appears over the page content -->
+<div class="modal fade" id="emergencyModal" tabindex="-1" aria-labelledby="emergencyModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+      <!-- Modal Header with title and close button -->
+      <div class="modal-header border-danger">
+        <h5 class="modal-title text-danger" id="emergencyModalLabel">
+          <i class="bi bi-exclamation-triangle-fill"></i> Emergency Contacts
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <!-- Modal Body with emergency numbers -->
+      <div class="modal-body">
+        <p><strong>National Crisis Hotline:</strong> 988</p>
+        <p><strong>Campus Security:</strong> 555-0123</p>
+        <p><strong>Counseling Center:</strong> 555-0456</p>
+        <p class="text-muted small">If you are in immediate danger, please call 911.</p>
+      </div>
+      <!-- Modal Footer with action buttons -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a href="tel:988" class="btn btn-danger">Call Now</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Component 2: Toast Notification - Welcome message -->
+<!-- Bootstrap Toast: small notification that auto-hides -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="welcomeToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header bg-success text-white">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      <strong class="me-auto">Welcome!</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      You're logged in. Need support? We're here to help! 🌿
+    </div>
+  </div>
+</div>
+
+<!-- Component 3: Alert Banner -->
+<!-- Bootstrap Alert: dismissible message banner -->
+<div class="container mt-3">
+  <div class="alert alert-info alert-dismissible fade show" role="alert">
+    <i class="bi bi-info-circle-fill"></i>
+    <strong>Tip:</strong> Use the Support Classifier to get directed to the right department.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+</div>
+
 <!-- ========== PAGE SCRIPTS ========== -->
 <script>
 (function() {
@@ -112,9 +174,11 @@
     }
   });
 
-  // Emergency button (placeholder)
+  // Emergency button - now opens Bootstrap Modal instead of alert
   emergencyBtn.addEventListener('click', () => {
-    alert('Emergency assistance feature coming soon!');
+    // Use Bootstrap's Modal API to show the emergency modal
+    const modal = new bootstrap.Modal(document.getElementById('emergencyModal'));
+    modal.show();
   });
 
   // Load user info from localStorage on page load
@@ -123,9 +187,18 @@
     const tags = localStorage.getItem('tags') || 'Student, Planner';
     document.getElementById('username').textContent = `Username: ${username}`;
     document.getElementById('userTags').textContent = `Tags: ${tags}`;
+    
+    // Show welcome toast notification using Bootstrap Toast
+    const welcomeToast = new bootstrap.Toast(document.getElementById('welcomeToast'));
+    welcomeToast.show();
   });
 })();
 </script>
+
+<!-- ==================== BOOTSTRAP JAVASCRIPT ==================== -->
+<!-- Bootstrap JS Bundle: includes Popper.js for dropdowns, tooltips, popovers -->
+<!-- Required for: modals, toasts, alerts, dropdowns, collapse, etc. -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

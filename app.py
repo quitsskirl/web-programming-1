@@ -99,8 +99,24 @@ def token_required(f):
 mongo_uri = os.getenv("MONGO_URI")  # Get connection string from environment (set in .env file)
 client = None  # MongoDB client object (will hold connection)
 db = None  # Database reference
-students = None  # Collection for student documents
-professionals = None  # Collection for professional documents
+
+# ==================== MONGODB COLLECTIONS (8 total for 2 team members) ====================
+# Collection 1: students - stores student user accounts
+students = None
+# Collection 2: professionals - stores professional/counselor accounts  
+professionals = None
+# Collection 3: appointments - stores scheduled appointments between students and professionals
+appointments = None
+# Collection 4: messages - stores chat messages between users
+messages = None
+# Collection 5: resources - stores mental health resources, articles, tips
+resources = None
+# Collection 6: feedback - stores user feedback and ratings
+feedback = None
+# Collection 7: notifications - stores user notifications
+notifications = None
+# Collection 8: support_tickets - stores support requests from classifier
+support_tickets = None
 
 if mongo_uri:  # Only try to connect if MONGO_URI is set
     try:
@@ -113,15 +129,31 @@ if mongo_uri:  # Only try to connect if MONGO_URI is set
         )
         client.admin.command("ping")  # Send ping to test if connection works
         db = client["healthDB"]  # Select/create database named "healthDB"
-        students = db["students"]  # Reference to "students" collection
-        professionals = db["professionals"]  # Reference to "professionals" collection
+        
+        # Initialize all 8 collections
+        students = db["students"]  # Collection 1: Student accounts
+        professionals = db["professionals"]  # Collection 2: Professional accounts
+        appointments = db["appointments"]  # Collection 3: Scheduled appointments
+        messages = db["messages"]  # Collection 4: Chat messages
+        resources = db["resources"]  # Collection 5: Mental health resources
+        feedback = db["feedback"]  # Collection 6: User feedback
+        notifications = db["notifications"]  # Collection 7: User notifications
+        support_tickets = db["support_tickets"]  # Collection 8: Support tickets from classifier
+        
         print("✅ MongoDB connection OK!")  # Success message
+        print("📦 8 collections initialized: students, professionals, appointments, messages, resources, feedback, notifications, support_tickets")
     except Exception as e:  # Catch any connection errors
         print("❌ MongoDB connection failed:", e)  # Print error message
         client = None  # Reset all variables to None
         db = None
         students = None
         professionals = None
+        appointments = None
+        messages = None
+        resources = None
+        feedback = None
+        notifications = None
+        support_tickets = None
 else:
     print("⚠️ MONGO_URI not set. Database features will be unavailable.")  # Warning if no connection string
 
@@ -567,6 +599,368 @@ def get_students():
         s["_id"] = str(s["_id"])  # Convert MongoDB ObjectId to string (ObjectId not JSON serializable)
         all_students.append(s)  # Add document to list
     return jsonify(all_students), 200  # Return list as JSON
+
+
+# ==================== CRUD OPERATIONS ====================
+# CRUD = Create, Read, Update, Delete - the 4 basic database operations
+# We need full CRUD for the project requirements
+
+# Import ObjectId for MongoDB document lookups by _id
+from bson import ObjectId  # ObjectId: MongoDB's unique identifier type
+
+
+# ==================== UPDATE OPERATIONS ====================
+
+# ----- Update Student Profile (UPDATE operation) -----
+@app.route("/api/student/update", methods=["PUT"])  # PUT request for updating data
+@token_required  # User must be logged in
+def update_student():
+    """
+    UPDATE operation: Modify an existing student's profile.
+    
+    This is one of the 4 CRUD operations required for the project.
+    - C: Create (register) ✓
+    - R: Read (get students) ✓
+    - U: Update (this function) ✓
+    - D: Delete (below) ✓
+    
+    URL: PUT /api/student/update
+    Headers: Authorization: Bearer <token>
+    
+    Request JSON:
+        {
+            "tags": ["new", "tags"],      // Optional: update interests/tags
+            "email": "new@email.com"      // Optional: update email
+        }
+    
+    Response: Success or error message
+    """
+    if students is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    # Get current user from JWT token (set by @token_required decorator)
+    current_user = request.current_user
+    username = current_user.get('username')
+    
+    # Only students can update student profiles
+    if current_user.get('role') != 'student':
+        return jsonify({"message": "Access denied. Only students can update their profile."}), 403
+    
+    # Get update data from request body
+    data = request.get_json(silent=True) or {}
+    
+    # Build update document - only include fields that were provided
+    update_fields = {}
+    
+    if "tags" in data:  # Update tags/interests if provided
+        tags = data["tags"]
+        if not isinstance(tags, list):  # Ensure tags is a list
+            tags = [tags]
+        update_fields["tags"] = tags
+    
+    if "email" in data:  # Update email if provided
+        update_fields["email"] = data["email"]
+    
+    if "bio" in data:  # Update bio/description if provided
+        update_fields["bio"] = data["bio"]
+    
+    # Check if there's anything to update
+    if not update_fields:
+        return jsonify({"message": "No fields to update provided"}), 400
+    
+    # Perform the UPDATE operation in MongoDB
+    # update_one() finds one document and updates it
+    result = students.update_one(
+        {"username": username},  # Filter: find document with this username
+        {"$set": update_fields}  # Update: set the new field values
+    )
+    
+    # Check if update was successful
+    if result.modified_count > 0:
+        return jsonify({"message": "Profile updated successfully!", "updated_fields": list(update_fields.keys())}), 200
+    else:
+        return jsonify({"message": "No changes made (profile may already have these values)"}), 200
+
+
+# ----- Update Professional Profile (UPDATE operation) -----
+@app.route("/api/professional/update", methods=["PUT"])
+@token_required
+def update_professional():
+    """
+    UPDATE operation: Modify an existing professional's profile.
+    Similar to student update but for professionals.
+    """
+    if professionals is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Access denied. Only professionals can update their profile."}), 403
+    
+    data = request.get_json(silent=True) or {}
+    update_fields = {}
+    
+    if "specialty" in data:
+        update_fields["specialty"] = data["specialty"]
+    
+    if "email" in data:
+        update_fields["email"] = data["email"]
+    
+    if "bio" in data:
+        update_fields["bio"] = data["bio"]
+    
+    if "availability" in data:  # Professionals can set availability
+        update_fields["availability"] = data["availability"]
+    
+    if not update_fields:
+        return jsonify({"message": "No fields to update provided"}), 400
+    
+    result = professionals.update_one(
+        {"username": username},
+        {"$set": update_fields}
+    )
+    
+    if result.modified_count > 0:
+        return jsonify({"message": "Profile updated successfully!"}), 200
+    else:
+        return jsonify({"message": "No changes made"}), 200
+
+
+# ==================== DELETE OPERATIONS ====================
+
+# ----- Delete Student Account (DELETE operation) -----
+@app.route("/api/student/delete", methods=["DELETE"])  # DELETE request for removing data
+@token_required
+def delete_student():
+    """
+    DELETE operation: Remove a student account from the database.
+    
+    This completes our CRUD operations:
+    - C: Create (register) ✓
+    - R: Read (get students) ✓
+    - U: Update (above) ✓
+    - D: Delete (this function) ✓
+    
+    URL: DELETE /api/student/delete
+    Headers: Authorization: Bearer <token>
+    
+    IMPORTANT: This permanently deletes the account!
+    """
+    if students is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    
+    if current_user.get('role') != 'student':
+        return jsonify({"message": "Access denied. Only students can delete their account."}), 403
+    
+    # Perform the DELETE operation in MongoDB
+    # delete_one() finds and removes one document
+    result = students.delete_one({"username": username})
+    
+    if result.deleted_count > 0:
+        return jsonify({"message": "Account deleted successfully. Sorry to see you go!"}), 200
+    else:
+        return jsonify({"message": "Account not found"}), 404
+
+
+# ----- Delete Professional Account (DELETE operation) -----
+@app.route("/api/professional/delete", methods=["DELETE"])
+@token_required
+def delete_professional():
+    """
+    DELETE operation: Remove a professional account.
+    """
+    if professionals is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Access denied."}), 403
+    
+    result = professionals.delete_one({"username": username})
+    
+    if result.deleted_count > 0:
+        return jsonify({"message": "Account deleted successfully."}), 200
+    else:
+        return jsonify({"message": "Account not found"}), 404
+
+
+# ==================== ADDITIONAL COLLECTION ROUTES ====================
+# These routes demonstrate CRUD operations on other collections
+
+# ----- Create Appointment (CREATE for appointments collection) -----
+@app.route("/api/appointments", methods=["POST"])
+@token_required
+def create_appointment():
+    """
+    CREATE operation for appointments collection.
+    Allows students to book appointments with professionals.
+    """
+    if appointments is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    data = request.get_json(silent=True) or {}
+    
+    # Create appointment document
+    appointment = {
+        "student_username": current_user.get('username'),
+        "professional_username": data.get("professional"),
+        "date": data.get("date"),
+        "time": data.get("time"),
+        "reason": data.get("reason", ""),
+        "status": "pending",  # pending, confirmed, completed, cancelled
+        "created_at": datetime.datetime.utcnow()
+    }
+    
+    result = appointments.insert_one(appointment)
+    
+    return jsonify({
+        "message": "Appointment requested!",
+        "appointment_id": str(result.inserted_id)
+    }), 201
+
+
+# ----- Get Appointments (READ for appointments collection) -----
+@app.route("/api/appointments", methods=["GET"])
+@token_required
+def get_appointments():
+    """
+    READ operation for appointments collection.
+    Returns appointments for the logged-in user.
+    """
+    if appointments is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    role = current_user.get('role')
+    
+    # Find appointments based on user role
+    if role == 'student':
+        query = {"student_username": username}
+    else:
+        query = {"professional_username": username}
+    
+    user_appointments = []
+    for apt in appointments.find(query):
+        apt["_id"] = str(apt["_id"])
+        apt["created_at"] = str(apt.get("created_at", ""))
+        user_appointments.append(apt)
+    
+    return jsonify(user_appointments), 200
+
+
+# ----- Submit Feedback (CREATE for feedback collection) -----
+@app.route("/api/feedback", methods=["POST"])
+@token_required
+def submit_feedback():
+    """
+    CREATE operation for feedback collection.
+    Allows users to submit feedback about the platform.
+    """
+    if feedback is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    data = request.get_json(silent=True) or {}
+    
+    feedback_doc = {
+        "username": current_user.get('username'),
+        "rating": data.get("rating", 5),  # 1-5 stars
+        "comment": data.get("comment", ""),
+        "category": data.get("category", "general"),  # general, bug, suggestion
+        "created_at": datetime.datetime.utcnow()
+    }
+    
+    feedback.insert_one(feedback_doc)
+    
+    return jsonify({"message": "Thank you for your feedback!"}), 201
+
+
+# ----- Get Resources (READ for resources collection) -----
+@app.route("/api/resources", methods=["GET"])
+def get_resources():
+    """
+    READ operation for resources collection.
+    Returns mental health resources (public, no auth required).
+    """
+    if resources is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    all_resources = []
+    for r in resources.find():
+        r["_id"] = str(r["_id"])
+        all_resources.append(r)
+    
+    return jsonify(all_resources), 200
+
+
+# ----- Add Resource (CREATE for resources collection - professionals only) -----
+@app.route("/api/resources", methods=["POST"])
+@token_required
+def add_resource():
+    """
+    CREATE operation for resources collection.
+    Only professionals can add resources.
+    """
+    if resources is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Only professionals can add resources"}), 403
+    
+    data = request.get_json(silent=True) or {}
+    
+    resource = {
+        "title": data.get("title"),
+        "content": data.get("content"),
+        "category": data.get("category", "general"),  # stress, anxiety, depression, etc.
+        "added_by": current_user.get('username'),
+        "created_at": datetime.datetime.utcnow()
+    }
+    
+    resources.insert_one(resource)
+    
+    return jsonify({"message": "Resource added successfully!"}), 201
+
+
+# ----- Create Support Ticket (CREATE for support_tickets collection) -----
+@app.route("/api/support-ticket", methods=["POST"])
+@token_required
+def create_support_ticket():
+    """
+    CREATE operation for support_tickets collection.
+    Creates a support ticket from the classifier results.
+    """
+    if support_tickets is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    data = request.get_json(silent=True) or {}
+    
+    ticket = {
+        "student_username": current_user.get('username'),
+        "message": data.get("message"),
+        "department": data.get("department"),  # IDC, OPEN, COUNSEL
+        "crisis": data.get("crisis", False),
+        "status": "open",  # open, in_progress, resolved
+        "created_at": datetime.datetime.utcnow()
+    }
+    
+    result = support_tickets.insert_one(ticket)
+    
+    return jsonify({
+        "message": "Support ticket created",
+        "ticket_id": str(result.inserted_id)
+    }), 201
 
 
 # ==================== START SERVER ====================
