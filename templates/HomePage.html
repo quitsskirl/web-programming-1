@@ -54,11 +54,14 @@
   <h1>Home</h1>
   <p>Your companion for a successful and balanced study experience</p>
   
-  <!-- Events carousel (placeholder) -->
-  <div class="carousel">
-    <button>&lt;</button>
-    <p>This Week's Event</p>
-    <button>&gt;</button>
+  <!-- Image Slider -->
+  <div class="slider">
+    <button class="arrow left" onclick="prevSlide()">&#10094;</button>
+    <div class="slides">
+      <img src="{{ url_for('static', filename='images/therapy.jpg') }}" class="slide active" alt="Therapy">
+      <img src="{{ url_for('static', filename='images/session.webp') }}" class="slide" alt="Session">
+    </div>
+    <button class="arrow right" onclick="nextSlide()">&#10095;</button>
   </div>
   
   <!-- Link to more info page -->
@@ -149,11 +152,40 @@
     document.getElementById('username').textContent = `Username: ${username}`;
     document.getElementById('userTags').textContent = `Tags: ${tags}`;
     
-    // Show welcome toast notification using Bootstrap Toast
-    const welcomeToast = new bootstrap.Toast(document.getElementById('welcomeToast'));
-    welcomeToast.show();
+    // Show welcome toast ONLY after fresh login (not on every page visit)
+    const justLoggedIn = localStorage.getItem('justLoggedIn');
+    if (justLoggedIn === 'true') {
+      const welcomeToast = new bootstrap.Toast(document.getElementById('welcomeToast'));
+      welcomeToast.show();
+      // Clear the flag so it doesn't show again
+      localStorage.removeItem('justLoggedIn');
+    }
   });
 })();
+</script>
+
+<!-- ==================== IMAGE SLIDER SCRIPT ==================== -->
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll(".slide");
+  
+  function showSlide(index) {
+    slides.forEach(slide => slide.classList.remove("active"));
+    slides[index].classList.add("active");
+  }
+  
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % slides.length;
+    showSlide(currentSlide);
+  }
+  
+  function prevSlide() {
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    showSlide(currentSlide);
+  }
+  
+  // Auto-slide every 5 seconds
+  setInterval(nextSlide, 5000);
 </script>
 
 <!-- ==================== BOOTSTRAP JAVASCRIPT ==================== -->
