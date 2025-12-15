@@ -9,6 +9,7 @@ from .register_professional import register_pf_bp
 from .services import services_bp
 from .settings import settings_bp
 from .support_classifier import classifier_bp  # <-- NEW import
+from .appointments import appointments_bp  # Appointments booking system
 
 
 # =============================================================================
@@ -27,5 +28,6 @@ all_blueprints = [
     register_pf_bp,     # /register-professional
     services_bp,        # /services
     settings_bp,        # /settings
-    classifier_bp,      # /support-classifier   <-- NEW entry
+    classifier_bp,      # /support-classifier
+    appointments_bp,    # /book-appointment, /my-appointments
 ]

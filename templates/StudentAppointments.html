@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mental Health | My Appointments</title>
+  
+  <!-- ==================== BOOTSTRAP CSS ==================== -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <!-- Link to appointment page styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='BookAppointment.css') }}">
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header>
+  <div class="header-left">
+    <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
+    <h2>My Appointments</h2>
+  </div>
+  <div class="header-right">
+    <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
+  </div>
+</header>
+
+<!-- ========== SIDE NAVIGATION MENU (STUDENT) ========== -->
+<nav id="sideMenu" class="side-menu" aria-hidden="true">
+  <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
+  <h3>Menu</h3>
+  <a href="{{ url_for('home.home_page') }}">🏠 Home Page</a>
+  <a href="{{ url_for('services.services_page') }}">🛠️ Services</a>
+  <a href="{{ url_for('classifier.support_classifier_page') }}">🤖 Support Classifier</a>
+  <a href="{{ url_for('appointments.book_appointment') }}">📅 Book Appointment</a>
+  <a class="active" href="{{ url_for('appointments.student_appointments') }}">📋 My Appointments</a>
+  <a href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
+</nav>
+
+<!-- ========== MAIN CONTENT ========== -->
+<main class="container">
+  <div class="appointments-container">
+    <div class="page-header">
+      <h1><i class="bi bi-calendar-event"></i> Your Appointments</h1>
+      <a href="{{ url_for('appointments.book_appointment') }}" class="btn-new">
+        <i class="bi bi-plus-circle"></i> Book New
+      </a>
+    </div>
+
+    <!-- Appointments List -->
+    <div class="appointments-list">
+      {% if appointments %}
+        {% for apt in appointments %}
+          <div class="appointment-card">
+            <div class="appointment-status {{ apt.status }}">
+              {% if apt.status == 'scheduled' %}
+                <i class="bi bi-clock-history"></i> Pending
+              {% elif apt.status == 'confirmed' %}
+                <i class="bi bi-check-circle"></i> Confirmed
+              {% elif apt.status == 'completed' %}
+                <i class="bi bi-check2-all"></i> Completed
+              {% elif apt.status == 'cancelled' %}
+                <i class="bi bi-x-circle"></i> Cancelled
+              {% else %}
+                <i class="bi bi-circle"></i> {{ apt.status | capitalize }}
+              {% endif %}
+            </div>
+            
+            <div class="appointment-details">
+              <div class="appointment-info">
+                <h3>
+                  <i class="bi bi-person-badge"></i>
+                  {{ apt.professional_username or 'Counselor' }}
+                </h3>
+                <p class="datetime">
+                  <i class="bi bi-calendar3"></i> {{ apt.date }}
+                  <span class="separator">•</span>
+                  <i class="bi bi-clock"></i> {{ apt.time }}
+                </p>
+                {% if apt.reason %}
+                  <p class="reason">
+                    <i class="bi bi-chat-quote"></i> {{ apt.reason }}
+                  </p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+          <i class="bi bi-calendar-x"></i>
+          <h3>No Appointments Yet</h3>
+          <p>You haven't booked any appointments. Schedule one to get started!</p>
+          <a href="{{ url_for('appointments.book_appointment') }}" class="btn-book">
+            <i class="bi bi-plus-circle"></i> Book Your First Appointment
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</main>
+
+<!-- ========== PAGE SCRIPTS ========== -->
+<script>
+(function() {
+  const menuBtn = document.getElementById('menuBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const closeMenu = document.getElementById('closeMenu');
+  const chatBtn = document.getElementById('chatBtn');
+
+  // Load student appointments filtered by username
+  document.addEventListener('DOMContentLoaded', () => {
+    const username = localStorage.getItem('username') || 'Guest';
+    const currentUrl = new URL(window.location.href);
+    if (!currentUrl.searchParams.has('student')) {
+      currentUrl.searchParams.set('student', username);
+      window.location.href = currentUrl.toString();
+    }
+  });
+
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.add('open');
+    sideMenu.setAttribute('aria-hidden', 'false');
+  });
+
+  closeMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.remove('open');
+    sideMenu.setAttribute('aria-hidden', 'true');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!sideMenu.contains(e.target) && e.target !== menuBtn) {
+      sideMenu.classList.remove('open');
+      sideMenu.setAttribute('aria-hidden', 'true');
+    }
+  });
+
+  chatBtn.addEventListener('click', () => {
+    alert('Chat feature coming soon!');
+  });
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+

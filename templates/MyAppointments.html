@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mental Health | My Appointments - Professional</title>
+  
+  <!-- ==================== BOOTSTRAP CSS ==================== -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <!-- Link to appointment page styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='BookAppointment.css') }}">
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header>
+  <div class="header-left">
+    <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
+    <h2>My Appointments</h2>
+  </div>
+  <div class="header-right">
+    <button id="userBtn" class="user-icon" title="View Account">👤</button>
+    <div id="userPopup" class="user-popup">
+      <h3 id="username">Username: Professional</h3>
+      <p id="userRole">Role: Counselor</p>
+    </div>
+  </div>
+</header>
+
+<!-- ========== SIDE NAVIGATION MENU (PROFESSIONAL) ========== -->
+<nav id="sideMenu" class="side-menu" aria-hidden="true">
+  <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
+  <h3>Menu</h3>
+  <a href="{{ url_for('hp_professor.home_professor_page') }}">🏠 Home Page</a>
+  <a href="{{ url_for('services.services_page') }}">🛠️ Services</a>
+  <a class="active" href="{{ url_for('appointments.my_appointments') }}">📋 My Appointments</a>
+  <a href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
+</nav>
+
+<!-- ========== MAIN CONTENT ========== -->
+<main class="container">
+  <div class="appointments-container">
+    <div class="page-header">
+      <h1><i class="bi bi-calendar-check"></i> Student Appointments</h1>
+      <p class="subtitle">Manage appointment requests from students</p>
+    </div>
+
+    <!-- Appointments List -->
+    <div class="appointments-list">
+      {% if appointments %}
+        {% for apt in appointments %}
+          <div class="appointment-card professional-view">
+            <div class="appointment-status {{ apt.status }}">
+              {% if apt.status == 'scheduled' %}
+                <i class="bi bi-clock-history"></i>
+              {% elif apt.status == 'confirmed' %}
+                <i class="bi bi-check-circle"></i>
+              {% elif apt.status == 'completed' %}
+                <i class="bi bi-check2-all"></i>
+              {% elif apt.status == 'cancelled' %}
+                <i class="bi bi-x-circle"></i>
+              {% else %}
+                <i class="bi bi-circle"></i>
+              {% endif %}
+              {{ apt.status | capitalize }}
+            </div>
+            
+            <div class="appointment-details">
+              <div class="appointment-info">
+                <h3>
+                  <i class="bi bi-person-fill"></i>
+                  Student: {{ apt.student_username or 'Anonymous' }}
+                </h3>
+                <p class="datetime">
+                  <i class="bi bi-calendar3"></i> {{ apt.date }}
+                  <span class="separator">•</span>
+                  <i class="bi bi-clock"></i> {{ apt.time }}
+                </p>
+                {% if apt.reason %}
+                  <p class="reason">
+                    <i class="bi bi-chat-quote"></i> {{ apt.reason }}
+                  </p>
+                {% endif %}
+              </div>
+
+              <!-- Action Buttons for Professionals -->
+              {% if apt.status == 'scheduled' %}
+                <div class="appointment-actions">
+                  <form action="{{ url_for('appointments.update_appointment_status') }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="appointment_id" value="{{ apt._id }}">
+                    <input type="hidden" name="status" value="confirmed">
+                    <button type="submit" class="btn-action confirm">
+                      <i class="bi bi-check-lg"></i> Confirm
+                    </button>
+                  </form>
+                  <form action="{{ url_for('appointments.update_appointment_status') }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="appointment_id" value="{{ apt._id }}">
+                    <input type="hidden" name="status" value="cancelled">
+                    <button type="submit" class="btn-action cancel">
+                      <i class="bi bi-x-lg"></i> Decline
+                    </button>
+                  </form>
+                </div>
+              {% elif apt.status == 'confirmed' %}
+                <div class="appointment-actions">
+                  <form action="{{ url_for('appointments.update_appointment_status') }}" method="POST" style="display: inline;">
+                    <input type="hidden" name="appointment_id" value="{{ apt._id }}">
+                    <input type="hidden" name="status" value="completed">
+                    <button type="submit" class="btn-action complete">
+                      <i class="bi bi-check2-all"></i> Mark Complete
+                    </button>
+                  </form>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+          <i class="bi bi-calendar-x"></i>
+          <h3>No Appointments Yet</h3>
+          <p>You don't have any appointments scheduled. Students can book appointments with you.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</main>
+
+<!-- ========== PAGE SCRIPTS ========== -->
+<script>
+(function() {
+  const menuBtn = document.getElementById('menuBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const closeMenu = document.getElementById('closeMenu');
+  const userBtn = document.getElementById('userBtn');
+  const userPopup = document.getElementById('userPopup');
+
+  // Load professional info
+  document.addEventListener('DOMContentLoaded', () => {
+    const username = localStorage.getItem('username') || 'Professional';
+    document.getElementById('username').textContent = `Username: ${username}`;
+    
+    // Load appointments filtered by this professional
+    const currentUrl = new URL(window.location.href);
+    if (!currentUrl.searchParams.has('professional')) {
+      currentUrl.searchParams.set('professional', username);
+      window.location.href = currentUrl.toString();
+    }
+  });
+
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.add('open');
+    sideMenu.setAttribute('aria-hidden', 'false');
+  });
+
+  closeMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.remove('open');
+    sideMenu.setAttribute('aria-hidden', 'true');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!sideMenu.contains(e.target) && e.target !== menuBtn) {
+      sideMenu.classList.remove('open');
+      sideMenu.setAttribute('aria-hidden', 'true');
+    }
+  });
+
+  userBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    userPopup.classList.toggle('active');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!userPopup.contains(e.target) && e.target !== userBtn) {
+      userPopup.classList.remove('active');
+    }
+  });
+})();
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

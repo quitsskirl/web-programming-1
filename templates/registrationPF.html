@@ -40,6 +40,18 @@
         <input type="password" id="password" placeholder="Enter a strong password" required />
       </div>
 
+      <!-- Specialty input -->
+      <div class="form-group">
+        <label for="specialty">Specialty</label>
+        <select id="specialty">
+          <option value="General Counselor">General Counselor</option>
+          <option value="Mental Health Counselor">Mental Health Counselor</option>
+          <option value="Academic Advisor">Academic Advisor</option>
+          <option value="Psychologist">Psychologist</option>
+          <option value="Career Counselor">Career Counselor</option>
+        </select>
+      </div>
+
       <button class="register-btn" type="submit">REGISTER</button>
 
       <!-- Link to login page -->
@@ -53,19 +65,47 @@
 
   <!-- ========== REGISTRATION SCRIPT ========== -->
   <script>
-    // Handle form submission
-    document.getElementById("registerFormPF").addEventListener("submit", function(e){
+    // Handle form submission - registers with database
+    document.getElementById("registerFormPF").addEventListener("submit", async function(e){
       e.preventDefault(); // Prevent page reload
       
       // Get form values
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
+      const specialty = document.getElementById("specialty").value;
 
-      if(username && password){
-        // Save professor credentials to localStorage
-        localStorage.setItem("mhProfessor", JSON.stringify({ username, password }));
-        alert("Professor registration successful! Please log in.");
-        window.location.href = "{{ url_for('login_pf.login_professional_page') }}"; // Go to login
+      if(!username || !password){
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      try {
+        // Send registration request to backend API
+        const response = await fetch('/api/register/professional', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ 
+            username: username, 
+            password: password,
+            specialty: specialty
+          })
+        });
+        
+        const data = await response.json();
+        
+        if(response.ok){
+          // Success - redirect to login
+          alert("Professor registration successful! Please log in.");
+          window.location.href = "{{ url_for('login_pf.login_professional_page') }}";
+        } else {
+          // Show error message from server
+          alert(data.message || "Registration failed. Please try again.");
+        }
+      } catch(error){
+        console.error("Registration error:", error);
+        alert("Could not connect to server. Please try again.");
       }
     });
   </script>

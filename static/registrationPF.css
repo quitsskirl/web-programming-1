@@ -96,8 +96,25 @@ input{
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-input:focus{ border-color: var(--green-400); outline: none; box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.2); }
+input:focus, select:focus{ border-color: var(--green-400); outline: none; box-shadow: 0 0 0 3px rgba(116, 198, 157, 0.2); }
 input::placeholder{ color: #9cb8ad; }
+
+/* Select dropdown styling */
+select{
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #d8ebe3;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #f5f5f5;
+  color: #333;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%232d6a4f' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
 
 /* ----- Buttons ----- */
 .login-btn, .register-btn{
