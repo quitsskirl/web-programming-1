@@ -111,7 +111,7 @@ def book_appointment():
         POST: Redirect to student home page with success message
     """
     # Import here to avoid circular imports
-    from app import professionals, appointments
+    from app import professionals, appointments, create_notification
     
     if request.method == 'POST':
         # Check if database is available
@@ -141,6 +141,14 @@ def book_appointment():
         
         # Insert into database
         appointments.insert_one(appointment)
+        
+        # Create notification for the professional
+        create_notification(
+            user_id=professional_id,
+            title="New Appointment Request",
+            message=f"Student {student_username} has booked an appointment with you on {date} at {time}.",
+            notif_type="appointment"
+        )
         
         # Redirect to student booking confirmation page
         return redirect(url_for('appointments.booking_success'))

@@ -83,7 +83,11 @@
           localStorage.setItem("token", data.token);
           localStorage.setItem("username", username);
           localStorage.setItem("role", "professional");
-          alert("Login successful!");
+          localStorage.setItem("justLoggedIn", "true");  // Flag to show notifications
+          
+          // Also set cookie for server-side authentication on page routes
+          document.cookie = `jwt_token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
+          
           window.location.href = "{{ url_for('hp_professor.home_professor_page') }}";
         } else {
           // Show error message from server

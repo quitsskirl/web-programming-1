@@ -88,8 +88,11 @@
           localStorage.setItem("token", data.token);
           localStorage.setItem("username", data.user.username);
           localStorage.setItem("role", data.user.role);
+          localStorage.setItem("justLoggedIn", "true");
           
-          alert("Login successful!");
+          // Also set cookie for server-side authentication on page routes
+          document.cookie = `jwt_token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
+          
           window.location.href = "{{ url_for('home.home_page') }}"; // Go to student home
         } else {
           alert(data.message || "Login failed. Please check your credentials.");

@@ -4,8 +4,44 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Professor Space</title>
+  
+  <!-- ==================== BOOTSTRAP CSS ==================== -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  
   <!-- Link to professor homepage styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='HPprofessor1.css') }}">
+  
+  <style>
+    /* Toast notification styles */
+    .notification-toast {
+      min-width: 320px;
+    }
+    .notification-toast .toast-header {
+      background: linear-gradient(135deg, #8a9562, #6f7843);
+      color: white;
+    }
+    .notification-toast .toast-header .btn-close {
+      filter: brightness(0) invert(1);
+    }
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #dc3545;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .notification-btn {
+      position: relative;
+    }
+  </style>
 </head>
 
 <body>
@@ -15,18 +51,22 @@
   <!-- Left side: Menu button -->
   <div class="header-left">
     <button id="menuBtn" class="menu-icon">&#9776;</button>
-    <h2>Menu</h2>
+    <h2>Professor Home</h2>
   </div>
 
-  <!-- Right side: Chat and user buttons -->
+  <!-- Right side: Notification, Chat and user buttons -->
   <div class="header-right">
+    <button id="notifBtn" class="chat-icon notification-btn" title="Notifications">
+      🔔
+      <span id="notifBadge" class="notification-badge" style="display: none;">0</span>
+    </button>
     <button id="chatBtn" class="chat-icon">💬</button>
     <button id="userBtn" class="user-icon">👤</button>
 
     <!-- User popup - shows username and role -->
     <div id="userPopup" class="user-popup">
       <h3 id="username">Username: Guest</h3>
-      <p id="userTags">Tags: Student, Planner</p>
+      <p id="userRole">Role: Professional</p>
     </div>
   </div>
 </header>
@@ -37,15 +77,223 @@
   <h3>Menu</h3>
 
   <!-- Navigation links for professors -->
-  <!-- Home link goes to PROFESSOR home page (not student) -->
   <a href="{{ url_for('hp_professor.home_professor_page') }}">🏠 Home Page</a>
-  <a href="{{ url_for('services.services_page') }}">🛠️ Services</a>
   <a href="{{ url_for('appointments.my_appointments') }}">📋 My Appointments</a>
-  <a href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
+  <a href="{{ url_for('settings.settings_professor_page') }}">⚙️ Settings</a>
 </nav>
 
-<!-- External JS file for professor home functionality -->
-<script src="{{ url_for('static', filename='HPprofessor1.js') }}"></script>
+<!-- ========== MAIN CONTENT ========== -->
+<main class="container mt-4">
+  <div class="text-center">
+    <h1 style="color: #4b5431;">Welcome, Professor!</h1>
+    <p>Manage your appointments and support students.</p>
+    
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <a href="{{ url_for('appointments.my_appointments') }}" class="btn btn-success btn-lg">
+        <i class="bi bi-calendar-check"></i> View Appointments
+      </a>
+    </div>
+  </div>
+</main>
+
+<!-- ========== TOAST CONTAINER FOR NOTIFICATIONS ========== -->
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 9999;">
+  <!-- Toasts will be dynamically added here -->
+</div>
+
+<!-- ========== BOOTSTRAP JAVASCRIPT ========== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ========== PAGE SCRIPTS ========== -->
+<script>
+(function() {
+  const menuBtn = document.getElementById('menuBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const closeMenu = document.getElementById('closeMenu');
+  const chatBtn = document.getElementById('chatBtn');
+  const userBtn = document.getElementById('userBtn');
+  const userPopup = document.getElementById('userPopup');
+  const notifBtn = document.getElementById('notifBtn');
+  const notifBadge = document.getElementById('notifBadge');
+  const toastContainer = document.getElementById('toastContainer');
+
+  // Load user info
+  document.addEventListener('DOMContentLoaded', () => {
+    const username = localStorage.getItem('username') || 'Professional';
+    document.getElementById('username').textContent = `Username: ${username}`;
+    
+    // Check if just logged in - show notifications
+    const justLoggedIn = localStorage.getItem('justLoggedIn');
+    if (justLoggedIn === 'true') {
+      loadAndShowNotifications();
+      localStorage.removeItem('justLoggedIn');
+    } else {
+      // Just update the badge count
+      updateNotificationBadge();
+    }
+  });
+
+  // Function to load and display notifications
+  async function loadAndShowNotifications() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const response = await fetch('/api/notifications', {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
+
+      if (response.ok) {
+        const notifications = await response.json();
+        const unreadNotifications = notifications.filter(n => !n.read);
+        
+        // Update badge
+        if (unreadNotifications.length > 0) {
+          notifBadge.textContent = unreadNotifications.length;
+          notifBadge.style.display = 'flex';
+        } else {
+          notifBadge.style.display = 'none';
+        }
+
+        // Show toast for each unread notification (max 5)
+        unreadNotifications.slice(0, 5).forEach((notif, index) => {
+          setTimeout(() => {
+            showNotificationToast(notif);
+          }, index * 500); // Stagger the toasts
+        });
+      }
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    }
+  }
+
+  // Function to update notification badge only
+  async function updateNotificationBadge() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      const response = await fetch('/api/notifications', {
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
+
+      if (response.ok) {
+        const notifications = await response.json();
+        const unreadCount = notifications.filter(n => !n.read).length;
+        
+        if (unreadCount > 0) {
+          notifBadge.textContent = unreadCount;
+          notifBadge.style.display = 'flex';
+        } else {
+          notifBadge.style.display = 'none';
+        }
+      }
+    } catch (error) {
+      console.error('Error updating badge:', error);
+    }
+  }
+
+  // Function to show a notification toast
+  function showNotificationToast(notif) {
+    const toastId = `toast-${notif._id}`;
+    
+    const toastHTML = `
+      <div id="${toastId}" class="toast notification-toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="8000">
+        <div class="toast-header">
+          <i class="bi bi-bell-fill me-2"></i>
+          <strong class="me-auto">${notif.title}</strong>
+          <small>Just now</small>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          ${notif.message}
+        </div>
+      </div>
+    `;
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+
+    // Mark as read when toast is shown
+    markNotificationAsRead(notif._id);
+
+    // Remove toast element after it hides
+    toastElement.addEventListener('hidden.bs.toast', () => {
+      toastElement.remove();
+      updateNotificationBadge();
+    });
+  }
+
+  // Function to mark notification as read
+  async function markNotificationAsRead(notifId) {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    try {
+      await fetch(`/api/notifications/${notifId}/read`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  }
+
+  // Notification button click - show all notifications
+  notifBtn.addEventListener('click', () => {
+    loadAndShowNotifications();
+  });
+
+  // Menu button
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.add('open');
+    sideMenu.setAttribute('aria-hidden', 'false');
+  });
+
+  // Close menu
+  closeMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.remove('open');
+    sideMenu.setAttribute('aria-hidden', 'true');
+  });
+
+  // Close menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!sideMenu.contains(e.target) && e.target !== menuBtn) {
+      sideMenu.classList.remove('open');
+      sideMenu.setAttribute('aria-hidden', 'true');
+    }
+  });
+
+  // Chat button
+  chatBtn.addEventListener('click', () => {
+    alert('Chat feature coming soon!');
+  });
+
+  // User popup toggle
+  userBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    userPopup.classList.toggle('active');
+  });
+
+  // Close user popup when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!userPopup.contains(e.target) && e.target !== userBtn) {
+      userPopup.classList.remove('active');
+    }
+  });
+})();
+</script>
 
 </body>
 </html>
