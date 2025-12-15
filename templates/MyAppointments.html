@@ -138,17 +138,11 @@
   const userBtn = document.getElementById('userBtn');
   const userPopup = document.getElementById('userPopup');
 
-  // Load professional info
+  // Load professional info from localStorage for display
   document.addEventListener('DOMContentLoaded', () => {
     const username = localStorage.getItem('username') || 'Professional';
     document.getElementById('username').textContent = `Username: ${username}`;
-    
-    // Load appointments filtered by this professional
-    const currentUrl = new URL(window.location.href);
-    if (!currentUrl.searchParams.has('professional')) {
-      currentUrl.searchParams.set('professional', username);
-      window.location.href = currentUrl.toString();
-    }
+    // Note: Appointments are now filtered server-side using JWT authentication
   });
 
   menuBtn.addEventListener('click', (e) => {

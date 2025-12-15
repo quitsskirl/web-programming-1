@@ -47,8 +47,7 @@
     </div>
 
     <form method="POST" class="booking-form" id="appointmentForm">
-      <!-- Hidden field for student username (populated by JS) -->
-      <input type="hidden" name="student_username" id="studentUsername" value="Guest">
+      <!-- Note: Student username is now retrieved from JWT token on the server -->
 
       <!-- Professional Selection -->
       <div class="form-group">
@@ -124,9 +123,7 @@
   const today = new Date().toISOString().split('T')[0];
   dateInput.setAttribute('min', today);
 
-  // Load username from localStorage
-  const username = localStorage.getItem('username') || 'Guest';
-  document.getElementById('studentUsername').value = username;
+  // Note: Username is now retrieved from JWT token on the server
 
   // Open side menu
   menuBtn.addEventListener('click', (e) => {

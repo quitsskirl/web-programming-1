@@ -109,15 +109,8 @@
   const closeMenu = document.getElementById('closeMenu');
   const chatBtn = document.getElementById('chatBtn');
 
-  // Load student appointments filtered by username
-  document.addEventListener('DOMContentLoaded', () => {
-    const username = localStorage.getItem('username') || 'Guest';
-    const currentUrl = new URL(window.location.href);
-    if (!currentUrl.searchParams.has('student')) {
-      currentUrl.searchParams.set('student', username);
-      window.location.href = currentUrl.toString();
-    }
-  });
+  // Note: Appointments are now filtered server-side using JWT authentication
+  // No client-side redirect needed
 
   menuBtn.addEventListener('click', (e) => {
     e.stopPropagation();

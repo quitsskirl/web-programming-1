@@ -1,7 +1,9 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from datetime import datetime
+from functools import wraps
 import os
 import sys
+import jwt
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -10,11 +12,94 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 appointments_bp = Blueprint('appointments', __name__)
 
 
+def get_current_user():
+    """
+    Helper function to get current user from JWT token.
+    Checks both cookies and Authorization header.
+    Returns user payload dict or None if not authenticated.
+    """
+    from flask import current_app
+    
+    token = None
+    
+    # Check cookie first (for page routes)
+    token = request.cookies.get('jwt_token')
+    
+    # Fallback to Authorization header (for API routes)
+    if not token and 'Authorization' in request.headers:
+        auth_header = request.headers['Authorization']
+        if auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+    
+    # Fallback to query parameter
+    if not token:
+        token = request.args.get('token')
+    
+    if not token:
+        return None
+    
+    try:
+        secret_key = current_app.config.get('JWT_SECRET_KEY', 'your-secret-key-change-in-production')
+        payload = jwt.decode(token, secret_key, algorithms=['HS256'])
+        return payload
+    except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+        return None
+
+
+def login_required_page(f):
+    """
+    Decorator for page routes that require authentication.
+    Redirects to login page if not authenticated.
+    """
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        user = get_current_user()
+        if not user:
+            # Redirect to login page
+            return redirect(url_for('login_st.login_student_page'))
+        request.current_user = user
+        return f(*args, **kwargs)
+    return decorated
+
+
+def professional_required(f):
+    """
+    Decorator for routes that require professional role.
+    """
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        user = get_current_user()
+        if not user:
+            return redirect(url_for('login_pf.login_professional_page'))
+        if user.get('role') != 'professional':
+            return jsonify({"message": "Access denied. Professionals only."}), 403
+        request.current_user = user
+        return f(*args, **kwargs)
+    return decorated
+
+
+def student_required(f):
+    """
+    Decorator for routes that require student role.
+    """
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        user = get_current_user()
+        if not user:
+            return redirect(url_for('login_st.login_student_page'))
+        if user.get('role') != 'student':
+            return jsonify({"message": "Access denied. Students only."}), 403
+        request.current_user = user
+        return f(*args, **kwargs)
+    return decorated
+
+
 @appointments_bp.route('/book-appointment', methods=['GET', 'POST'])
+@student_required  # Bug 1 Fix: Require student authentication
 def book_appointment():
     """
     Book an appointment with a professional.
-    FOR STUDENTS ONLY.
+    FOR STUDENTS ONLY - requires authentication.
     
     URL: http://localhost:5000/book-appointment
     
@@ -39,8 +124,9 @@ def book_appointment():
         time = request.form.get('time')
         reason = request.form.get('reason', '')
         
-        # Get username from localStorage (sent via hidden field)
-        student_username = request.form.get('student_username', 'Guest')
+        # Bug 1 Fix: Use authenticated user's username instead of form field
+        # This prevents users from booking appointments for other students
+        student_username = request.current_user.get('username')
         
         # Create appointment document
         appointment = {
@@ -72,6 +158,7 @@ def book_appointment():
 
 
 @appointments_bp.route('/booking-success')
+@student_required  # Require authentication for success page too
 def booking_success():
     """
     Show booking confirmation for students.
@@ -82,6 +169,7 @@ def booking_success():
 
 
 @appointments_bp.route('/my-appointments')
+@professional_required  # Bug 1 Fix: Require professional authentication
 def my_appointments():
     """
     View all appointments for professionals.
@@ -95,15 +183,15 @@ def my_appointments():
     # Import here to avoid circular imports
     from app import appointments
     
-    # Get professional username from query param (sent by JS from localStorage)
-    professional_username = request.args.get('professional', None)
+    # Bug 2 Fix: Use authenticated user's username from JWT token
+    # Don't rely on query parameters which can be manipulated
+    professional_username = request.current_user.get('username')
     
-    # Get all appointments for this professional
+    # Get all appointments for this professional only
     appointments_list = []
-    if appointments is not None:
-        query = {}
-        if professional_username:
-            query = {"professional_username": professional_username}
+    if appointments is not None and professional_username:
+        # Bug 2 Fix: Always filter by the authenticated user
+        query = {"professional_username": professional_username}
         
         for apt in appointments.find(query).sort("date", -1):
             # Skip schema documents
@@ -117,10 +205,11 @@ def my_appointments():
 
 
 @appointments_bp.route('/update-appointment-status', methods=['POST'])
+@professional_required  # Bug 1 Fix: Require professional authentication
 def update_appointment_status():
     """
     Update appointment status (confirm, complete, cancel).
-    FOR PROFESSIONALS ONLY.
+    FOR PROFESSIONALS ONLY - requires authentication.
     
     URL: http://localhost:5000/update-appointment-status
     """
@@ -136,36 +225,43 @@ def update_appointment_status():
     if not appointment_id or not new_status:
         return jsonify({"message": "Missing appointment_id or status"}), 400
     
-    # Update the appointment status
+    # Bug 1 Fix: Verify the appointment belongs to this professional before updating
+    professional_username = request.current_user.get('username')
+    
+    # Update the appointment status only if it belongs to this professional
     result = appointments.update_one(
-        {"_id": ObjectId(appointment_id)},
+        {
+            "_id": ObjectId(appointment_id),
+            "professional_username": professional_username  # Security: verify ownership
+        },
         {"$set": {"status": new_status}}
     )
     
     if result.modified_count > 0:
         return redirect(url_for('appointments.my_appointments'))
     else:
-        return jsonify({"message": "Appointment not found"}), 404
+        return jsonify({"message": "Appointment not found or access denied"}), 404
 
 
 @appointments_bp.route('/student-appointments')
+@student_required  # Bug 1 Fix: Require student authentication
 def student_appointments():
     """
     View appointments for students - shows their booked appointments.
-    FOR STUDENTS ONLY.
+    FOR STUDENTS ONLY - requires authentication.
     
     URL: http://localhost:5000/student-appointments
     """
     from app import appointments
     
-    # Get student username from query param
-    student_username = request.args.get('student', None)
+    # Bug 2 Fix: Use authenticated user's username from JWT token
+    # Don't rely on query parameters which can be manipulated
+    student_username = request.current_user.get('username')
     
     appointments_list = []
-    if appointments is not None:
-        query = {}
-        if student_username:
-            query = {"student_username": student_username}
+    if appointments is not None and student_username:
+        # Bug 2 Fix: Always filter by the authenticated user
+        query = {"student_username": student_username}
         
         for apt in appointments.find(query).sort("date", -1):
             if apt.get("_schema"):
