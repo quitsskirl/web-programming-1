@@ -8,8 +8,9 @@ from .register_student import register_st_bp
 from .register_professional import register_pf_bp
 from .services import services_bp
 from .settings import settings_bp
-from .support_classifier import classifier_bp  # <-- NEW import
-from .appointments import appointments_bp  # Appointments booking system
+from .support_classifier import classifier_bp
+from .appointments import appointments_bp
+from .resources import resources_bp  # Resources page for students
 
 
 # =============================================================================
@@ -27,7 +28,8 @@ all_blueprints = [
     register_st_bp,     # /register-student
     register_pf_bp,     # /register-professional
     services_bp,        # /services
-    settings_bp,        # /settings
+    settings_bp,        # /settings, /settings-professor
     classifier_bp,      # /support-classifier
     appointments_bp,    # /book-appointment, /my-appointments
+    resources_bp,       # /resources
 ]

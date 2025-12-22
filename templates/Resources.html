@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mental Health | Resources</title>
+  
+  <!-- ==================== BOOTSTRAP CSS ==================== -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <!-- Link to resources page styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='Resources.css') }}">
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<header>
+  <div class="header-left">
+    <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
+    <h2>Resources</h2>
+  </div>
+  <div class="header-right">
+    <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
+  </div>
+</header>
+
+<!-- ========== SIDE NAVIGATION MENU ========== -->
+<nav id="sideMenu" class="side-menu" aria-hidden="true">
+  <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
+  <h3>Menu</h3>
+  <a href="{{ url_for('home.home_page') }}">🏠 Home Page</a>
+  <a href="{{ url_for('services.services_page') }}">🛠️ Services</a>
+  <a href="{{ url_for('classifier.support_classifier_page') }}">🤖 Support Classifier</a>
+  <a class="active" href="{{ url_for('resources.resources_page') }}">📚 Resources</a>
+  <a href="{{ url_for('appointments.book_appointment') }}">📅 Book Appointment</a>
+  <a href="{{ url_for('appointments.student_appointments') }}">📋 My Appointments</a>
+  <a href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
+</nav>
+
+<!-- ========== MAIN CONTENT ========== -->
+<main class="container">
+  <div class="resources-header">
+    <i class="bi bi-journal-richtext"></i>
+    <h1>Mental Health Resources</h1>
+    <p>Helpful articles, guides, and materials for your wellbeing</p>
+  </div>
+
+  <!-- ========== RESOURCE SECTIONS ========== -->
+  
+  <!-- Articles Section -->
+  <section class="resource-section">
+    <h2><i class="bi bi-file-text"></i> Articles & Guides</h2>
+    <div class="resource-grid" id="articlesGrid">
+      
+      <article class="resource-card">
+        <h3>Body Image</h3>
+        <p>Having body image concerns is a relatively common experience and is not a mental health problem in and of itself; however, it can be a risk factor for mental health problems.</p>
+        <a href="#" class="read-more-btn">Read more</a>
+      </article>
+
+      <article class="resource-card">
+        <h3>15 Tips for Mental Wellness</h3>
+        <p>We asked students 'what do you do to look after your mental health when things get tough?'. Read their tips and advice for maintaining wellbeing.</p>
+        <a href="#" class="read-more-btn">Read more</a>
+      </article>
+
+      <article class="resource-card">
+        <h3>How to Support Someone</h3>
+        <p>We all go through tough times and people help us through them. Read our guide on how to support someone with a mental health problem.</p>
+        <a href="#" class="read-more-btn">Read more</a>
+      </article>
+
+      <article class="resource-card">
+        <h3>Managing Stress & Anxiety</h3>
+        <p>Stress is a normal part of life, but when it becomes overwhelming it can affect your mental health. Learn techniques to manage stress effectively.</p>
+        <a href="#" class="read-more-btn">Read more</a>
+      </article>
+
+      <article class="resource-card">
+        <h3>Random Acts of Kindness</h3>
+        <p>Small acts of kindness can have a big impact on both the giver and receiver. Discover how kindness can improve your mental wellbeing.</p>
+        <a href="#" class="read-more-btn">Read more</a>
+      </article>
+
+      <article class="resource-card">
+        <h3>Sleep & Mental Health</h3>
+        <p>Sleep and mental health are closely connected. Poor sleep can contribute to mental health problems, and mental health issues can affect sleep quality.</p>
+        <a href="#" class="read-more-btn">Read more</a>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Videos Section -->
+  <section class="resource-section">
+    <h2><i class="bi bi-play-circle"></i> Videos & Tutorials</h2>
+    <div class="resource-grid" id="videosGrid">
+      
+      <article class="resource-card video-card">
+        <div class="video-thumbnail">
+          <i class="bi bi-play-circle-fill"></i>
+        </div>
+        <h3>Understanding Anxiety</h3>
+        <p>A helpful video explaining what anxiety is, its symptoms, and coping strategies you can use daily.</p>
+        <a href="#" class="read-more-btn">Watch now</a>
+      </article>
+
+      <article class="resource-card video-card">
+        <div class="video-thumbnail">
+          <i class="bi bi-play-circle-fill"></i>
+        </div>
+        <h3>Mindfulness Meditation</h3>
+        <p>A guided 10-minute meditation session to help you relax, focus, and reduce stress.</p>
+        <a href="#" class="read-more-btn">Watch now</a>
+      </article>
+
+      <article class="resource-card video-card">
+        <div class="video-thumbnail">
+          <i class="bi bi-play-circle-fill"></i>
+        </div>
+        <h3>Building Resilience</h3>
+        <p>Learn practical tips and strategies for building mental resilience and bouncing back from challenges.</p>
+        <a href="#" class="read-more-btn">Watch now</a>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ========== PAGE SCRIPTS ========== -->
+<script>
+(function() {
+  const menuBtn = document.getElementById('menuBtn');
+  const sideMenu = document.getElementById('sideMenu');
+  const closeMenu = document.getElementById('closeMenu');
+  const chatBtn = document.getElementById('chatBtn');
+
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.add('open');
+    sideMenu.setAttribute('aria-hidden', 'false');
+  });
+
+  closeMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    sideMenu.classList.remove('open');
+    sideMenu.setAttribute('aria-hidden', 'true');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!sideMenu.contains(e.target) && e.target !== menuBtn) {
+      sideMenu.classList.remove('open');
+      sideMenu.setAttribute('aria-hidden', 'true');
+    }
+  });
+
+  chatBtn.addEventListener('click', () => {
+    alert('Chat feature coming soon!');
+  });
+})();
+</script>
+
+<!-- ==================== BOOTSTRAP JAVASCRIPT ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+
