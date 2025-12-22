@@ -18,6 +18,29 @@
 </head>
 <body>
 
+  <!-- ========== LOADING SCREEN ========== -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-content">
+      <div class="leaf-loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <p class="loading-text">Loading<span class="dots"></span></p>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('load', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      setTimeout(function() {
+        loadingScreen.classList.add('hidden');
+      }, 800);
+    });
+  </script>
+
   <!-- ========== BACKGROUND SCENERY ========== -->
   <!-- Decorative animated forest background -->
   <div class="scenery" aria-hidden="true">
@@ -56,6 +79,9 @@
         <small>Hold Ctrl (Windows) or Cmd (Mac) to select multiple.</small>
       </div>
 
+      <!-- Message area -->
+      <div id="msgBox" style="padding: 10px; border-radius: 8px; margin-bottom: 15px; display: none; text-align: center;"></div>
+
       <!-- Action buttons -->
       <div class="btn-group">
         <button class="register-btn" type="submit">REGISTER</button>
@@ -76,43 +102,50 @@
 
   <!-- ========== REGISTRATION SCRIPT ========== -->
   <script>
-    // Handle form submission
-    document.getElementById("registerFormST").addEventListener("submit", function(e){
-      e.preventDefault(); // Prevent page reload
+    function showMessage(message, isError = false) {
+      const msgBox = document.getElementById('msgBox');
+      msgBox.textContent = message;
+      msgBox.style.display = 'block';
+      msgBox.style.color = isError ? '#d9534f' : '#5cb85c';
+      msgBox.style.background = isError ? '#fdf2f2' : '#f2fdf2';
+    }
 
-      // Get form values
+    document.getElementById("registerFormST").addEventListener("submit", async function(e){
+      e.preventDefault();
+      document.getElementById('msgBox').style.display = 'none';
+
       const username = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
       const select = document.getElementById("characteristics");
-      const tags = [...select.selectedOptions].map(o => o.value); // Get selected tags
+      const tags = [...select.selectedOptions].map(o => o.value);
 
-      if(username && password){
-        const payload = { username, password, tags };
+      if(!username || !password){
+        showMessage("Please fill in username and password.", true);
+        return;
+      }
 
-        // Send registration to backend API
-        fetch("http://127.0.0.1:5000/register", {
+      try {
+        const response = await fetch("/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(data => {
-          alert(data.message || "Registered.");
-          // Save to localStorage as backup
-          localStorage.setItem("mhStudent", JSON.stringify(payload));
-          localStorage.setItem("username", username);
-          localStorage.setItem("tags", Array.isArray(tags) ? tags.join(", ") : "");
-          window.location.href = "{{ url_for('login_st.login_student_page') }}"; // Go to login
-        })
-        .catch(err => {
-          // Fallback: save locally if API fails
-          console.error(err);
-          localStorage.setItem("mhStudent", JSON.stringify(payload));
-          localStorage.setItem("username", username);
-          localStorage.setItem("tags", Array.isArray(tags) ? tags.join(", ") : "");
-          alert("Saved locally. Redirecting to login.");
-          window.location.href = "{{ url_for('login_st.login_student_page') }}";
+          body: JSON.stringify({ username, password, tags })
         });
+        
+        const data = await response.json();
+        
+        if(response.ok){
+          localStorage.setItem("username", username);
+          localStorage.setItem("tags", tags.join(", "));
+          showMessage("Registration successful! Redirecting to login...");
+          setTimeout(() => {
+            window.location.href = "{{ url_for('login_st.login_student_page') }}";
+          }, 1500);
+        } else {
+          showMessage(data.message || "Registration failed.", true);
+        }
+      } catch(error){
+        console.error("Registration error:", error);
+        showMessage("Could not connect to server.", true);
       }
     });
   </script>

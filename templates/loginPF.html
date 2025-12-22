@@ -9,6 +9,29 @@
 </head>
 <body>
 
+  <!-- ========== LOADING SCREEN ========== -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-content">
+      <div class="leaf-loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <p class="loading-text">Loading<span class="dots"></span></p>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('load', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      setTimeout(function() {
+        loadingScreen.classList.add('hidden');
+      }, 800);
+    });
+  </script>
+
   <!-- ========== BACKGROUND SCENERY ========== -->
   <!-- Decorative animated forest background -->
   <div class="scenery" aria-hidden="true">

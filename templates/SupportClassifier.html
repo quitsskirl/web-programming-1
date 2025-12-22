@@ -15,6 +15,20 @@
 </head>
 
 <body>
+  <!-- ========== LOADING SCREEN ========== -->
+  <div id="loadingScreen" class="loading-screen">
+    <div class="loading-content">
+      <div class="leaf-loader">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <p class="loading-text">Loading<span class="dots"></span></p>
+    </div>
+  </div>
+
   <div class="container">
     <a href="{{ url_for('home.home_page') }}" class="back-btn">← Back</a>
     <div class="header">
@@ -75,5 +89,14 @@
   </div>
 
   <script src="{{ url_for('static', filename='support-classifier.js') }}" defer></script>
+  
+  <script>
+    window.addEventListener('load', function() {
+      const loadingScreen = document.getElementById('loadingScreen');
+      setTimeout(function() {
+        loadingScreen.classList.add('hidden');
+      }, 800);
+    });
+  </script>
 </body>
 </html>
