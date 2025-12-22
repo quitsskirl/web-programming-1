@@ -12,14 +12,25 @@ def services_page():
     
     URL: http://localhost:5000/services
     
-    This page shows available counselors that students
-    can chat with for mental health support.
+    This page shows all registered professionals that students
+    can connect with for mental health support.
     
-    Currently displays placeholder counselor cards.
-    In the future, this would load actual counselors
-    from the database with their availability status.
+    Loads professionals from the database dynamically.
     
     Returns:
-        Rendered Services.html template
+        Rendered Services.html template with professionals list
     """
-    return render_template('Services.html')
+    # Import here to avoid circular imports
+    from app import professionals
+    
+    # Get all professionals from database
+    professionals_list = []
+    if professionals is not None:
+        for pro in professionals.find():
+            professionals_list.append({
+                "username": pro.get("username", ""),
+                "specialty": pro.get("specialty", "General Counselor"),
+                "bio": pro.get("bio", "Available for support sessions.")
+            })
+    
+    return render_template('Services.html', professionals=professionals_list)

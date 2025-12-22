@@ -67,20 +67,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // === Logout button ===
   document.getElementById('btnLogOut').addEventListener('click', () => {
-    // You can clear localStorage here if you want to fully log out:
-    // localStorage.clear();
-    // Redirect to the Flask first page ("/" -> first.first_page)
+    // Clear all stored data
+    localStorage.clear();
+    // Clear the JWT cookie
+    document.cookie = 'jwt_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    // Redirect to the first page
     window.location.href = '/';
   });
 
   // === Delete account button ===
-  document.getElementById('btnDeleteAccount').addEventListener('click', () => {
-    const confirmDelete = confirm(
-      'Are you sure you want to delete your account? This cannot be undone.'
-    );
-    if (confirmDelete) {
-      alert('Account will be deleted (placeholder).');
-      // Add real deletion logic here if you implement backend support.
-    }
-  });
+  // Note: Delete account functionality is handled in Settings.html inline script
+  // which calls the actual API endpoint /api/student/delete or /api/professional/delete
 });

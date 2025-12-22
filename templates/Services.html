@@ -37,53 +37,53 @@
 
 <!-- ========== MAIN CONTENT ========== -->
 <main class="container">
-  <!-- Section header with search and filter -->
+  <!-- Section header with search -->
   <div class="section-header">
-    <h1>CHAT NOW!</h1>
+    <h1>Available Counselors</h1>
+    <p class="subtitle">Connect with our mental health professionals</p>
 
     <div class="toolbar">
-      <!-- Filter tags (placeholder) -->
-      <div class="tags">
-        <button class="tag"></button>
-        <button class="tag"></button>
-        <button class="tag"></button>
-        <button class="tag"></button>
-      </div>
-
       <!-- Search bar -->
       <div class="searchbar">
-        <input type="search" placeholder="Search" aria-label="Search services or counselors"/>
+        <input type="search" id="searchInput" placeholder="Search by name or specialty..." aria-label="Search counselors"/>
       </div>
     </div>
   </div>
 
   <!-- ========== COUNSELOR CARDS ========== -->
-  <!-- Cards for available counselors/professionals -->
-  <section class="cards">
-    <!-- Counselor card 1 -->
-    <article class="card">
-      <div class="avatar"><span>👤</span></div>
-      <h3>Username</h3>
-      <p>Start a chat session instantly.</p>
-      <button class="primary">Start Chat</button>
-    </article>
-
-    <!-- Counselor card 2 -->
-    <article class="card">
-      <div class="avatar"><span>👤</span></div>
-      <h3>Username</h3>
-      <p>Start a chat session instantly.</p>
-      <button class="primary">Start Chat</button>
-    </article>
-
-    <!-- Counselor card 3 -->
-    <article class="card">
-      <div class="avatar"><span>👤</span></div>
-      <h3>Username</h3>
-      <p>Start a chat session instantly.</p>
-      <button class="primary">Start Chat</button>
-    </article>
+  <!-- Cards for available counselors/professionals - dynamically loaded from database -->
+  <section class="cards" id="counselorCards">
+    {% if professionals %}
+      {% for pro in professionals %}
+        <article class="card" data-username="{{ pro.username }}" data-specialty="{{ pro.specialty }}">
+          <div class="avatar">
+            <span>👤</span>
+          </div>
+          <h3>{{ pro.username }}</h3>
+          <p class="specialty"><i class="bi bi-award"></i> {{ pro.specialty }}</p>
+          <p class="bio">{{ pro.bio }}</p>
+          <button class="primary chat-btn" data-username="{{ pro.username }}">
+            <i class="bi bi-chat-dots"></i> Chat Now
+          </button>
+        </article>
+      {% endfor %}
+    {% else %}
+      <!-- Empty state when no professionals registered -->
+      <div class="empty-state">
+        <i class="bi bi-person-x"></i>
+        <h3>No Counselors Available Yet</h3>
+        <p>Check back later for available mental health professionals.</p>
+      </div>
+    {% endif %}
   </section>
+
+  <!-- Stats -->
+  <div class="stats-bar">
+    <span id="counselorCount">
+      <i class="bi bi-people"></i> 
+      {{ professionals|length if professionals else 0 }} Counselor(s) Available
+    </span>
+  </div>
 </main>
 
 <!-- ========== PAGE SCRIPTS ========== -->
@@ -94,6 +94,8 @@
   const sideMenu = document.getElementById('sideMenu');
   const closeMenu = document.getElementById('closeMenu');
   const chatBtn = document.getElementById('chatBtn');
+  const searchInput = document.getElementById('searchInput');
+  const cards = document.querySelectorAll('.card');
 
   // Open side menu
   menuBtn.addEventListener('click', (e) => {
@@ -120,6 +122,30 @@
   // Chat button (placeholder)
   chatBtn.addEventListener('click', () => {
     alert('Chat feature coming soon!');
+  });
+
+  // Search functionality
+  searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase();
+    
+    cards.forEach(card => {
+      const username = card.dataset.username.toLowerCase();
+      const specialty = card.dataset.specialty.toLowerCase();
+      
+      if (username.includes(searchTerm) || specialty.includes(searchTerm)) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  });
+
+  // Chat button click - show coming soon popup
+  document.querySelectorAll('.chat-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const username = e.currentTarget.dataset.username;
+      alert(`Chat with ${username} is coming soon! 💬\n\nThis feature is currently under development. In the meantime, you can book an appointment with this counselor.`);
+    });
   });
 })();
 </script>
