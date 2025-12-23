@@ -3,6 +3,8 @@ from flask import Flask, request, jsonify  # Flask: web framework, request: get 
 from flask_cors import CORS  # CORS: allows frontend (different origin) to call our API
 from pymongo import MongoClient  # MongoClient: connects to MongoDB database
 from werkzeug.security import generate_password_hash, check_password_hash  # Functions to hash and verify passwords securely
+from werkzeug.utils import secure_filename  # Secure filename for uploads
+from flask import send_from_directory, make_response  # For serving files
 
 # Password hashing configuration
 HASH_METHOD = 'scrypt'  # scrypt: memory-hard algorithm, resistant to brute-force attacks
@@ -27,6 +29,19 @@ load_dotenv()  # Read .env file and load MONGO_URI, JWT_SECRET_KEY, OPENAI_API_K
 
 app = Flask(__name__)  # Create the Flask application instance (__name__ = current module)
 CORS(app)  # Enable Cross-Origin Resource Sharing so frontend can make API calls
+
+# ==================== FILE UPLOAD CONFIGURATION ====================
+UPLOAD_FOLDER = os.path.join('static', 'uploads', 'pdfs')
+ALLOWED_EXTENSIONS = {'pdf'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+
+# Create upload directory if it doesn't exist
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    """Check if file extension is allowed"""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # ==================== JWT CONFIGURATION ====================
 # JWT Configuration - stored in app.config for easy access throughout the app
@@ -1005,6 +1020,190 @@ def add_resource():
     resources.insert_one(resource)
     
     return jsonify({"message": "Resource added successfully!"}), 201
+
+
+# ==================== PDF UPLOAD/DELETE API ====================
+
+# ----- Upload PDF Resource (Professionals only) -----
+@app.route("/api/resources/upload-pdf", methods=["POST"])
+@token_required
+def upload_pdf_resource():
+    """
+    Upload a PDF file to the server and save metadata to database.
+    Only professionals can upload PDFs.
+    """
+    if resources is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Only professionals can upload resources"}), 403
+    
+    # Check if file is in request
+    if 'file' not in request.files:
+        return jsonify({"message": "No file provided"}), 400
+    
+    file = request.files['file']
+    
+    if file.filename == '':
+        return jsonify({"message": "No file selected"}), 400
+    
+    if not allowed_file(file.filename):
+        return jsonify({"message": "Only PDF files are allowed"}), 400
+    
+    # Secure the filename and save
+    filename = secure_filename(file.filename)
+    # Add timestamp to avoid conflicts
+    unique_filename = f"{datetime.datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{filename}"
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+    
+    try:
+        file.save(filepath)
+    except Exception as e:
+        return jsonify({"message": f"Failed to save file: {str(e)}"}), 500
+    
+    # Save metadata to MongoDB
+    resource_doc = {
+        "title": request.form.get('title', filename.replace('.pdf', '')),
+        "description": request.form.get('description', ''),
+        "category": request.form.get('category', 'article'),
+        "resource_type": "pdf",
+        "filename": unique_filename,
+        "filepath": f"/static/uploads/pdfs/{unique_filename}",
+        "original_filename": filename,
+        "uploaded_by": current_user.get('username'),
+        "created_at": datetime.datetime.utcnow()
+    }
+    
+    result = resources.insert_one(resource_doc)
+    
+    return jsonify({
+        "message": "PDF uploaded successfully!",
+        "resource_id": str(result.inserted_id),
+        "filepath": resource_doc["filepath"]
+    }), 201
+
+
+# ----- Delete PDF Resource (Professionals only) -----
+@app.route("/api/resources/<resource_id>", methods=["DELETE"])
+@token_required
+def delete_resource(resource_id):
+    """
+    Delete a PDF resource from the server and database.
+    Only professionals can delete resources.
+    """
+    if resources is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Only professionals can delete resources"}), 403
+    
+    # Find the resource
+    try:
+        resource = resources.find_one({"_id": ObjectId(resource_id)})
+    except:
+        return jsonify({"message": "Invalid resource ID"}), 400
+    
+    if not resource:
+        return jsonify({"message": "Resource not found"}), 404
+    
+    # Delete the file from filesystem if it's a PDF
+    if resource.get("resource_type") == "pdf" and resource.get("filename"):
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], resource["filename"])
+        try:
+            if os.path.exists(filepath):
+                os.remove(filepath)
+        except Exception as e:
+            print(f"Warning: Could not delete file {filepath}: {e}")
+    
+    # Delete from database
+    result = resources.delete_one({"_id": ObjectId(resource_id)})
+    
+    if result.deleted_count > 0:
+        return jsonify({"message": "Resource deleted successfully!"}), 200
+    else:
+        return jsonify({"message": "Failed to delete resource"}), 500
+
+
+# ----- Get PDF Resources (for Resources page) -----
+@app.route("/api/resources/pdfs", methods=["GET"])
+def get_pdf_resources():
+    """
+    Get all PDF resources for display on Resources page.
+    Public endpoint - no authentication required.
+    """
+    if resources is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    pdf_resources = []
+    for r in resources.find({"resource_type": "pdf"}).sort("created_at", -1):
+        r["_id"] = str(r["_id"])
+        r["created_at"] = str(r.get("created_at", ""))
+        pdf_resources.append(r)
+    
+    return jsonify(pdf_resources), 200
+
+
+# ----- Add Video Resource (Professionals only) -----
+@app.route("/api/resources/add-video", methods=["POST"])
+@token_required
+def add_video_resource():
+    """
+    Add a video resource by providing a URL link.
+    Only professionals can add videos.
+    """
+    if resources is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Only professionals can add resources"}), 403
+    
+    data = request.get_json(silent=True) or {}
+    
+    title = data.get('title', '').strip()
+    video_url = data.get('video_url', '').strip()
+    description = data.get('description', '').strip()
+    
+    if not title or not video_url:
+        return jsonify({"message": "Title and video URL are required"}), 400
+    
+    # Save video resource to MongoDB
+    video_doc = {
+        "title": title,
+        "description": description,
+        "video_url": video_url,
+        "resource_type": "video",
+        "uploaded_by": current_user.get('username'),
+        "created_at": datetime.datetime.utcnow()
+    }
+    
+    result = resources.insert_one(video_doc)
+    
+    return jsonify({
+        "message": "Video added successfully!",
+        "resource_id": str(result.inserted_id)
+    }), 201
+
+
+# ----- Get Video Resources (for Resources page) -----
+@app.route("/api/resources/videos", methods=["GET"])
+def get_video_resources():
+    """
+    Get all video resources for display on Resources page.
+    Public endpoint - no authentication required.
+    """
+    if resources is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    video_resources = []
+    for r in resources.find({"resource_type": "video"}).sort("created_at", -1):
+        r["_id"] = str(r["_id"])
+        r["created_at"] = str(r.get("created_at", ""))
+        video_resources.append(r)
+    
+    return jsonify(video_resources), 200
 
 
 # ----- Create Support Ticket (CREATE for support_tickets collection) -----

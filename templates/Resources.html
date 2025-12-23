@@ -62,82 +62,27 @@
 
   <!-- ========== RESOURCE SECTIONS ========== -->
   
-  <!-- Articles Section -->
+  <!-- Articles & Guides Section (Dynamic PDFs from Database) -->
   <section class="resource-section">
     <h2><i class="bi bi-file-text"></i> Articles & Guides</h2>
-    <div class="resource-grid" id="articlesGrid">
-      
-      <article class="resource-card">
-        <h3>Body Image</h3>
-        <p>Having body image concerns is a relatively common experience and is not a mental health problem in and of itself; however, it can be a risk factor for mental health problems.</p>
-        <a href="#" class="read-more-btn">Read more</a>
-      </article>
-
-      <article class="resource-card">
-        <h3>15 Tips for Mental Wellness</h3>
-        <p>We asked students 'what do you do to look after your mental health when things get tough?'. Read their tips and advice for maintaining wellbeing.</p>
-        <a href="#" class="read-more-btn">Read more</a>
-      </article>
-
-      <article class="resource-card">
-        <h3>How to Support Someone</h3>
-        <p>We all go through tough times and people help us through them. Read our guide on how to support someone with a mental health problem.</p>
-        <a href="#" class="read-more-btn">Read more</a>
-      </article>
-
-      <article class="resource-card">
-        <h3>Managing Stress & Anxiety</h3>
-        <p>Stress is a normal part of life, but when it becomes overwhelming it can affect your mental health. Learn techniques to manage stress effectively.</p>
-        <a href="#" class="read-more-btn">Read more</a>
-      </article>
-
-      <article class="resource-card">
-        <h3>Random Acts of Kindness</h3>
-        <p>Small acts of kindness can have a big impact on both the giver and receiver. Discover how kindness can improve your mental wellbeing.</p>
-        <a href="#" class="read-more-btn">Read more</a>
-      </article>
-
-      <article class="resource-card">
-        <h3>Sleep & Mental Health</h3>
-        <p>Sleep and mental health are closely connected. Poor sleep can contribute to mental health problems, and mental health issues can affect sleep quality.</p>
-        <a href="#" class="read-more-btn">Read more</a>
-      </article>
-
+    <div class="resource-grid" id="pdfGrid">
+      <!-- PDFs will be loaded here dynamically -->
+      <div class="loading-placeholder" id="pdfLoading">
+        <i class="bi bi-hourglass-split"></i>
+        <p>Loading articles...</p>
+      </div>
     </div>
   </section>
 
-  <!-- Videos Section -->
+  <!-- Videos Section (Dynamic from Database) -->
   <section class="resource-section">
     <h2><i class="bi bi-play-circle"></i> Videos & Tutorials</h2>
     <div class="resource-grid" id="videosGrid">
-      
-      <article class="resource-card video-card">
-        <div class="video-thumbnail">
-          <i class="bi bi-play-circle-fill"></i>
-        </div>
-        <h3>Understanding Anxiety</h3>
-        <p>A helpful video explaining what anxiety is, its symptoms, and coping strategies you can use daily.</p>
-        <a href="#" class="read-more-btn">Watch now</a>
-      </article>
-
-      <article class="resource-card video-card">
-        <div class="video-thumbnail">
-          <i class="bi bi-play-circle-fill"></i>
-        </div>
-        <h3>Mindfulness Meditation</h3>
-        <p>A guided 10-minute meditation session to help you relax, focus, and reduce stress.</p>
-        <a href="#" class="read-more-btn">Watch now</a>
-      </article>
-
-      <article class="resource-card video-card">
-        <div class="video-thumbnail">
-          <i class="bi bi-play-circle-fill"></i>
-        </div>
-        <h3>Building Resilience</h3>
-        <p>Learn practical tips and strategies for building mental resilience and bouncing back from challenges.</p>
-        <a href="#" class="read-more-btn">Watch now</a>
-      </article>
-
+      <!-- Videos will be loaded here dynamically -->
+      <div class="loading-placeholder" id="videoLoading">
+        <i class="bi bi-hourglass-split"></i>
+        <p>Loading video resources...</p>
+      </div>
     </div>
   </section>
 
@@ -180,6 +125,99 @@
 
   chatBtn.addEventListener('click', () => {
     alert('Chat feature coming soon!');
+  });
+
+  // Load PDF resources from database
+  async function loadPDFResources() {
+    const pdfGrid = document.getElementById('pdfGrid');
+    const pdfLoading = document.getElementById('pdfLoading');
+    
+    try {
+      const response = await fetch('/api/resources/pdfs');
+      const pdfs = await response.json();
+      
+      if (!Array.isArray(pdfs) || pdfs.length === 0) {
+        pdfGrid.innerHTML = `
+          <div class="coming-soon">
+            <i class="bi bi-folder2-open"></i>
+            <p>No articles available yet. Check back soon!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      pdfGrid.innerHTML = pdfs.map(pdf => `
+        <article class="resource-card">
+          <h3>${escapeHtml(pdf.title)}</h3>
+          <p>${escapeHtml(pdf.description || 'Click to read this article.')}</p>
+          <a href="${pdf.filepath}" target="_blank" class="read-more-btn">Read more</a>
+        </article>
+      `).join('');
+      
+    } catch (error) {
+      console.error('Error loading articles:', error);
+      pdfGrid.innerHTML = `
+        <div class="coming-soon">
+          <i class="bi bi-exclamation-circle"></i>
+          <p>Could not load articles. Please try again later.</p>
+        </div>
+      `;
+    }
+  }
+
+  // Escape HTML to prevent XSS
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+  }
+
+  // Load Video resources from database
+  async function loadVideoResources() {
+    const videoGrid = document.getElementById('videosGrid');
+    
+    try {
+      const response = await fetch('/api/resources/videos');
+      const videos = await response.json();
+      
+      if (!Array.isArray(videos) || videos.length === 0) {
+        videoGrid.innerHTML = `
+          <div class="coming-soon">
+            <i class="bi bi-camera-video-off"></i>
+            <p>No video tutorials available yet. Check back soon!</p>
+          </div>
+        `;
+        return;
+      }
+      
+      videoGrid.innerHTML = videos.map(video => `
+        <article class="resource-card video-card">
+          <div class="video-thumbnail">
+            <i class="bi bi-play-circle-fill"></i>
+          </div>
+          <h3>${escapeHtml(video.title)}</h3>
+          <p>${escapeHtml(video.description || 'Click to watch this helpful video.')}</p>
+          <a href="${escapeHtml(video.video_url)}" target="_blank" class="read-more-btn">
+            <i class="bi bi-play-fill"></i> Watch now
+          </a>
+        </article>
+      `).join('');
+      
+    } catch (error) {
+      console.error('Error loading videos:', error);
+      videoGrid.innerHTML = `
+        <div class="coming-soon">
+          <i class="bi bi-exclamation-circle"></i>
+          <p>Could not load video resources. Please try again later.</p>
+        </div>
+      `;
+    }
+  }
+
+  // Load both PDFs and Videos on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    loadPDFResources();
+    loadVideoResources();
   });
 })();
 </script>

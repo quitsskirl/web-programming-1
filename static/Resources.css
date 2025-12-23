@@ -308,6 +308,58 @@ header {
   opacity: 1;
 }
 
+/* ----- PDF Card Specific Styles ----- */
+.pdf-card .pdf-icon {
+  background: linear-gradient(135deg, #f8e8e8 0%, #f0d4d4 100%);
+  border-radius: 8px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.pdf-card .pdf-icon i {
+  font-size: 48px;
+  color: #c44;
+  opacity: 0.8;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.pdf-card:hover .pdf-icon i {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.pdf-card .read-more-btn i {
+  margin-right: 6px;
+}
+
+/* Loading Placeholder */
+.loading-placeholder {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  color: #888;
+}
+
+.loading-placeholder i {
+  font-size: 36px;
+  margin-bottom: 10px;
+  display: block;
+  color: #8a9562;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-placeholder p {
+  margin: 0;
+}
+
 /* ----- Coming Soon Placeholder ----- */
 .coming-soon {
   grid-column: 1 / -1;
