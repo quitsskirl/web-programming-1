@@ -113,6 +113,11 @@
           localStorage.setItem("role", data.user.role);
           localStorage.setItem("justLoggedIn", "true");
           
+          // Store user profile data from database
+          localStorage.setItem("tags", data.user.tags || "");
+          localStorage.setItem("email", data.user.email || "");
+          localStorage.setItem("bio", data.user.bio || "");
+          
           // Also set cookie for server-side authentication on page routes
           document.cookie = `jwt_token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
           

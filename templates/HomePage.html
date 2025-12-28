@@ -172,10 +172,10 @@
 
   // Load user info from localStorage on page load
   document.addEventListener('DOMContentLoaded', () => {
-    const username = localStorage.getItem('username') || 'JohnDoe';
-    const tags = localStorage.getItem('tags') || 'Student, Planner';
+    const username = localStorage.getItem('username') || 'Guest';
+    const tags = localStorage.getItem('tags');
     document.getElementById('username').textContent = `Username: ${username}`;
-    document.getElementById('userTags').textContent = `Tags: ${tags}`;
+    document.getElementById('userTags').textContent = tags ? `Tags: ${tags}` : 'Tags: No tags set';
     
     // Show welcome toast ONLY after fresh login (not on every page visit)
     const justLoggedIn = localStorage.getItem('justLoggedIn');

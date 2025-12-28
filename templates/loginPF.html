@@ -104,9 +104,15 @@
         if(response.ok){
           // Success - save token and redirect
           localStorage.setItem("token", data.token);
-          localStorage.setItem("username", username);
+          localStorage.setItem("username", data.user.username);
           localStorage.setItem("role", "professional");
           localStorage.setItem("justLoggedIn", "true");  // Flag to show notifications
+          
+          // Store user profile data from database
+          localStorage.setItem("specialty", data.user.specialty || "");
+          localStorage.setItem("email", data.user.email || "");
+          localStorage.setItem("bio", data.user.bio || "");
+          localStorage.setItem("availability", data.user.availability || "");
           
           // Also set cookie for server-side authentication on page routes
           document.cookie = `jwt_token=${data.token}; path=/; max-age=86400; SameSite=Lax`;

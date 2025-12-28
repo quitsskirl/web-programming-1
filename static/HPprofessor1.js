@@ -49,9 +49,9 @@
   // === LOAD USER INFO FROM LOCAL STORAGE ===
   document.addEventListener('DOMContentLoaded', () => {
     const username = localStorage.getItem('username') || 'Guest';
-    const tags = localStorage.getItem('tags') || 'Student, Planner';
+    const specialty = localStorage.getItem('specialty');
 
     document.getElementById('username').textContent = `Username: ${username}`;
-    document.getElementById('userTags').textContent = `Tags: ${tags}`;
+    document.getElementById('userTags').textContent = specialty ? `Specialty: ${specialty}` : 'Specialty: Not set';
   });
 })();

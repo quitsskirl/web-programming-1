@@ -570,6 +570,7 @@ def login_student():
     """
     API endpoint to authenticate a student.
     Returns JWT token if credentials are valid.
+    Also returns user profile data (tags, email, bio) from database.
     """
     if students is None:  # Check database connection
         return jsonify({"message": "Database unavailable"}), 503
@@ -596,10 +597,23 @@ def login_student():
     # Generate JWT token
     token = generate_token(user["_id"], username, role='student')  # Create token with user info
     
+    # Get user profile data from database
+    tags = user.get("tags", [])  # Get tags array from database
+    if isinstance(tags, list):
+        tags_str = ", ".join(tags) if tags else ""  # Convert list to comma-separated string
+    else:
+        tags_str = str(tags) if tags else ""
+    
     return jsonify({  # Return success response
         "message": "Login successful",
         "token": token,  # JWT token for future authenticated requests
-        "user": {"username": username, "role": "student"}  # User info for frontend
+        "user": {
+            "username": username,
+            "role": "student",
+            "tags": tags_str,  # User's tags/interests from database
+            "email": user.get("email", ""),  # Email if set
+            "bio": user.get("bio", "")  # Bio if set
+        }
     }), 200  # 200 = OK
 
 
@@ -609,6 +623,7 @@ def login_professional():
     """
     API endpoint to authenticate a professional.
     Same as student login but uses professionals collection.
+    Also returns user profile data (specialty, email, bio) from database.
     """
     if professionals is None:
         return jsonify({"message": "Database unavailable"}), 503
@@ -635,7 +650,14 @@ def login_professional():
     return jsonify({
         "message": "Login successful",
         "token": token,
-        "user": {"username": username, "role": "professional"}
+        "user": {
+            "username": username,
+            "role": "professional",
+            "specialty": user.get("specialty", ""),  # Professional's specialty from database
+            "email": user.get("email", ""),  # Email if set
+            "bio": user.get("bio", ""),  # Bio if set
+            "availability": user.get("availability", "")  # Availability if set
+        }
     }), 200
 
 
@@ -852,7 +874,7 @@ def update_professional():
 @token_required
 def delete_student():
     """
-    DELETE operation: Remove a student account from the database.
+    DELETE operation: Remove a student account and ALL related data from the database.
     
     This completes our CRUD operations:
     - C: Create (register) ✓
@@ -863,7 +885,10 @@ def delete_student():
     URL: DELETE /api/student/delete
     Headers: Authorization: Bearer <token>
     
-    IMPORTANT: This permanently deletes the account!
+    IMPORTANT: This permanently deletes the account AND all associated data!
+    - Appointments where student is involved
+    - Support tickets created by the student
+    - Notifications for the student
     """
     if students is None:
         return jsonify({"message": "Database unavailable"}), 503
@@ -874,12 +899,46 @@ def delete_student():
     if current_user.get('role') != 'student':
         return jsonify({"message": "Access denied. Only students can delete their account."}), 403
     
-    # Perform the DELETE operation in MongoDB
-    # delete_one() finds and removes one document
+    # Track what was deleted for the response
+    deleted_data = {
+        "appointments": 0,
+        "support_tickets": 0,
+        "notifications": 0
+    }
+    
+    # 1. Delete all appointments where this student is involved
+    if appointments is not None:
+        apt_result = appointments.delete_many({"student_username": username})
+        deleted_data["appointments"] = apt_result.deleted_count
+        print(f"🗑️ Deleted {apt_result.deleted_count} appointments for student: {username}")
+    
+    # 2. Delete all support tickets created by this student
+    if support_tickets is not None:
+        # Support tickets use both 'user_id' and 'sender_user_id' fields
+        tickets_result = support_tickets.delete_many({
+            "$or": [
+                {"user_id": username},
+                {"sender_user_id": username}
+            ]
+        })
+        deleted_data["support_tickets"] = tickets_result.deleted_count
+        print(f"🗑️ Deleted {tickets_result.deleted_count} support tickets for student: {username}")
+    
+    # 3. Delete all notifications for this student
+    if notifications is not None:
+        notif_result = notifications.delete_many({"user_id": username})
+        deleted_data["notifications"] = notif_result.deleted_count
+        print(f"🗑️ Deleted {notif_result.deleted_count} notifications for student: {username}")
+    
+    # 4. Finally, delete the student account itself
     result = students.delete_one({"username": username})
     
     if result.deleted_count > 0:
-        return jsonify({"message": "Account deleted successfully. Sorry to see you go!"}), 200
+        print(f"✅ Student account deleted: {username}")
+        return jsonify({
+            "message": "Account and all associated data deleted successfully. Sorry to see you go!",
+            "deleted_data": deleted_data
+        }), 200
     else:
         return jsonify({"message": "Account not found"}), 404
 
@@ -889,7 +948,13 @@ def delete_student():
 @token_required
 def delete_professional():
     """
-    DELETE operation: Remove a professional account.
+    DELETE operation: Remove a professional account and ALL related data.
+    
+    This deletes:
+    - The professional account
+    - All appointments where professional is involved
+    - All resources uploaded by the professional (including PDF files)
+    - All notifications for the professional
     """
     if professionals is None:
         return jsonify({"message": "Database unavailable"}), 503
@@ -900,10 +965,60 @@ def delete_professional():
     if current_user.get('role') != 'professional':
         return jsonify({"message": "Access denied."}), 403
     
+    # Track what was deleted for the response
+    deleted_data = {
+        "appointments": 0,
+        "resources": 0,
+        "notifications": 0,
+        "pdf_files": 0
+    }
+    
+    # 1. Delete all appointments where this professional is involved
+    if appointments is not None:
+        apt_result = appointments.delete_many({"professional_username": username})
+        deleted_data["appointments"] = apt_result.deleted_count
+        print(f"🗑️ Deleted {apt_result.deleted_count} appointments for professional: {username}")
+    
+    # 2. Delete all resources uploaded by this professional
+    if resources is not None:
+        # First, find all PDF resources to delete their files from the filesystem
+        pdf_resources = list(resources.find({
+            "uploaded_by": username,
+            "resource_type": "pdf"
+        }))
+        
+        # Delete PDF files from the filesystem
+        for pdf in pdf_resources:
+            if pdf.get("filename"):
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], pdf["filename"])
+                try:
+                    if os.path.exists(filepath):
+                        os.remove(filepath)
+                        deleted_data["pdf_files"] += 1
+                        print(f"🗑️ Deleted PDF file: {filepath}")
+                except Exception as e:
+                    print(f"⚠️ Could not delete file {filepath}: {e}")
+        
+        # Delete all resources (PDFs and videos) from database
+        res_result = resources.delete_many({"uploaded_by": username})
+        deleted_data["resources"] = res_result.deleted_count
+        print(f"🗑️ Deleted {res_result.deleted_count} resources for professional: {username}")
+    
+    # 3. Delete all notifications for this professional
+    if notifications is not None:
+        notif_result = notifications.delete_many({"user_id": username})
+        deleted_data["notifications"] = notif_result.deleted_count
+        print(f"🗑️ Deleted {notif_result.deleted_count} notifications for professional: {username}")
+    
+    # 4. Finally, delete the professional account itself
     result = professionals.delete_one({"username": username})
     
     if result.deleted_count > 0:
-        return jsonify({"message": "Account deleted successfully."}), 200
+        print(f"✅ Professional account deleted: {username}")
+        return jsonify({
+            "message": "Account and all associated data deleted successfully.",
+            "deleted_data": deleted_data
+        }), 200
     else:
         return jsonify({"message": "Account not found"}), 404
 
