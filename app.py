@@ -1084,6 +1084,62 @@ def upload_pdf_resource():
     }), 201
 
 
+# ----- Update Resource (Professionals only) -----
+@app.route("/api/resources/<resource_id>", methods=["PUT"])
+@token_required
+def update_resource(resource_id):
+    """
+    UPDATE operation for resources collection.
+    Allows professionals to edit resource title and description.
+    """
+    if resources is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Only professionals can edit resources"}), 403
+    
+    # Find the resource
+    try:
+        resource = resources.find_one({"_id": ObjectId(resource_id)})
+    except:
+        return jsonify({"message": "Invalid resource ID"}), 400
+    
+    if not resource:
+        return jsonify({"message": "Resource not found"}), 404
+    
+    # Get update data
+    data = request.get_json(silent=True) or {}
+    
+    update_fields = {}
+    
+    # Update title if provided
+    if "title" in data and data["title"].strip():
+        update_fields["title"] = data["title"].strip()
+    
+    # Update description if provided
+    if "description" in data:
+        update_fields["description"] = data["description"].strip()
+    
+    # Update video_url if provided (for video resources)
+    if "video_url" in data and data["video_url"].strip():
+        update_fields["video_url"] = data["video_url"].strip()
+    
+    if not update_fields:
+        return jsonify({"message": "No fields to update provided"}), 400
+    
+    # Perform the update
+    result = resources.update_one(
+        {"_id": ObjectId(resource_id)},
+        {"$set": update_fields}
+    )
+    
+    if result.modified_count > 0:
+        return jsonify({"message": "Resource updated successfully!", "updated_fields": list(update_fields.keys())}), 200
+    else:
+        return jsonify({"message": "No changes made (values may be the same)"}), 200
+
+
 # ----- Delete PDF Resource (Professionals only) -----
 @app.route("/api/resources/<resource_id>", methods=["DELETE"])
 @token_required
@@ -1111,7 +1167,7 @@ def delete_resource(resource_id):
     # Delete the file from filesystem if it's a PDF
     if resource.get("resource_type") == "pdf" and resource.get("filename"):
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], resource["filename"])
-        try:
+        try: 
             if os.path.exists(filepath):
                 os.remove(filepath)
         except Exception as e:

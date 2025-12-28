@@ -157,6 +157,43 @@
 
 </main>
 
+<!-- ========== EDIT RESOURCE MODAL ========== -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-pencil-square text-primary"></i> Edit Resource</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editResourceForm">
+          <input type="hidden" id="editResourceId">
+          <input type="hidden" id="editResourceType">
+          
+          <div class="mb-3">
+            <label for="editTitle" class="form-label"><i class="bi bi-type"></i> Title</label>
+            <input type="text" class="form-control" id="editTitle" placeholder="Enter resource title..." required>
+          </div>
+          
+          <div class="mb-3">
+            <label for="editDescription" class="form-label"><i class="bi bi-text-paragraph"></i> Description</label>
+            <textarea class="form-control" id="editDescription" rows="3" placeholder="Brief description..."></textarea>
+          </div>
+          
+          <div class="mb-3" id="editVideoUrlGroup" style="display: none;">
+            <label for="editVideoUrl" class="form-label"><i class="bi bi-link-45deg"></i> Video URL</label>
+            <input type="url" class="form-control" id="editVideoUrl" placeholder="https://youtube.com/watch?v=...">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-success" id="confirmEditBtn"><i class="bi bi-check-lg"></i> Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ========== DELETE CONFIRMATION MODAL ========== -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
@@ -207,6 +244,7 @@
   
   let deleteResourceId = null;
   const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+  const editModal = new bootstrap.Modal(document.getElementById('editModal'));
 
   // Load user info
   document.addEventListener('DOMContentLoaded', () => {
@@ -383,6 +421,9 @@
               <a href="${r.filepath}" target="_blank" class="btn-view" title="View PDF">
                 <i class="bi bi-eye"></i>
               </a>
+              <button class="btn-edit" onclick="openEditModal('${r._id}', 'pdf', '${escapeHtml(r.title).replace(/'/g, "\\'")}', '${escapeHtml(r.description || '').replace(/'/g, "\\'")}')" title="Edit">
+                <i class="bi bi-pencil"></i>
+              </button>
               <button class="btn-delete" onclick="confirmDelete('${r._id}', '${escapeHtml(r.title)}')" title="Delete">
                 <i class="bi bi-trash"></i>
               </button>
@@ -411,6 +452,9 @@
               <a href="${escapeHtml(r.video_url)}" target="_blank" class="btn-view btn-watch" title="Watch Video">
                 <i class="bi bi-play-fill"></i>
               </a>
+              <button class="btn-edit" onclick="openEditModal('${r._id}', 'video', '${escapeHtml(r.title).replace(/'/g, "\\'")}', '${escapeHtml(r.description || '').replace(/'/g, "\\'")}', '${escapeHtml(r.video_url || '').replace(/'/g, "\\'")}')" title="Edit">
+                <i class="bi bi-pencil"></i>
+              </button>
               <button class="btn-delete" onclick="confirmDelete('${r._id}', '${escapeHtml(r.title)}')" title="Delete">
                 <i class="bi bi-trash"></i>
               </button>
@@ -447,6 +491,89 @@
     document.getElementById('deleteResourceTitle').textContent = title;
     deleteModal.show();
   };
+
+  // Open edit modal
+  window.openEditModal = function(id, type, title, description, videoUrl = '') {
+    document.getElementById('editResourceId').value = id;
+    document.getElementById('editResourceType').value = type;
+    document.getElementById('editTitle').value = title;
+    document.getElementById('editDescription').value = description;
+    
+    // Show/hide video URL field based on resource type
+    const videoUrlGroup = document.getElementById('editVideoUrlGroup');
+    const videoUrlInput = document.getElementById('editVideoUrl');
+    
+    if (type === 'video') {
+      videoUrlGroup.style.display = 'block';
+      videoUrlInput.value = videoUrl;
+    } else {
+      videoUrlGroup.style.display = 'none';
+      videoUrlInput.value = '';
+    }
+    
+    editModal.show();
+  };
+
+  // Save edit changes
+  document.getElementById('confirmEditBtn').addEventListener('click', async () => {
+    const resourceId = document.getElementById('editResourceId').value;
+    const resourceType = document.getElementById('editResourceType').value;
+    const title = document.getElementById('editTitle').value.trim();
+    const description = document.getElementById('editDescription').value.trim();
+    const videoUrl = document.getElementById('editVideoUrl').value.trim();
+    
+    if (!title) {
+      showMessage('Title is required.', true);
+      return;
+    }
+    
+    const token = localStorage.getItem('token');
+    if (!token) {
+      showMessage('Please log in to edit resources.', true);
+      return;
+    }
+    
+    const confirmBtn = document.getElementById('confirmEditBtn');
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+    
+    const updateData = {
+      title: title,
+      description: description
+    };
+    
+    // Include video_url for video resources
+    if (resourceType === 'video' && videoUrl) {
+      updateData.video_url = videoUrl;
+    }
+    
+    try {
+      const response = await fetch(`/api/resources/${resourceId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(updateData)
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        editModal.hide();
+        showMessage('Resource updated successfully!', false);
+        loadResources();
+      } else {
+        showMessage(data.message || 'Update failed.', true);
+      }
+    } catch (error) {
+      console.error('Edit error:', error);
+      showMessage('Could not update resource.', true);
+    } finally {
+      confirmBtn.disabled = false;
+      confirmBtn.innerHTML = '<i class="bi bi-check-lg"></i> Save Changes';
+    }
+  });
 
   // Delete resource
   document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
