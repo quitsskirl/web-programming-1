@@ -81,42 +81,48 @@
 
       <!-- Hidden form: Change Password -->
       <div class="hidden-form" id="formChangePass">
-        <h4>Change Password</h4>
+        <h4><i class="bi bi-lock"></i> Change Password</h4>
         <form id="changePassForm">
-          <label for="oldPass">Current Password:</label><br>
-          <input type="password" id="oldPass" name="oldPass" required><br><br>
-          <label for="newPass">New Password:</label><br>
-          <input type="password" id="newPass" name="newPass" required><br><br>
-          <button type="submit" class="primary">Update Password</button>
+          <label for="oldPass">Current Password</label>
+          <input type="password" id="oldPass" name="oldPass" placeholder="Enter current password" required>
+          <label for="newPass">New Password</label>
+          <input type="password" id="newPass" name="newPass" placeholder="Enter new password" required>
+          <button type="submit" class="primary">
+            <i class="bi bi-check-lg"></i> Update Password
+          </button>
         </form>
       </div>
 
       <!-- Hidden form: Notification Settings -->
       <div class="hidden-form" id="formNotifications">
-        <h4>Notification Preferences</h4>
+        <h4><i class="bi bi-bell"></i> Notification Preferences</h4>
         <form id="notifForm">
-          <label><input type="checkbox" name="emailNot" checked> Email notifications for new appointments</label><br>
-          <label><input type="checkbox" name="smsNot"> SMS notifications</label><br>
-          <label><input type="checkbox" name="reminderNot" checked> Appointment reminders</label><br><br>
-          <button type="submit" class="primary">Save Preferences</button>
+          <label><input type="checkbox" name="emailNot" checked> Email notifications for new appointments</label>
+          <label><input type="checkbox" name="smsNot"> SMS notifications</label>
+          <label><input type="checkbox" name="reminderNot" checked> Appointment reminders</label>
+          <button type="submit" class="primary">
+            <i class="bi bi-check-lg"></i> Save Preferences
+          </button>
         </form>
       </div>
 
       <!-- Hidden form: Update Profile -->
       <div class="hidden-form" id="formUpdateProfile">
-        <h4>Update Profile</h4>
+        <h4><i class="bi bi-person-badge"></i> Update Profile</h4>
         <form id="profileForm">
-          <label for="specialty">Specialty:</label><br>
+          <label for="specialty">Specialty</label>
           <select id="specialty" name="specialty">
             <option value="General Counselor">General Counselor</option>
             <option value="Mental Health Counselor">Mental Health Counselor</option>
             <option value="Academic Advisor">Academic Advisor</option>
             <option value="Psychologist">Psychologist</option>
             <option value="Career Counselor">Career Counselor</option>
-          </select><br><br>
-          <label for="bio">Bio:</label><br>
-          <textarea id="bio" name="bio" rows="3" placeholder="Tell students about yourself..."></textarea><br><br>
-          <button type="submit" class="primary">Save Profile</button>
+          </select>
+          <label for="bio">Bio</label>
+          <textarea id="bio" name="bio" rows="3" placeholder="Tell students about yourself..."></textarea>
+          <button type="submit" class="primary">
+            <i class="bi bi-check-lg"></i> Save Profile
+          </button>
         </form>
       </div>
     </section>
@@ -124,12 +130,14 @@
     <!-- ===== DANGER ZONE ===== -->
     <section class="danger-zone">
       <h3><i class="bi bi-exclamation-triangle"></i> Danger Zone</h3>
-      <button class="delete-btn" id="btnDeleteAccount">
-        <i class="bi bi-trash"></i> Delete Account
-      </button>
-      <button class="logout-btn" id="btnLogOut">
-        <i class="bi bi-box-arrow-right"></i> Log Out
-      </button>
+      <div class="button-group">
+        <button class="delete-btn" id="btnDeleteAccount">
+          <i class="bi bi-trash"></i> Delete Account
+        </button>
+        <button class="logout-btn" id="btnLogOut">
+          <i class="bi bi-box-arrow-right"></i> Log Out
+        </button>
+      </div>
     </section>
 
   </main>

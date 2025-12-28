@@ -1,4 +1,24 @@
-/* ========== STUDENT HOME PAGE STYLES ========== */
+/* ========== STUDENT HOME PAGE STYLES - ENHANCED ========== */
+
+/* ========================================
+   CSS VARIABLES
+   ======================================== */
+:root {
+  --primary-dark: #4b5431;
+  --primary: #6f7843;
+  --primary-light: #8a9562;
+  --primary-pale: #e8eddc;
+  --accent: #9ba670;
+  --bg-light: #f8f9f5;
+  --bg-warm: #f6f6f0;
+  --text-dark: #2d3320;
+  --text-muted: #6b7055;
+  --border-light: #d4dcc4;
+  --shadow-sm: 0 2px 8px rgba(75, 84, 49, 0.08);
+  --shadow-md: 0 4px 20px rgba(75, 84, 49, 0.12);
+  --shadow-lg: 0 8px 30px rgba(75, 84, 49, 0.18);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 /* ========================================
    LOADING SCREEN ANIMATION
@@ -106,125 +126,317 @@
   80%, 100% { content: '...'; }
 }
 
-/* ----- Base Styles ----- */
-body {
-  margin: 0;
-  font-family: "Segoe UI", Arial, sans-serif;
-  background-color: #f6f6f0;
-  color: #333;
+/* ========================================
+   BASE STYLES
+   ======================================== */
+* {
+  box-sizing: border-box;
 }
 
-/* ----- Header ----- */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(180deg, var(--bg-warm) 0%, #f0f2e8 100%);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+/* ========================================
+   HEADER - Enhanced
+   ======================================== */
 header {
-  background-color: #8a9562;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
   color: white;
-  padding: 10px 20px;
+  padding: 14px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.header-left, .header-right { display: flex; align-items: center; gap: 10px; }
-.header-left h2 { margin: 0; }
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-left h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
 
 /* Menu button */
-.menu-icon { font-size: 26px; background: none; border: none; color: white; cursor: pointer; }
+.menu-icon {
+  font-size: 26px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.menu-icon:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
 
 /* Chat button */
 .chat-icon {
-  background-color: white;
-  color: #8a9562;
-  border-radius: 50%;
-  padding: 8px;
-  font-size: 18px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 20px;
   border: none;
   cursor: pointer;
-  width: 40px; height: 40px;
-  display: flex; align-items: center; justify-content: center;
-  transition: background-color 0.3s ease;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
 }
-.chat-icon:hover { background-color: #eaeedc; }
+
+.chat-icon:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
 
 /* User icon */
 .user-icon {
-  font-size: 22px;
-  background-color: #8a9663;
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.2);
   color: white;
   border: none;
-  border-radius: 50%;
-  width: 40px; height: 40px;
-  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  transition: all 0.2s ease;
+  transition: var(--transition);
 }
-.user-icon:hover { background-color: #7c8a56; transform: scale(1.05); }
 
-/* ----- User Popup ----- */
+.user-icon:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* ========================================
+   USER POPUP - Enhanced
+   ======================================== */
 .user-popup {
   position: absolute;
-  top: 65px; right: 20px;
-  background-color: #e3e5d6;
-  padding: 14px 20px;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-  min-width: 190px;
+  top: 70px;
+  right: 24px;
+  background: white;
+  padding: 20px 24px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  min-width: 240px;
   text-align: left;
   z-index: 1000;
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(-10px) scale(0.95);
   pointer-events: none;
-  transition: all 0.3s ease-out;
+  transition: var(--transition);
+  border: 1px solid var(--border-light);
 }
-.user-popup.active { opacity: 1; transform: translateY(0); pointer-events: auto; animation: popupGlow 1.2s ease-in-out; }
-.user-popup h3 { margin: 0; font-size: 16px; color: #444; }
-.user-popup p { margin: 5px 0 0; font-size: 14px; color: #666; }
-@keyframes popupGlow { 0% { box-shadow: 0 0 0 rgba(138, 150, 99, 0); } 50% { box-shadow: 0 0 12px rgba(138, 150, 99, 0.3); } 100% { box-shadow: 0 0 0 rgba(138, 150, 99, 0); } }
-.user-popup::before { content: ""; position: absolute; top: -8px; right: 20px; border-width: 8px; border-style: solid; border-color: transparent transparent #e3e5d6 transparent; }
 
-/* ----- Sidebar Menu ----- */
+.user-popup.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.user-popup h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.user-popup p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  background: var(--primary-pale);
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.user-popup::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 24px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent transparent white transparent;
+}
+
+/* ========================================
+   SIDEBAR MENU - Enhanced
+   ======================================== */
 .side-menu {
   position: fixed;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   transform: translateX(-100%);
-  width: 250px; height: 100%;
-  background-color: #4b5431;
+  width: 280px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary-dark) 0%, #3a4126 100%);
   color: white;
-  display: flex; flex-direction: column;
-  padding: 20px;
-  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.25);
-  transition: transform 0.35s ease, opacity 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
   z-index: 9999;
   opacity: 0;
   pointer-events: none;
 }
-.side-menu.open { transform: translateX(0); opacity: 1; pointer-events: auto; }
-.side-menu h3 { margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); font-size: 20px; }
-.side-menu a { color: white; text-decoration: none; padding: 12px 0; font-size: 16px; display: block; transition: background 0.3s; }
-.side-menu a:hover { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
-.close-btn { align-self: flex-end; background: none; border: none; color: white; font-size: 30px; cursor: pointer; margin-bottom: 10px; }
 
-/* ----- Hero Section ----- */
-.hero { text-align: center; padding: 80px 20px 50px; }
-.hero h1 { font-size: 60px; margin: 0; color: #4b5431; }
-.hero p { margin-top: 10px; color: #666; }
+.side-menu.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
 
-/* ----- Image Slider ----- */
+.side-menu h3 {
+  margin: 0 0 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.side-menu a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  padding: 14px 16px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 10px;
+  transition: var(--transition);
+  margin-bottom: 4px;
+}
+
+.side-menu a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: translateX(4px);
+}
+
+.side-menu a.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-weight: 600;
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================
+   HERO SECTION - Enhanced
+   ======================================== */
+.hero {
+  text-align: center;
+  padding: 60px 20px 40px;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 300px;
+  background: radial-gradient(ellipse at center top, rgba(138, 149, 98, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero h1 {
+  font-size: 56px;
+  margin: 0;
+  color: var(--primary-dark);
+  font-weight: 700;
+  letter-spacing: -1px;
+  position: relative;
+}
+
+.hero h1::after {
+  content: '🌿';
+  font-size: 36px;
+  margin-left: 12px;
+}
+
+.hero p {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 18px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ========================================
+   IMAGE SLIDER - Enhanced
+   ======================================== */
 .slider {
   position: relative;
-  width: 80%;
-  max-width: 600px;
-  height: 300px;
-  margin: 30px auto;
-  background-color: #d8ddc8;
-  border-radius: 16px;
+  width: 90%;
+  max-width: 700px;
+  height: 350px;
+  margin: 40px auto;
+  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--border-light) 100%);
+  border-radius: 24px;
   overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 4px solid white;
 }
+
 .slides {
   width: 100%;
   height: 100%;
   position: relative;
 }
+
 .slide {
   position: absolute;
   top: 0;
@@ -233,50 +445,274 @@ header {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.6s ease-in-out, transform 0.6s ease;
+  transform: scale(1.02);
 }
+
 .slide.active {
   opacity: 1;
+  transform: scale(1);
 }
+
 .arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255,255,255,0.8);
+  background: white;
   border: none;
-  font-size: 28px;
+  font-size: 24px;
   cursor: pointer;
-  color: #4f5b2f;
+  color: var(--primary-dark);
   z-index: 2;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s;
-}
-.arrow:hover {
-  background: rgba(255,255,255,1);
-}
-.arrow.left {
-  left: 15px;
-}
-.arrow.right {
-  right: 15px;
+  transition: var(--transition);
+  box-shadow: var(--shadow-md);
 }
 
-/* Button */
+.arrow:hover {
+  background: var(--primary-pale);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.arrow.left {
+  left: 20px;
+}
+
+.arrow.right {
+  right: 20px;
+}
+
+/* ========================================
+   BUTTONS - Enhanced
+   ======================================== */
 .btn {
-  display: inline-block;
-  background-color: #6f7843;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
-  padding: 12px 24px;
+  padding: 16px 32px;
   border: none;
-  border-radius: 25px;
+  border-radius: 30px;
   text-decoration: none;
   font-size: 16px;
-  margin-top: 20px;
+  font-weight: 600;
+  margin-top: 24px;
   cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
 }
 
+.btn:hover {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ========================================
+   CUSTOM TIP BANNER - Dark Green Theme
+   ======================================== */
+.tip-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, #3a4126 100%);
+  color: white;
+  padding: 18px 24px;
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tip-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.tip-icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tip-icon i {
+  font-size: 24px;
+  color: #fcd34d;
+}
+
+.tip-content {
+  flex: 1;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.tip-content strong {
+  color: #fcd34d;
+  font-weight: 600;
+}
+
+.tip-banner .btn-close {
+  filter: brightness(0) invert(1);
+  opacity: 0.7;
+  transition: var(--transition);
+}
+
+.tip-banner .btn-close:hover {
+  opacity: 1;
+}
+
+/* ========================================
+   TOAST CUSTOMIZATION
+   ======================================== */
+.toast {
+  border-radius: 12px;
+  border: none;
+  box-shadow: var(--shadow-lg);
+}
+
+.toast-header.bg-success {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+  border-radius: 12px 12px 0 0;
+}
+
+.toast-body {
+  padding: 16px;
+  font-size: 15px;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 42px;
+  }
+  
+  .hero h1::after {
+    font-size: 28px;
+  }
+  
+  .hero p {
+    font-size: 16px;
+  }
+  
+  .slider {
+    height: 250px;
+    width: 95%;
+  }
+  
+  .arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  header {
+    padding: 12px 16px;
+  }
+  
+  .header-left h2 {
+    font-size: 18px;
+  }
+  
+  .tip-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .tip-icon {
+    margin-bottom: 8px;
+  }
+  
+  .side-menu {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 40px 16px 30px;
+  }
+  
+  .hero h1 {
+    font-size: 36px;
+  }
+  
+  .btn {
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+}
+
+/* ========================================
+   ANIMATIONS & EFFECTS
+   ======================================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero h1 {
+  animation: fadeInUp 0.6s ease 0.1s both;
+}
+
+.hero p {
+  animation: fadeInUp 0.6s ease 0.2s both;
+}
+
+.slider {
+  animation: fadeInUp 0.6s ease 0.3s both;
+}
+
+.btn {
+  animation: fadeInUp 0.6s ease 0.4s both;
+}
+
+/* Focus States */
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--primary-light);
+  outline-offset: 2px;
+}
+
+/* Selection Color */
+::selection {
+  background: var(--primary-pale);
+  color: var(--primary-dark);
+}

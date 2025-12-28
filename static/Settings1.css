@@ -1,4 +1,30 @@
-/* ========== SETTINGS PAGE STYLES ========== */
+/* ========== SETTINGS PAGE STYLES - MODERN REDESIGN ========== */
+
+/* ========================================
+   CSS VARIABLES - Consistent Theming
+   ======================================== */
+:root {
+  --primary-dark: #4b5431;
+  --primary: #6f7843;
+  --primary-light: #8a9562;
+  --primary-pale: #e8eddc;
+  --accent: #9ba670;
+  --bg-light: #f8f9f5;
+  --bg-card: #ffffff;
+  --text-dark: #2d3320;
+  --text-muted: #6b7055;
+  --border-light: #e0e4d4;
+  --danger: #c44;
+  --danger-light: #fee2e2;
+  --success: #22c55e;
+  --shadow-sm: 0 2px 8px rgba(75, 84, 49, 0.08);
+  --shadow-md: 0 4px 20px rgba(75, 84, 49, 0.12);
+  --shadow-lg: 0 8px 30px rgba(75, 84, 49, 0.15);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 /* ========================================
    LOADING SCREEN ANIMATION
@@ -73,112 +99,617 @@
   80%, 100% { content: '...'; }
 }
 
-/* ----- Base Styles ----- */
-body {
-  margin: 0;
-  font-family: "Segoe UI", Arial, sans-serif;
-  background-color: #f6f6f0;
-  color: #333;
+/* ========================================
+   BASE STYLES
+   ======================================== */
+* {
+  box-sizing: border-box;
 }
 
-/* ----- Header ----- */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(180deg, var(--bg-light) 0%, #f0f2e8 100%);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
 header {
-  background-color: #8a9562;
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
   color: white;
-  padding: 15px;
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-/* Menu button */
-.menu-icon { font-size: 26px; background: none; border: none; color: white; cursor: pointer; }
+header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
 
-/* Chat button */
-.chat-icon {
-  background-color: white;
-  color: #8a9562;
-  border-radius: 50%;
-  padding: 8px;
-  font-size: 18px;
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menu-icon {
+  font-size: 26px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.menu-icon:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+.chat-icon, .user-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 20px;
   border: none;
   cursor: pointer;
-  width: 40px; height: 40px;
-  display: flex; align-items: center; justify-content: center;
-  transition: background-color 0.3s ease;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
 }
-.chat-icon:hover { background-color: #eaeedc; }
 
-/* ----- Sidebar Menu ----- */
+.chat-icon:hover, .user-icon:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* User Popup */
+.user-popup {
+  position: absolute;
+  top: 70px;
+  right: 24px;
+  background: white;
+  padding: 20px 24px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  min-width: 220px;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  pointer-events: none;
+  transition: var(--transition);
+  border: 1px solid var(--border-light);
+}
+
+.user-popup.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.user-popup h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.user-popup p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ========================================
+   SIDEBAR MENU
+   ======================================== */
 .side-menu {
   position: fixed;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   transform: translateX(-100%);
-  width: 250px; height: 100%;
-  background-color: #4b5431;
+  width: 280px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--primary-dark) 0%, #3a4126 100%);
   color: white;
-  display: flex; flex-direction: column;
-  padding: 20px;
-  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.25);
-  transition: transform 0.35s ease, opacity 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
   z-index: 9999;
   opacity: 0;
   pointer-events: none;
 }
-.side-menu.open { transform: translateX(0); opacity: 1; pointer-events: auto; }
-.side-menu h3 { margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.2); font-size: 20px; }
-.side-menu a { color: white; text-decoration: none; padding: 12px 0; font-size: 16px; display: block; transition: background 0.3s; }
-.side-menu a:hover { background: rgba(255, 255, 255, 0.15); border-radius: 4px; }
-.side-menu a.active { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
-.close-btn { align-self: flex-end; background: none; border: none; color: white; font-size: 30px; cursor: pointer; margin-bottom: 10px; }
 
-/* ----- Main Container ----- */
-.container { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
-
-/* ----- Settings Boxes ----- */
-.profile-box, .account-settings, .danger-zone {
-  background-color: #fff;
-  border: 1px solid #d4d8c4;
-  border-radius: 16px;
-  padding: 20px;
-  margin: 20px 0;
+.side-menu.open {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
 }
-.profile-box h3, .account-settings h3, .danger-zone h3 { color: #4b5431; border-bottom: 1px solid #ccc; padding-bottom: 8px; }
 
-/* Hidden forms */
-.hidden-form { display: none; margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; }
+.side-menu h3 {
+  margin: 0 0 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 22px;
+  font-weight: 600;
+}
 
-/* ----- Buttons ----- */
+.side-menu a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  padding: 14px 16px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  margin-bottom: 4px;
+}
+
+.side-menu a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: translateX(4px);
+}
+
+.side-menu a.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-weight: 600;
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================
+   MAIN CONTAINER
+   ======================================== */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+/* Page Title */
+.container > h1 {
+  color: var(--primary-dark);
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+
+/* ========================================
+   SETTINGS CARDS
+   ======================================== */
+.profile-box, .account-settings, .danger-zone {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+  transition: var(--transition);
+}
+
+.profile-box:hover, .account-settings:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Section Headers */
+.profile-box h3, .account-settings h3, .danger-zone h3 {
+  color: var(--primary-dark);
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--primary-pale);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-box h3 i, .account-settings h3 i, .danger-zone h3 i {
+  color: var(--primary-light);
+  font-size: 24px;
+}
+
+/* ========================================
+   PROFILE BOX - Enhanced
+   ======================================== */
+.profile-box {
+  background: linear-gradient(135deg, white 0%, var(--primary-pale) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-box::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(138, 149, 98, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.profile-box p {
+  margin: 12px 0;
+  font-size: 16px;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-box p strong {
+  color: var(--primary-dark);
+  font-weight: 600;
+  min-width: 100px;
+}
+
+.profile-box p span {
+  color: var(--text-muted);
+  background: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  border: 1px solid var(--border-light);
+}
+
+/* ========================================
+   ACCOUNT SETTINGS - Buttons Grid
+   ======================================== */
+.account-settings {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Settings Buttons Container */
+.account-settings > button.primary,
+.account-settings > .settings-btn-group {
+  margin-bottom: 8px;
+}
+
+/* Primary Action Buttons */
 .primary {
-  background-color: #6f7843;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   color: white;
   border: none;
-  border-radius: 20px;
-  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  padding: 16px 24px;
   cursor: pointer;
   font-size: 15px;
-  margin: 10px 5px 0 0;
+  font-weight: 600;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: var(--transition);
+  width: 100%;
+  text-align: left;
 }
-.primary:hover { background-color: #8a9562; }
 
+.primary:hover {
+  background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.primary i {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+/* ========================================
+   HIDDEN FORMS - Expandable Sections
+   ======================================== */
+.hidden-form {
+  display: none;
+  margin-top: 20px;
+  padding: 24px;
+  background: linear-gradient(135deg, #fafbf7 0%, #f5f7f0 100%);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hidden-form h4 {
+  color: var(--primary-dark);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Form Labels */
+.hidden-form label {
+  display: block;
+  color: var(--text-dark);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* Form Inputs */
+.hidden-form input[type="password"],
+.hidden-form input[type="text"],
+.hidden-form input[type="email"],
+.hidden-form select,
+.hidden-form textarea {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  margin-bottom: 16px;
+  transition: var(--transition);
+  background: white;
+}
+
+.hidden-form input:focus,
+.hidden-form select:focus,
+.hidden-form textarea:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 4px rgba(138, 149, 98, 0.15);
+}
+
+/* Checkbox Styling */
+.hidden-form label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.hidden-form label:has(input[type="checkbox"]):hover {
+  background: var(--primary-pale);
+  border-color: var(--primary-light);
+}
+
+.hidden-form input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/* Form Submit Button */
+.hidden-form button.primary {
+  width: auto;
+  margin-top: 8px;
+  padding: 14px 28px;
+  justify-content: center;
+}
+
+/* ========================================
+   DANGER ZONE
+   ======================================== */
+.danger-zone {
+  background: linear-gradient(135deg, white 0%, #fff5f5 100%);
+  border-color: #fecaca;
+}
+
+.danger-zone h3 {
+  color: var(--danger);
+  border-bottom-color: #fecaca;
+}
+
+.danger-zone h3 i {
+  color: var(--danger);
+}
+
+/* Danger Zone Button Container */
+.danger-zone .button-group {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* Delete Button */
 .delete-btn {
-  background-color: #b84141;
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: var(--transition);
 }
-.delete-btn:hover { background-color: #d95353; }
 
+.delete-btn:hover {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+}
+
+.delete-btn i {
+  font-size: 18px;
+}
+
+/* Logout Button */
 .logout-btn {
-  background-color: #6f7843;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 20px;
-  border: none;
+  background: white;
+  color: var(--primary-dark);
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border-light);
   cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: var(--transition);
 }
 
-/* ----- Responsive ----- */
-@media (max-width: 600px) { .container { margin: 20px auto; padding: 0 15px; } }
+.logout-btn:hover {
+  background: var(--primary-pale);
+  border-color: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.logout-btn i {
+  font-size: 18px;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 768px) {
+  .container {
+    padding: 24px 16px 40px;
+  }
+  
+  .profile-box, .account-settings, .danger-zone {
+    padding: 20px;
+    border-radius: var(--radius-md);
+  }
+  
+  .profile-box h3, .account-settings h3, .danger-zone h3 {
+    font-size: 18px;
+  }
+  
+  .primary {
+    padding: 14px 20px;
+    font-size: 14px;
+  }
+  
+  .delete-btn, .logout-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .side-menu {
+    width: 100%;
+  }
+  
+  header {
+    padding: 12px 16px;
+  }
+  
+  header h2 {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-box p {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .profile-box p span {
+    margin-left: 0;
+  }
+  
+  .hidden-form {
+    padding: 16px;
+  }
+}
+
+/* ========================================
+   ANIMATIONS & MICRO-INTERACTIONS
+   ======================================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.profile-box {
+  animation: fadeIn 0.5s ease 0.1s both;
+}
+
+.account-settings {
+  animation: fadeIn 0.5s ease 0.2s both;
+}
+
+.danger-zone {
+  animation: fadeIn 0.5s ease 0.3s both;
+}
+
+/* Focus States for Accessibility */
+button:focus-visible, 
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--primary-light);
+  outline-offset: 2px;
+}
+
+/* Selection Color */
+::selection {
+  background: var(--primary-pale);
+  color: var(--primary-dark);
+}

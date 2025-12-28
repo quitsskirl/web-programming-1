@@ -32,9 +32,13 @@
 
   <!-- ========== HEADER ========== -->
   <header>
-    <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
-    <h2>Settings</h2>
-    <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
+    <div class="header-left">
+      <button id="menuBtn" class="menu-icon" title="Open Menu">&#9776;</button>
+      <h2>Settings</h2>
+    </div>
+    <div class="header-right">
+      <button id="chatBtn" class="chat-icon" title="Open Chat">💬</button>
+    </div>
   </header>
 
   <!-- ========== SIDE NAVIGATION MENU ========== -->
@@ -56,56 +60,75 @@
     <!-- ===== PROFILE INFO BOX ===== -->
     <!-- Displays current user's account info -->
     <section class="profile-box">
-      <h3>Account Info</h3>
+      <h3><i class="bi bi-person-circle"></i> Account Info</h3>
       <p><strong>Username:</strong> <span id="profileUsername">Loading...</span></p>
       <p><strong>Tags:</strong> <span id="profileTags">Loading...</span></p>
     </section>
 
     <!-- ===== ACCOUNT SETTINGS ===== -->
     <section class="account-settings">
-      <h3>Security & Preferences</h3>
+      <h3><i class="bi bi-shield-lock"></i> Security & Preferences</h3>
       
       <!-- Setting action buttons -->
-      <button class="primary" id="btnChangePass">Change Password</button>
-      <button class="primary" id="btnNotifications">Notifications Preferences</button>
-      <button class="primary" id="btnBlocked">Manage Blocked Users</button>
+      <button class="primary" id="btnChangePass">
+        <i class="bi bi-key"></i> Change Password
+      </button>
+      <button class="primary" id="btnNotifications">
+        <i class="bi bi-bell"></i> Notification Preferences
+      </button>
+      <button class="primary" id="btnBlocked">
+        <i class="bi bi-person-x"></i> Manage Blocked Users
+      </button>
 
       <!-- Hidden form: Change Password -->
       <div class="hidden-form" id="formChangePass">
-        <h4>Change Password</h4>
+        <h4><i class="bi bi-lock"></i> Change Password</h4>
         <form>
-          <label for="oldPass">Old Password:</label><br>
-          <input type="password" id="oldPass" name="oldPass" required><br><br>
-          <label for="newPass">New Password:</label><br>
-          <input type="password" id="newPass" name="newPass" required><br><br>
-          <button type="submit" class="primary">Submit</button>
+          <label for="oldPass">Current Password</label>
+          <input type="password" id="oldPass" name="oldPass" placeholder="Enter current password" required>
+          <label for="newPass">New Password</label>
+          <input type="password" id="newPass" name="newPass" placeholder="Enter new password" required>
+          <button type="submit" class="primary">
+            <i class="bi bi-check-lg"></i> Update Password
+          </button>
         </form>
       </div>
 
       <!-- Hidden form: Notification Settings -->
       <div class="hidden-form" id="formNotifications">
-        <h4>Notifications</h4>
+        <h4><i class="bi bi-bell"></i> Notification Preferences</h4>
         <form>
-          <label><input type="checkbox" name="emailNot" checked> Email notifications</label><br>
-          <label><input type="checkbox" name="smsNot"> SMS notifications</label><br><br>
-          <button type="submit" class="primary">Save</button>
+          <label><input type="checkbox" name="emailNot" checked> Email notifications for updates</label>
+          <label><input type="checkbox" name="smsNot"> SMS notifications</label>
+          <label><input type="checkbox" name="reminderNot" checked> Appointment reminders</label>
+          <button type="submit" class="primary">
+            <i class="bi bi-check-lg"></i> Save Preferences
+          </button>
         </form>
       </div>
 
       <!-- Hidden form: Blocked Users -->
       <div class="hidden-form" id="formBlocked">
-        <h4>Blocked Users</h4>
-        <p>You currently have no blocked users.</p>
-        <button type="button" class="primary">Manage</button>
+        <h4><i class="bi bi-person-x"></i> Blocked Users</h4>
+        <p style="color: #6b7055; margin-bottom: 16px;">You currently have no blocked users.</p>
+        <button type="button" class="primary">
+          <i class="bi bi-gear"></i> Manage Block List
+        </button>
       </div>
     </section>
 
     <!-- ===== DANGER ZONE ===== -->
     <!-- Account deletion and logout -->
     <section class="danger-zone">
-      <h3>Danger Zone</h3>
-      <button class="delete-btn" id="btnDeleteAccount">Delete Account</button>
-      <button class="logout-btn" id="btnLogOut">Log Out</button>
+      <h3><i class="bi bi-exclamation-triangle"></i> Danger Zone</h3>
+      <div class="button-group">
+        <button class="delete-btn" id="btnDeleteAccount">
+          <i class="bi bi-trash"></i> Delete Account
+        </button>
+        <button class="logout-btn" id="btnLogOut">
+          <i class="bi bi-box-arrow-right"></i> Log Out
+        </button>
+      </div>
     </section>
 
   </main>

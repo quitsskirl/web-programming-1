@@ -24,21 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     Array.from(select.options).forEach(o => (o.selected = false)); // clear multi-select explicitly
   });
 
-  // Register form
-  document.getElementById("registerFormST").addEventListener("submit", e => {
-    e.preventDefault();
-
-    const username = document.getElementById("username").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const selectedTags = Array.from(select.selectedOptions).map(opt => opt.value);
-
-    if(username && password){
-      const student = { username, password, tags: selectedTags };
-      localStorage.setItem("mhStudent", JSON.stringify(student));
-      alert("Student registration successful! Please log in.");
-      window.location.href = "loginST.html";
-    } else {
-      alert("Please fill in all required fields before registering.");
-    }
-  });
+  // NOTE: The form submit handler is in registerST.html template
+  // It calls the /register API and redirects using Flask url_for
+  // This JS file only handles dynamic options and clear button
 });
