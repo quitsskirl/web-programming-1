@@ -416,22 +416,22 @@ header {
 }
 
 /* ========================================
-   IMAGE SLIDER - Enhanced
+   IMAGE SLIDER BOX
    ======================================== */
-.slider {
+.slider-box {
   position: relative;
   width: 90%;
-  max-width: 700px;
-  height: 350px;
+  max-width: 800px;
+  height: 400px;
   margin: 40px auto;
-  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--border-light) 100%);
   border-radius: 24px;
   overflow: hidden;
   box-shadow: var(--shadow-lg);
+  background: linear-gradient(135deg, var(--primary-pale) 0%, var(--border-light) 100%);
   border: 4px solid white;
 }
 
-.slides {
+.slides-container {
   width: 100%;
   height: 100%;
   position: relative;
@@ -445,8 +445,8 @@ header {
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 0.6s ease-in-out, transform 0.6s ease;
-  transform: scale(1.02);
+  transform: scale(1.05);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 .slide.active {
@@ -454,37 +454,69 @@ header {
   transform: scale(1);
 }
 
-.arrow {
+/* Slider Arrows */
+.slider-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   background: white;
   border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: var(--primary-dark);
-  z-index: 2;
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition);
+  cursor: pointer;
+  z-index: 10;
   box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  color: var(--primary-dark);
+  font-size: 20px;
 }
 
-.arrow:hover {
+.slider-arrow:hover {
   background: var(--primary-pale);
   transform: translateY(-50%) scale(1.1);
 }
 
-.arrow.left {
+.slider-arrow.left {
   left: 20px;
 }
 
-.arrow.right {
+.slider-arrow.right {
   right: 20px;
+}
+
+/* Slide Indicator Dots */
+.slide-dots {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: var(--transition);
+  border: 2px solid white;
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.dot.active {
+  background: white;
+  transform: scale(1.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* ========================================
@@ -625,15 +657,33 @@ header {
     font-size: 16px;
   }
   
-  .slider {
-    height: 250px;
+  .slider-box {
+    height: 280px;
     width: 95%;
+    border-radius: 18px;
   }
   
-  .arrow {
+  .slider-arrow {
     width: 40px;
     height: 40px;
-    font-size: 20px;
+    font-size: 16px;
+  }
+  
+  .slider-arrow.left {
+    left: 12px;
+  }
+  
+  .slider-arrow.right {
+    right: 12px;
+  }
+  
+  .slide-dots {
+    bottom: 14px;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
   }
   
   header {
@@ -672,6 +722,12 @@ header {
     padding: 14px 24px;
     font-size: 15px;
   }
+  
+  .slider-box {
+    height: 220px;
+    border-radius: 14px;
+    border-width: 3px;
+  }
 }
 
 /* ========================================
@@ -696,12 +752,12 @@ header {
   animation: fadeInUp 0.6s ease 0.2s both;
 }
 
-.slider {
-  animation: fadeInUp 0.6s ease 0.3s both;
+.slider-box {
+  animation: fadeInUp 0.5s ease 0.3s both;
 }
 
-.btn {
-  animation: fadeInUp 0.6s ease 0.4s both;
+.hero .btn {
+  animation: fadeInUp 0.6s ease 0.6s both;
 }
 
 /* Focus States */

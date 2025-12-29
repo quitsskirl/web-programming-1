@@ -71,18 +71,30 @@
   <h1>Home</h1>
   <p>Your companion for a successful and balanced study experience</p>
   
-  <!-- Image Slider -->
-  <div class="slider">
-    <button class="arrow left" onclick="prevSlide()">&#10094;</button>
-    <div class="slides">
-      <img src="{{ url_for('static', filename='images/therapy.jpg') }}" class="slide active" alt="Therapy">
-      <img src="{{ url_for('static', filename='images/session.webp') }}" class="slide" alt="Session">
+  <!-- Image Slider Box -->
+  <div class="slider-box">
+    <button class="slider-arrow left" onclick="prevSlide()">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+    
+    <div class="slides-container">
+      <img src="{{ url_for('static', filename='images/therapy.jpg') }}" class="slide active" alt="Therapy Session">
+      <img src="{{ url_for('static', filename='images/istockphoto-1322211571-612x612.jpg') }}" class="slide" alt="Mental Wellness">
     </div>
-    <button class="arrow right" onclick="nextSlide()">&#10095;</button>
+    
+    <button class="slider-arrow right" onclick="nextSlide()">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+    
+    <!-- Slide Indicators -->
+    <div class="slide-dots">
+      <span class="dot active" onclick="goToSlide(0)"></span>
+      <span class="dot" onclick="goToSlide(1)"></span>
+    </div>
   </div>
   
   <!-- Link to more info page -->
-  <a href="{{ url_for('info.more_info_page') }}" class="btn">More Info</a>
+  <a href="{{ url_for('info.more_info_page') }}" class="btn"><i class="bi bi-arrow-right-circle"></i> More Info</a>
 </section>
 
 <!-- ==================== BOOTSTRAP COMPONENTS ==================== -->
@@ -193,14 +205,21 @@
 })();
 </script>
 
+
 <!-- ==================== IMAGE SLIDER SCRIPT ==================== -->
 <script>
   let currentSlide = 0;
   const slides = document.querySelectorAll(".slide");
+  const dots = document.querySelectorAll(".dot");
   
   function showSlide(index) {
+    // Update slides
     slides.forEach(slide => slide.classList.remove("active"));
     slides[index].classList.add("active");
+    
+    // Update dots
+    dots.forEach(dot => dot.classList.remove("active"));
+    dots[index].classList.add("active");
   }
   
   function nextSlide() {
@@ -213,8 +232,13 @@
     showSlide(currentSlide);
   }
   
-  // Auto-slide every 5 seconds
-  setInterval(nextSlide, 5000);
+  function goToSlide(index) {
+    currentSlide = index;
+    showSlide(currentSlide);
+  }
+  
+  // Auto-slide every 4 seconds
+  setInterval(nextSlide, 4000);
 </script>
 
 <!-- ==================== BOOTSTRAP JAVASCRIPT ==================== -->
