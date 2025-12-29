@@ -115,7 +115,7 @@ mongo_uri = os.getenv("MONGO_URI")  # Get connection string from environment (se
 client = None  # MongoDB client object (will hold connection)
 db = None  # Database reference
 
-# ==================== MONGODB COLLECTIONS (5 tables) ====================
+# ==================== MONGODB COLLECTIONS (6 tables) ====================
 # Table 1: professors - stores professor/counselor account info from sign-in
 professors_table = None
 # Table 2: appointments - scheduled meetings between students and professionals
@@ -126,6 +126,8 @@ resources = None
 support_tickets = None
 # Table 5: notifications - alerts and reminders for users
 notifications = None
+# Table 6: event_images - event images for the homepage slider
+event_images = None
 
 # Legacy collections (for backward compatibility with existing code)
 students = None
@@ -143,7 +145,7 @@ if mongo_uri:  # Only try to connect if MONGO_URI is set
         client.admin.command("ping")  # Send ping to test if connection works
         db = client["healthDB"]  # Select/create database named "healthDB"
         
-        # ==================== INITIALIZE 5 COLLECTIONS ====================
+        # ==================== INITIALIZE 6 COLLECTIONS ====================
         # Table 1: professors - professor account info (from sign-in page)
         professors_table = db["professors"]
         # Table 2: appointments - scheduled meetings
@@ -154,13 +156,15 @@ if mongo_uri:  # Only try to connect if MONGO_URI is set
         support_tickets = db["support_tickets"]
         # Table 5: notifications - user alerts
         notifications = db["notifications"]
+        # Table 6: event_images - homepage event images
+        event_images = db["event_images"]
         
         # Legacy collections (backward compatibility)
         students = db["students"]
         professionals = db["professionals"]
         
         print("✅ MongoDB connection OK!")
-        print("📦 5 tables initialized!")
+        print("📦 6 tables initialized!")
         
         # ==================== CREATE COLLECTIONS WITH SAMPLE DATA ====================
         # MongoDB collections only appear when they have at least 1 document
@@ -1375,6 +1379,174 @@ def get_video_resources():
         video_resources.append(r)
     
     return jsonify(video_resources), 200
+
+
+# ==================== EVENT IMAGES API (Homepage Slider) ====================
+# These endpoints manage event images that appear on the homepage slider
+
+# Upload folder for event images
+EVENT_IMAGES_FOLDER = os.path.join('static', 'uploads', 'events')
+os.makedirs(EVENT_IMAGES_FOLDER, exist_ok=True)
+
+ALLOWED_IMAGE_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+def allowed_image(filename):
+    """Check if file extension is an allowed image type"""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_IMAGE_EXTENSIONS
+
+
+# ----- Upload Event Image (Professionals only) -----
+@app.route("/api/events/upload-image", methods=["POST"])
+@token_required
+def upload_event_image():
+    """
+    Upload an event image to the homepage slider.
+    Only professionals can upload event images.
+    """
+    if event_images is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Only professionals can upload event images"}), 403
+    
+    # Check if file is in request
+    if 'file' not in request.files:
+        return jsonify({"message": "No file provided"}), 400
+    
+    file = request.files['file']
+    
+    if file.filename == '':
+        return jsonify({"message": "No file selected"}), 400
+    
+    if not allowed_image(file.filename):
+        return jsonify({"message": "Only image files are allowed (png, jpg, jpeg, gif, webp)"}), 400
+    
+    # Secure the filename and save
+    filename = secure_filename(file.filename)
+    # Add timestamp to avoid conflicts
+    unique_filename = f"{datetime.datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{filename}"
+    filepath = os.path.join(EVENT_IMAGES_FOLDER, unique_filename)
+    
+    try:
+        file.save(filepath)
+    except Exception as e:
+        return jsonify({"message": f"Failed to save file: {str(e)}"}), 500
+    
+    # Save metadata to MongoDB
+    event_doc = {
+        "title": request.form.get('title', 'Event'),
+        "description": request.form.get('description', ''),
+        "filename": unique_filename,
+        "filepath": f"/static/uploads/events/{unique_filename}",
+        "uploaded_by": current_user.get('username'),
+        "created_at": datetime.datetime.utcnow(),
+        "order": event_images.count_documents({})  # Order for sorting
+    }
+    
+    result = event_images.insert_one(event_doc)
+    
+    return jsonify({
+        "message": "Event image uploaded successfully!",
+        "image_id": str(result.inserted_id),
+        "filepath": event_doc["filepath"]
+    }), 201
+
+
+# ----- Get All Event Images -----
+@app.route("/api/events/images", methods=["GET"])
+def get_event_images():
+    """
+    Get all event images for the homepage slider.
+    Public endpoint - no authentication required.
+    """
+    if event_images is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    images = []
+    for img in event_images.find().sort("order", 1):
+        img["_id"] = str(img["_id"])
+        img["created_at"] = str(img.get("created_at", ""))
+        images.append(img)
+    
+    return jsonify(images), 200
+
+
+# ----- Delete Event Image (Professionals only) -----
+@app.route("/api/events/images/<image_id>", methods=["DELETE"])
+@token_required
+def delete_event_image(image_id):
+    """
+    Delete an event image from the slider.
+    Only professionals can delete event images.
+    """
+    if event_images is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Only professionals can delete event images"}), 403
+    
+    # Find the image
+    try:
+        image = event_images.find_one({"_id": ObjectId(image_id)})
+    except:
+        return jsonify({"message": "Invalid image ID"}), 400
+    
+    if not image:
+        return jsonify({"message": "Image not found"}), 404
+    
+    # Delete the file from filesystem
+    if image.get("filename"):
+        filepath = os.path.join(EVENT_IMAGES_FOLDER, image["filename"])
+        try:
+            if os.path.exists(filepath):
+                os.remove(filepath)
+        except Exception as e:
+            print(f"Warning: Could not delete file {filepath}: {e}")
+    
+    # Delete from database
+    result = event_images.delete_one({"_id": ObjectId(image_id)})
+    
+    if result.deleted_count > 0:
+        return jsonify({"message": "Event image deleted successfully!"}), 200
+    else:
+        return jsonify({"message": "Failed to delete image"}), 500
+
+
+# ----- Update Event Image Order (Professionals only) -----
+@app.route("/api/events/images/<image_id>/order", methods=["PUT"])
+@token_required
+def update_event_image_order(image_id):
+    """
+    Update the display order of an event image.
+    Only professionals can reorder images.
+    """
+    if event_images is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Only professionals can reorder images"}), 403
+    
+    data = request.get_json(silent=True) or {}
+    new_order = data.get('order')
+    
+    if new_order is None:
+        return jsonify({"message": "Order value is required"}), 400
+    
+    try:
+        result = event_images.update_one(
+            {"_id": ObjectId(image_id)},
+            {"$set": {"order": int(new_order)}}
+        )
+        
+        if result.modified_count > 0:
+            return jsonify({"message": "Order updated successfully!"}), 200
+        else:
+            return jsonify({"message": "No changes made"}), 200
+    except:
+        return jsonify({"message": "Invalid image ID"}), 400
 
 
 # ----- Create Support Ticket (CREATE for support_tickets collection) -----

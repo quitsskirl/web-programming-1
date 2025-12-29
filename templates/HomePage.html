@@ -71,26 +71,26 @@
   <h1>Home</h1>
   <p>Your companion for a successful and balanced study experience</p>
   
-  <!-- Image Slider Box -->
-  <div class="slider-box">
-    <button class="slider-arrow left" onclick="prevSlide()">
+  <!-- Image Slider Box - Shows events uploaded by professors -->
+  <div class="slider-box" id="sliderBox">
+    <button class="slider-arrow left" onclick="prevSlide()" id="arrowLeft" style="display: none;">
       <i class="bi bi-chevron-left"></i>
     </button>
     
-    <div class="slides-container">
-      <img src="{{ url_for('static', filename='images/therapy.jpg') }}" class="slide active" alt="Therapy Session">
-      <img src="{{ url_for('static', filename='images/istockphoto-1322211571-612x612.jpg') }}" class="slide" alt="Mental Wellness">
+    <div class="slides-container" id="slidesContainer">
+      <!-- Loading state -->
+      <div class="slider-loading" id="sliderLoading">
+        <i class="bi bi-hourglass-split"></i>
+        <p>Loading events...</p>
+      </div>
     </div>
     
-    <button class="slider-arrow right" onclick="nextSlide()">
+    <button class="slider-arrow right" onclick="nextSlide()" id="arrowRight" style="display: none;">
       <i class="bi bi-chevron-right"></i>
     </button>
     
     <!-- Slide Indicators -->
-    <div class="slide-dots">
-      <span class="dot active" onclick="goToSlide(0)"></span>
-      <span class="dot" onclick="goToSlide(1)"></span>
-    </div>
+    <div class="slide-dots" id="slideDots"></div>
   </div>
   
   <!-- Link to more info page -->
@@ -209,36 +209,125 @@
 <!-- ==================== IMAGE SLIDER SCRIPT ==================== -->
 <script>
   let currentSlide = 0;
-  const slides = document.querySelectorAll(".slide");
-  const dots = document.querySelectorAll(".dot");
+  let slides = [];
+  let dots = [];
   
-  function showSlide(index) {
-    // Update slides
-    slides.forEach(slide => slide.classList.remove("active"));
-    slides[index].classList.add("active");
+  // Load event images from database (uploaded by professors)
+  document.addEventListener('DOMContentLoaded', async () => {
+    const container = document.getElementById('slidesContainer');
+    const arrowLeft = document.getElementById('arrowLeft');
+    const arrowRight = document.getElementById('arrowRight');
     
-    // Update dots
-    dots.forEach(dot => dot.classList.remove("active"));
-    dots[index].classList.add("active");
+    try {
+      const response = await fetch('/api/events/images');
+      const eventImages = await response.json();
+      
+      if (Array.isArray(eventImages) && eventImages.length > 0) {
+        // Show images uploaded by professors
+        renderSlider(eventImages);
+        arrowLeft.style.display = 'flex';
+        arrowRight.style.display = 'flex';
+      } else {
+        // No events yet - show friendly message
+        container.innerHTML = `
+          <div class="slider-empty">
+            <i class="bi bi-calendar-event"></i>
+            <h3>Welcome to Mental Health Support</h3>
+            <p>Stay tuned for upcoming events and announcements!</p>
+          </div>
+        `;
+      }
+    } catch (error) {
+      console.error('Error loading event images:', error);
+      container.innerHTML = `
+        <div class="slider-empty">
+          <i class="bi bi-heart"></i>
+          <h3>Welcome!</h3>
+          <p>Your mental health journey starts here.</p>
+        </div>
+      `;
+    }
+  });
+  
+  function renderSlider(images) {
+    const container = document.getElementById('slidesContainer');
+    const dotsContainer = document.getElementById('slideDots');
+    
+    // Build slides HTML with event info overlay
+    container.innerHTML = images.map((img, index) => `
+      <div class="slide ${index === 0 ? 'active' : ''}">
+        <img src="${img.filepath}" alt="${img.title || 'Event'}">
+        <div class="slide-overlay">
+          <h4>${img.title || ''}</h4>
+          ${img.description ? `<p>${img.description}</p>` : ''}
+        </div>
+      </div>
+    `).join('');
+    
+    // Build dots HTML (only if more than 1 image)
+    if (images.length > 1) {
+      dotsContainer.innerHTML = images.map((_, index) => `
+        <span class="dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></span>
+      `).join('');
+    }
+    
+    // Update references
+    slides = document.querySelectorAll(".slide");
+    dots = document.querySelectorAll(".dot");
   }
   
-  function nextSlide() {
+  function showSlide(index) {
+    slides = document.querySelectorAll(".slide");
+    dots = document.querySelectorAll(".dot");
+    
+    if (slides.length === 0) return;
+    
+    slides.forEach(slide => slide.classList.remove("active"));
+    dots.forEach(dot => dot.classList.remove("active"));
+    
+    if (slides[index]) slides[index].classList.add("active");
+    if (dots[index]) dots[index].classList.add("active");
+  }
+  
+  let slideTimer = null;
+  
+  function startSlideTimer() {
+    // Clear existing timer and start fresh
+    if (slideTimer) clearInterval(slideTimer);
+    slideTimer = setInterval(autoNextSlide, 8000);
+  }
+  
+  function autoNextSlide() {
+    slides = document.querySelectorAll(".slide");
+    if (slides.length <= 1) return;
     currentSlide = (currentSlide + 1) % slides.length;
     showSlide(currentSlide);
   }
   
+  function nextSlide() {
+    slides = document.querySelectorAll(".slide");
+    if (slides.length <= 1) return;
+    currentSlide = (currentSlide + 1) % slides.length;
+    showSlide(currentSlide);
+    startSlideTimer(); // Reset timer after manual navigation
+  }
+  
   function prevSlide() {
+    slides = document.querySelectorAll(".slide");
+    if (slides.length <= 1) return;
     currentSlide = (currentSlide - 1 + slides.length) % slides.length;
     showSlide(currentSlide);
+    startSlideTimer(); // Reset timer after manual navigation
   }
   
   function goToSlide(index) {
     currentSlide = index;
     showSlide(currentSlide);
+    startSlideTimer(); // Reset timer after manual navigation
   }
   
-  // Auto-slide every 4 seconds
-  setInterval(nextSlide, 4000);
+  // Start auto-slide timer (8 seconds per slide)
+  startSlideTimer();
 </script>
 
 <!-- ==================== BOOTSTRAP JAVASCRIPT ==================== -->

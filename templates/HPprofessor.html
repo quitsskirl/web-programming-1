@@ -99,7 +99,7 @@
 
 <!-- ========== MAIN CONTENT ========== -->
 <main class="container mt-4">
-  <div class="text-center">
+  <div class="text-center mb-4">
     <h1 style="color: #4b5431;">Welcome, Professor!</h1>
     <p>Manage your appointments and support students.</p>
     
@@ -109,6 +109,75 @@
       </a>
     </div>
   </div>
+
+  <!-- ========== EVENTS SLIDER MANAGEMENT ========== -->
+  <section class="events-section mt-5">
+    <div class="events-header">
+      <h2><i class="bi bi-images"></i> Events Slider</h2>
+      <p class="text-muted">Manage images that appear on the student homepage</p>
+    </div>
+
+    <!-- Event Images Slider Preview -->
+    <div class="events-slider-container">
+      <div class="events-slider" id="eventsSlider">
+        <div class="empty-state" id="emptySlider">
+          <i class="bi bi-image"></i>
+          <p>No event images yet. Upload your first image below.</p>
+        </div>
+      </div>
+      <div class="slider-controls" id="sliderControls" style="display: none;">
+        <button class="slider-nav prev" onclick="prevEventSlide()"><i class="bi bi-chevron-left"></i></button>
+        <div class="slider-dots" id="eventDots"></div>
+        <button class="slider-nav next" onclick="nextEventSlide()"><i class="bi bi-chevron-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Upload New Event Image -->
+    <div class="upload-event-section">
+      <h3><i class="bi bi-cloud-upload"></i> Add New Event Image</h3>
+      
+      <form id="eventUploadForm" enctype="multipart/form-data">
+        <div class="upload-grid">
+          <div class="form-group">
+            <label for="eventTitle"><i class="bi bi-type"></i> Event Title</label>
+            <input type="text" id="eventTitle" name="title" placeholder="e.g., Mental Health Week" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="eventDescription"><i class="bi bi-text-paragraph"></i> Description (optional)</label>
+            <input type="text" id="eventDescription" name="description" placeholder="Brief description...">
+          </div>
+        </div>
+        
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="eventFile" name="file" accept="image/*" required>
+          <div class="drop-zone-content">
+            <i class="bi bi-cloud-arrow-up"></i>
+            <p>Drag & drop an image here or <span>browse</span></p>
+            <small>Supports: JPG, PNG, GIF, WEBP</small>
+          </div>
+          <div class="file-preview" id="filePreview" style="display: none;">
+            <img id="previewImg" src="" alt="Preview">
+            <span id="fileName"></span>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn-upload" id="uploadEventBtn">
+          <i class="bi bi-plus-circle"></i> Add to Slider
+        </button>
+      </form>
+      
+      <div id="uploadMessage" class="upload-message" style="display: none;"></div>
+    </div>
+
+    <!-- Manage Existing Images -->
+    <div class="manage-images-section">
+      <h3><i class="bi bi-gear"></i> Manage Images</h3>
+      <div class="images-grid" id="imagesGrid">
+        <!-- Images will be loaded here -->
+      </div>
+    </div>
+  </section>
 </main>
 
 <!-- ========== TOAST CONTAINER FOR NOTIFICATIONS ========== -->
@@ -316,6 +385,259 @@
     }
   });
 })();
+
+// ==================== EVENT IMAGES MANAGEMENT ====================
+let eventImages = [];
+let currentEventSlide = 0;
+
+// Load event images on page load
+document.addEventListener('DOMContentLoaded', loadEventImages);
+
+async function loadEventImages() {
+  try {
+    const response = await fetch('/api/events/images');
+    const images = await response.json();
+    eventImages = Array.isArray(images) ? images : [];
+    renderEventSlider();
+    renderImagesGrid();
+  } catch (error) {
+    console.error('Error loading event images:', error);
+  }
+}
+
+function renderEventSlider() {
+  const slider = document.getElementById('eventsSlider');
+  const controls = document.getElementById('sliderControls');
+  const dots = document.getElementById('eventDots');
+  const emptyState = document.getElementById('emptySlider');
+  
+  if (eventImages.length === 0) {
+    slider.innerHTML = `
+      <div class="empty-state">
+        <i class="bi bi-image"></i>
+        <p>No event images yet. Upload your first image below.</p>
+      </div>
+    `;
+    controls.style.display = 'none';
+    return;
+  }
+  
+  // Build slides
+  let slidesHTML = eventImages.map((img, index) => `
+    <div class="event-slide ${index === 0 ? 'active' : ''}" data-index="${index}">
+      <img src="${img.filepath}" alt="${img.title || 'Event'}">
+      <div class="event-overlay">
+        <h4>${img.title || 'Event'}</h4>
+        ${img.description ? `<p>${img.description}</p>` : ''}
+      </div>
+    </div>
+  `).join('');
+  
+  slider.innerHTML = slidesHTML;
+  controls.style.display = 'flex';
+  
+  // Build dots
+  dots.innerHTML = eventImages.map((_, index) => `
+    <span class="dot ${index === 0 ? 'active' : ''}" onclick="goToEventSlide(${index})"></span>
+  `).join('');
+}
+
+function showEventSlide(index) {
+  const slides = document.querySelectorAll('.event-slide');
+  const dots = document.querySelectorAll('#eventDots .dot');
+  
+  slides.forEach(s => s.classList.remove('active'));
+  dots.forEach(d => d.classList.remove('active'));
+  
+  if (slides[index]) slides[index].classList.add('active');
+  if (dots[index]) dots[index].classList.add('active');
+}
+
+let eventSlideTimer = null;
+
+function startEventSlideTimer() {
+  // Clear existing timer and start fresh
+  if (eventSlideTimer) clearInterval(eventSlideTimer);
+  eventSlideTimer = setInterval(() => {
+    if (eventImages.length > 1) {
+      currentEventSlide = (currentEventSlide + 1) % eventImages.length;
+      showEventSlide(currentEventSlide);
+    }
+  }, 8000);
+}
+
+function nextEventSlide() {
+  currentEventSlide = (currentEventSlide + 1) % eventImages.length;
+  showEventSlide(currentEventSlide);
+  startEventSlideTimer(); // Reset timer after manual navigation
+}
+
+function prevEventSlide() {
+  currentEventSlide = (currentEventSlide - 1 + eventImages.length) % eventImages.length;
+  showEventSlide(currentEventSlide);
+  startEventSlideTimer(); // Reset timer after manual navigation
+}
+
+function goToEventSlide(index) {
+  currentEventSlide = index;
+  showEventSlide(currentEventSlide);
+  startEventSlideTimer(); // Reset timer after manual navigation
+}
+
+// Start auto-slide timer (8 seconds per slide)
+startEventSlideTimer();
+
+function renderImagesGrid() {
+  const grid = document.getElementById('imagesGrid');
+  
+  if (eventImages.length === 0) {
+    grid.innerHTML = '<p class="no-images">No images uploaded yet.</p>';
+    return;
+  }
+  
+  grid.innerHTML = eventImages.map(img => `
+    <div class="image-card" data-id="${img._id}">
+      <img src="${img.filepath}" alt="${img.title || 'Event'}">
+      <div class="image-info">
+        <h5>${img.title || 'Untitled'}</h5>
+        <small>By ${img.uploaded_by || 'Unknown'}</small>
+      </div>
+      <button class="delete-btn" onclick="deleteEventImage('${img._id}', '${img.title || 'this image'}')">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+  `).join('');
+}
+
+// File upload handling
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('eventFile');
+const filePreview = document.getElementById('filePreview');
+const previewImg = document.getElementById('previewImg');
+const fileName = document.getElementById('fileName');
+
+// Drag and drop
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+});
+
+['dragenter', 'dragover'].forEach(eventName => {
+  dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'));
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+  dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'));
+});
+
+dropZone.addEventListener('drop', (e) => {
+  const files = e.dataTransfer.files;
+  if (files.length) {
+    fileInput.files = files;
+    showFilePreview(files[0]);
+  }
+});
+
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files.length) {
+    showFilePreview(e.target.files[0]);
+  }
+});
+
+function showFilePreview(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    previewImg.src = e.target.result;
+    fileName.textContent = file.name;
+    filePreview.style.display = 'flex';
+    dropZone.querySelector('.drop-zone-content').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+// Form submission
+document.getElementById('eventUploadForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const token = localStorage.getItem('token');
+  if (!token) {
+    showUploadMessage('Please log in to upload images.', true);
+    return;
+  }
+  
+  const formData = new FormData(e.target);
+  const uploadBtn = document.getElementById('uploadEventBtn');
+  
+  uploadBtn.disabled = true;
+  uploadBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Uploading...';
+  
+  try {
+    const response = await fetch('/api/events/upload-image', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      },
+      body: formData
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+      showUploadMessage('Image uploaded successfully!', false);
+      e.target.reset();
+      filePreview.style.display = 'none';
+      dropZone.querySelector('.drop-zone-content').style.display = 'flex';
+      loadEventImages();
+    } else {
+      showUploadMessage(data.message || 'Upload failed.', true);
+    }
+  } catch (error) {
+    console.error('Upload error:', error);
+    showUploadMessage('Could not upload image.', true);
+  } finally {
+    uploadBtn.disabled = false;
+    uploadBtn.innerHTML = '<i class="bi bi-plus-circle"></i> Add to Slider';
+  }
+});
+
+async function deleteEventImage(imageId, title) {
+  if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+  
+  const token = localStorage.getItem('token');
+  
+  try {
+    const response = await fetch(`/api/events/images/${imageId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    });
+    
+    if (response.ok) {
+      showUploadMessage('Image deleted successfully!', false);
+      loadEventImages();
+    } else {
+      const data = await response.json();
+      showUploadMessage(data.message || 'Delete failed.', true);
+    }
+  } catch (error) {
+    console.error('Delete error:', error);
+    showUploadMessage('Could not delete image.', true);
+  }
+}
+
+function showUploadMessage(message, isError) {
+  const msgEl = document.getElementById('uploadMessage');
+  msgEl.textContent = message;
+  msgEl.className = 'upload-message ' + (isError ? 'error' : 'success');
+  msgEl.style.display = 'block';
+  
+  setTimeout(() => {
+    msgEl.style.display = 'none';
+  }, 5000);
+}
 </script>
 
 </body>
