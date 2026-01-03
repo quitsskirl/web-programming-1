@@ -128,6 +128,8 @@ support_tickets = None
 notifications = None
 # Table 6: event_images - event images for the homepage slider
 event_images = None
+# Table 7: feedback - user feedback collection
+feedback = None
 
 # Legacy collections (for backward compatibility with existing code)
 students = None
@@ -158,6 +160,8 @@ if mongo_uri:  # Only try to connect if MONGO_URI is set
         notifications = db["notifications"]
         # Table 6: event_images - homepage event images
         event_images = db["event_images"]
+        # Table 7: feedback - user feedback
+        feedback = db["feedback"]
         
         # Legacy collections (backward compatibility)
         students = db["students"]
@@ -246,6 +250,8 @@ if mongo_uri:  # Only try to connect if MONGO_URI is set
         resources = None
         support_tickets = None
         notifications = None
+        event_images = None
+        feedback = None
         students = None
         professionals = None
 else:
@@ -1647,6 +1653,173 @@ def create_notification(user_id, title, message, notif_type="general"):
     }
     
     return notifications.insert_one(notif)
+
+
+# ==================== FEEDBACK API ====================
+# Feedback system for collecting user feedback after account activity
+
+# ----- Check Feedback Status -----
+@app.route("/api/feedback/status", methods=["GET"])
+@token_required
+def check_feedback_status():
+    """
+    Check if the user needs to show feedback popup.
+    Returns whether user has given feedback and their activity count.
+    """
+    if students is None and professionals is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    role = current_user.get('role')
+    
+    # Get user from appropriate collection
+    if role == 'student':
+        user = students.find_one({"username": username}) if students is not None else None
+    else:
+        user = professionals.find_one({"username": username}) if professionals is not None else None
+    
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    
+    # Check if user has already given feedback
+    has_given_feedback = user.get('has_given_feedback', False)
+    activity_count = user.get('activity_count', 0)
+    
+    # Show feedback popup after 3 activities if feedback not yet given
+    should_show_feedback = not has_given_feedback and activity_count >= 3
+    
+    return jsonify({
+        "has_given_feedback": has_given_feedback,
+        "activity_count": activity_count,
+        "should_show_feedback": should_show_feedback
+    }), 200
+
+
+# ----- Track User Activity -----
+@app.route("/api/feedback/track-activity", methods=["POST"])
+@token_required
+def track_activity():
+    """
+    Increment user's activity count.
+    Called when user performs actions like visiting pages, booking appointments, etc.
+    """
+    if students is None and professionals is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    role = current_user.get('role')
+    
+    # Get the appropriate collection (using is not None for PyMongo compatibility)
+    if role == 'student':
+        collection = students if students is not None else None
+    else:
+        collection = professionals if professionals is not None else None
+    
+    if collection is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    # Increment activity count
+    result = collection.update_one(
+        {"username": username},
+        {"$inc": {"activity_count": 1}}
+    )
+    
+    if result.modified_count > 0:
+        return jsonify({"message": "Activity tracked"}), 200
+    else:
+        return jsonify({"message": "User not found"}), 404
+
+
+# ----- Submit Feedback -----
+@app.route("/api/feedback/submit", methods=["POST"])
+@token_required
+def submit_feedback():
+    """
+    Submit user feedback and mark user as having given feedback.
+    Once submitted, the popup will never show again.
+    """
+    if feedback is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    role = current_user.get('role')
+    
+    data = request.get_json(silent=True) or {}
+    
+    rating = data.get('rating')  # 1-5 star rating
+    comment = data.get('comment', '').strip()  # Optional comment
+    
+    if not rating or not isinstance(rating, int) or rating < 1 or rating > 5:
+        return jsonify({"message": "Rating must be between 1 and 5"}), 400
+    
+    # Save feedback to feedback collection
+    feedback_doc = {
+        "username": username,
+        "role": role,
+        "rating": rating,
+        "comment": comment,
+        "created_at": datetime.datetime.utcnow()
+    }
+    
+    feedback.insert_one(feedback_doc)
+    
+    # Mark user as having given feedback (using is not None for PyMongo compatibility)
+    if role == 'student' and students is not None:
+        students.update_one(
+            {"username": username},
+            {"$set": {"has_given_feedback": True}}
+        )
+    elif role == 'professional' and professionals is not None:
+        professionals.update_one(
+            {"username": username},
+            {"$set": {"has_given_feedback": True}}
+        )
+    
+    print(f"✅ Feedback received from {username}: {rating} stars")
+    
+    return jsonify({
+        "message": "Thank you for your feedback!",
+        "rating": rating
+    }), 201
+
+
+# ----- Dismiss Feedback (Skip for now) -----
+@app.route("/api/feedback/dismiss", methods=["POST"])
+@token_required
+def dismiss_feedback():
+    """
+    Dismiss the feedback popup temporarily.
+    The popup will show again on next qualifying activity.
+    This does NOT mark feedback as given.
+    """
+    # Just acknowledge the dismissal - popup will show again next time
+    return jsonify({"message": "Feedback dismissed temporarily"}), 200
+
+
+# ----- Get All Feedback (Admin/Professional view) -----
+@app.route("/api/feedback/all", methods=["GET"])
+@token_required
+def get_all_feedback():
+    """
+    Get all feedback entries (for professionals/admins to review).
+    """
+    if feedback is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Access denied"}), 403
+    
+    all_feedback = []
+    for fb in feedback.find().sort("created_at", -1):
+        fb["_id"] = str(fb["_id"])
+        fb["created_at"] = str(fb.get("created_at", ""))
+        all_feedback.append(fb)
+    
+    return jsonify(all_feedback), 200
 
 
 # ==================== START SERVER ====================

@@ -14,6 +14,8 @@
   
   <!-- Link to homepage styles (loads after Bootstrap to override if needed) -->
   <link rel="stylesheet" href="{{ url_for('static', filename='HomePage1.css') }}">
+  <!-- Feedback Popup Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='feedback-popup.css') }}">
 </head>
 <body>
 
@@ -334,6 +336,9 @@
 <!-- Bootstrap JS Bundle: includes Popper.js for dropdowns, tooltips, popovers -->
 <!-- Required for: modals, toasts, alerts, dropdowns, collapse, etc. -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Feedback Popup System -->
+<script src="{{ url_for('static', filename='feedback-popup.js') }}"></script>
 
 </body>
 </html>
