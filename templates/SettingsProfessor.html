@@ -11,6 +11,8 @@
   
   <!-- Link to settings page styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='Settings1.css') }}">
+  <!-- Custom Leaf Cursor -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='custom-cursor.css') }}">
 </head>
 <body>
 
@@ -310,6 +312,9 @@
     });
   })();
   </script>
+
+  <!-- Custom Leaf Cursor -->
+  <script src="{{ url_for('static', filename='custom-cursor.js') }}"></script>
 
 </body>
 </html>

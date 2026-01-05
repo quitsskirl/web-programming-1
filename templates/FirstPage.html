@@ -6,6 +6,8 @@
   <title>Are You..?</title>
   <!-- Link to first page styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='FirstPage1.css') }}">
+  <!-- Custom Leaf Cursor -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='custom-cursor.css') }}">
 </head>
 <body>
 
@@ -71,6 +73,9 @@
       }, 1000); // Slightly longer delay for welcome effect
     });
   </script>
+
+  <!-- Custom Leaf Cursor -->
+  <script src="{{ url_for('static', filename='custom-cursor.js') }}"></script>
 
 </body>
 </html>

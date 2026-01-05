@@ -1,0 +1,93 @@
+/* ========== CUSTOM LEAF CURSOR ========== */
+/* Animated cursor that follows the mouse with a gentle sway effect */
+
+/* Hide default cursor on the page */
+.custom-cursor-active,
+.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* Don't hide cursor on inputs and textareas for usability */
+.custom-cursor-active input,
+.custom-cursor-active textarea,
+.custom-cursor-active select {
+  cursor: text !important;
+}
+
+.custom-cursor-active button,
+.custom-cursor-active a,
+.custom-cursor-active [role="button"] {
+  cursor: none !important;
+}
+
+/* The custom cursor element */
+.leaf-cursor {
+  position: fixed;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  z-index: 999999;
+  transform-origin: center center;
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.leaf-cursor.visible {
+  opacity: 1;
+}
+
+.leaf-cursor img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: leafSway 2.5s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+/* Gentle swaying animation like a leaf in the breeze */
+@keyframes leafSway {
+  0%, 100% {
+    transform: rotate(-8deg) translateY(0);
+  }
+  25% {
+    transform: rotate(5deg) translateY(-2px);
+  }
+  50% {
+    transform: rotate(-5deg) translateY(0);
+  }
+  75% {
+    transform: rotate(8deg) translateY(-1px);
+  }
+}
+
+/* Scale up slightly when clicking */
+.leaf-cursor.clicking img {
+  animation: leafClick 0.15s ease-out;
+}
+
+@keyframes leafClick {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(0.8) rotate(15deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Hover effect - leaf gets excited */
+.leaf-cursor.hovering img {
+  animation: leafHover 1s ease-in-out infinite;
+}
+
+@keyframes leafHover {
+  0%, 100% {
+    transform: rotate(-3deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(3deg) scale(1.15);
+  }
+}
+
