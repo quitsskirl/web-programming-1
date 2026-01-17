@@ -82,7 +82,7 @@
       <!-- Link to login page -->
       <div class="links">
         <p>Already have an account? 
-          <a href="{{ url_for('login_pf.login_professional_page') }}">Login here</a>
+          <a href="{{ url_for('pages.login_professional_page') }}">Login here</a>
         </p>
       </div>
     </form>
@@ -123,7 +123,7 @@
         if(response.ok){
           // Success - redirect to login
           alert("Professor registration successful! Please log in.");
-          window.location.href = "{{ url_for('login_pf.login_professional_page') }}";
+          window.location.href = "{{ url_for('pages.login_professional_page') }}";
         } else {
           // Show error message from server
           alert(data.message || "Registration failed. Please try again.");

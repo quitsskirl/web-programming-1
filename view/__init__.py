@@ -12,6 +12,25 @@ from .support_classifier import classifier_bp
 from .appointments import appointments_bp
 from .resources import resources_bp  # Resources page for students
 
+# Import shared utilities (can be used by any route file)
+from .utils import (
+    get_current_user,
+    get_user_role,
+    get_username,
+    is_authenticated,
+    is_student,
+    is_professional,
+    login_required,
+    student_required,
+    professional_required,
+    allowed_file,
+    allowed_pdf,
+    allowed_image,
+    validate_required_fields,
+    validate_email,
+    validate_password,
+)
+
 
 # =============================================================================
 # ALL BLUEPRINTS LIST

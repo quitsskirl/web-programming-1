@@ -49,10 +49,10 @@
 <nav id="sideMenu" class="side-menu" aria-hidden="true">
   <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
   <h3>Menu</h3>
-  <a href="{{ url_for('hp_professor.home_professor_page') }}">🏠 Home Page</a>
-  <a class="active" href="{{ url_for('appointments.my_appointments') }}">📋 My Appointments</a>
-  <a href="{{ url_for('resources.resources_professor_page') }}">📚 Manage Resources</a>
-  <a href="{{ url_for('settings.settings_professor_page') }}">⚙️ Settings</a>
+  <a href="{{ url_for('pages.home_professor_page') }}">🏠 Home Page</a>
+  <a class="active" href="{{ url_for('pages.my_appointments') }}">📋 My Appointments</a>
+  <a href="{{ url_for('pages.resources_professor_page') }}">📚 Manage Resources</a>
+  <a href="{{ url_for('pages.settings_professor_page') }}">⚙️ Settings</a>
 </nav>
 
 <!-- ========== MAIN CONTENT ========== -->
@@ -104,14 +104,14 @@
               <!-- Action Buttons for Professionals -->
               {% if apt.status == 'scheduled' %}
                 <div class="appointment-actions">
-                  <form action="{{ url_for('appointments.update_appointment_status') }}" method="POST" style="display: inline;">
+                  <form action="{{ url_for('pages.update_appointment_status') }}" method="POST" style="display: inline;">
                     <input type="hidden" name="appointment_id" value="{{ apt._id }}">
                     <input type="hidden" name="status" value="confirmed">
                     <button type="submit" class="btn-action confirm">
                       <i class="bi bi-check-lg"></i> Confirm
                     </button>
                   </form>
-                  <form action="{{ url_for('appointments.update_appointment_status') }}" method="POST" style="display: inline;">
+                  <form action="{{ url_for('pages.update_appointment_status') }}" method="POST" style="display: inline;">
                     <input type="hidden" name="appointment_id" value="{{ apt._id }}">
                     <input type="hidden" name="status" value="cancelled">
                     <button type="submit" class="btn-action cancel">
@@ -121,7 +121,7 @@
                 </div>
               {% elif apt.status == 'confirmed' %}
                 <div class="appointment-actions">
-                  <form action="{{ url_for('appointments.update_appointment_status') }}" method="POST" style="display: inline;">
+                  <form action="{{ url_for('pages.update_appointment_status') }}" method="POST" style="display: inline;">
                     <input type="hidden" name="appointment_id" value="{{ apt._id }}">
                     <input type="hidden" name="status" value="completed">
                     <button type="submit" class="btn-action complete">

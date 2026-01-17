@@ -93,10 +93,10 @@
   <h3>Menu</h3>
 
   <!-- Navigation links for professors -->
-  <a href="{{ url_for('hp_professor.home_professor_page') }}">🏠 Home Page</a>
-  <a href="{{ url_for('appointments.my_appointments') }}">📋 My Appointments</a>
-  <a href="{{ url_for('resources.resources_professor_page') }}">📚 Manage Resources</a>
-  <a href="{{ url_for('settings.settings_professor_page') }}">⚙️ Settings</a>
+  <a href="{{ url_for('pages.home_professor_page') }}">🏠 Home Page</a>
+  <a href="{{ url_for('pages.my_appointments') }}">📋 My Appointments</a>
+  <a href="{{ url_for('pages.resources_professor_page') }}">📚 Manage Resources</a>
+  <a href="{{ url_for('pages.settings_professor_page') }}">⚙️ Settings</a>
 </nav>
 
 <!-- ========== MAIN CONTENT ========== -->
@@ -106,7 +106,7 @@
     <p>Manage your appointments and support students.</p>
     
     <div class="d-flex justify-content-center gap-3 mt-4">
-      <a href="{{ url_for('appointments.my_appointments') }}" class="btn btn-success btn-lg">
+      <a href="{{ url_for('pages.my_appointments') }}" class="btn btn-success btn-lg">
         <i class="bi bi-calendar-check"></i> View Appointments
       </a>
     </div>

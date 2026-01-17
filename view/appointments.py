@@ -1,12 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, current_app
 from datetime import datetime
 from functools import wraps
-import os
-import sys
 import jwt
-
-# Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Create Blueprint for appointments
 appointments_bp = Blueprint('appointments', __name__)
@@ -110,8 +105,9 @@ def book_appointment():
         GET: Rendered BookAppointment.html template
         POST: Redirect to student home page with success message
     """
-    # Import here to avoid circular imports
-    from app import professionals, appointments, create_notification
+    # Import from new structure
+    from db import professionals, appointments
+    from routes.notifications_routes import create_notification
     
     if request.method == 'POST':
         # Check if database is available
@@ -188,8 +184,8 @@ def my_appointments():
     Returns:
         Rendered MyAppointments.html template with appointments list
     """
-    # Import here to avoid circular imports
-    from app import appointments
+    # Import from new structure
+    from db import appointments
     
     # Bug 2 Fix: Use authenticated user's username from JWT token
     # Don't rely on query parameters which can be manipulated
@@ -221,7 +217,7 @@ def update_appointment_status():
     
     URL: http://localhost:5000/update-appointment-status
     """
-    from app import appointments
+    from db import appointments
     from bson import ObjectId
     
     if appointments is None:
@@ -260,7 +256,7 @@ def student_appointments():
     
     URL: http://localhost:5000/student-appointments
     """
-    from app import appointments
+    from db import appointments
     
     # Bug 2 Fix: Use authenticated user's username from JWT token
     # Don't rely on query parameters which can be manipulated

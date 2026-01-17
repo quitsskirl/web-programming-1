@@ -60,8 +60,14 @@
         <label for="login-password">Password</label>
         <input type="password" id="login-password" placeholder="Enter your password" required />
       </div>
-        <input type="password" id="login-password" placeholder="Enter your password" required /> professor? 
-          <a href="{{ url_for('register_pf.register_professional_page') }}">Create an account</a>
+
+      <!-- Submit button -->
+      <button type="submit" class="login-btn">LOGIN</button>
+
+      <!-- Link to registration page -->
+      <div class="links">
+        <p>New professor? 
+          <a href="{{ url_for('pages.register_professional_page') }}">Create an account</a>
         </p>
       </div>
     </form>
@@ -110,7 +116,7 @@
           // Also set cookie for server-side authentication on page routes
           document.cookie = `jwt_token=${data.token}; path=/; max-age=86400; SameSite=Lax`;
           
-          window.location.href = "{{ url_for('hp_professor.home_professor_page') }}";
+          window.location.href = "{{ url_for('pages.home_professor_page') }}";
         } else {
           // Show error message from server
           alert(data.message || "Invalid credentials.");

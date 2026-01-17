@@ -71,7 +71,12 @@
       <!-- Password input -->
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter a strong password" required /> for="characteristics">Select Characteristics</label>
+        <input type="password" id="password" name="password" placeholder="Enter a strong password" required />
+      </div>
+
+      <!-- Characteristics dropdown -->
+      <div class="form-group">
+        <label for="characteristics">Select Characteristics</label>
         <select id="characteristics" name="characteristics" multiple size="6"></select>
         <small>Hold Ctrl (Windows) or Cmd (Mac) to select multiple.</small>
       </div>
@@ -88,7 +93,7 @@
       <!-- Link to login page -->
       <div class="links">
         <p>Already have an account? 
-          <a href="{{ url_for('login_st.login_student_page') }}">Login here</a>
+          <a href="{{ url_for('pages.login_student_page') }}">Login here</a>
         </p>
       </div>
     </form>
@@ -135,7 +140,7 @@
           localStorage.setItem("tags", tags.join(", "));
           showMessage("Registration successful! Redirecting to login...");
           setTimeout(() => {
-            window.location.href = "{{ url_for('login_st.login_student_page') }}";
+            window.location.href = "{{ url_for('pages.login_student_page') }}";
           }, 1500);
         } else {
           showMessage(data.message || "Registration failed.", true);

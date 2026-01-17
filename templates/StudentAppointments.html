@@ -45,13 +45,13 @@
 <nav id="sideMenu" class="side-menu" aria-hidden="true">
   <button id="closeMenu" class="close-btn" title="Close Menu">&times;</button>
   <h3>Menu</h3>
-  <a href="{{ url_for('home.home_page') }}">🏠 Home Page</a>
-  <a href="{{ url_for('services.services_page') }}">🛠️ Services</a>
-  <a href="{{ url_for('classifier.support_classifier_page') }}">🤖 Support Classifier</a>
-  <a href="{{ url_for('resources.resources_page') }}">📚 Resources</a>
-  <a href="{{ url_for('appointments.book_appointment') }}">📅 Book Appointment</a>
-  <a class="active" href="{{ url_for('appointments.student_appointments') }}">📋 My Appointments</a>
-  <a href="{{ url_for('settings.settings_page') }}">⚙️ Settings</a>
+  <a href="{{ url_for('pages.home_page') }}">🏠 Home Page</a>
+  <a href="{{ url_for('pages.services_page') }}">🛠️ Services</a>
+  <a href="{{ url_for('pages.support_classifier_page') }}">🤖 Support Classifier</a>
+  <a href="{{ url_for('pages.resources_page') }}">📚 Resources</a>
+  <a href="{{ url_for('pages.book_appointment') }}">📅 Book Appointment</a>
+  <a class="active" href="{{ url_for('pages.student_appointments') }}">📋 My Appointments</a>
+  <a href="{{ url_for('pages.settings_page') }}">⚙️ Settings</a>
 </nav>
 
 <!-- ========== MAIN CONTENT ========== -->
@@ -59,7 +59,7 @@
   <div class="appointments-container">
     <div class="page-header">
       <h1><i class="bi bi-calendar-event"></i> Your Appointments</h1>
-      <a href="{{ url_for('appointments.book_appointment') }}" class="btn-new">
+      <a href="{{ url_for('pages.book_appointment') }}" class="btn-new">
         <i class="bi bi-plus-circle"></i> Book New
       </a>
     </div>
@@ -109,7 +109,7 @@
           <i class="bi bi-calendar-x"></i>
           <h3>No Appointments Yet</h3>
           <p>You haven't booked any appointments. Schedule one to get started!</p>
-          <a href="{{ url_for('appointments.book_appointment') }}" class="btn-book">
+          <a href="{{ url_for('pages.book_appointment') }}" class="btn-book">
             <i class="bi bi-plus-circle"></i> Book Your First Appointment
           </a>
         </div>
