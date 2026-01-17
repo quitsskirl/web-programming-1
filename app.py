@@ -760,6 +760,130 @@ from bson import ObjectId  # ObjectId: MongoDB's unique identifier type
 
 # ==================== UPDATE OPERATIONS ====================
 
+# ----- Change Student Password (UPDATE operation) -----
+@app.route("/api/student/change-password", methods=["PUT"])
+@token_required
+def change_student_password():
+    """
+    UPDATE operation: Change a student's password.
+    
+    URL: PUT /api/student/change-password
+    Headers: Authorization: Bearer <token>
+    
+    Request JSON:
+        {
+            "old_password": "current password",
+            "new_password": "new password"
+        }
+    
+    Response: Success or error message
+    """
+    if students is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    
+    # Only students can change student passwords
+    if current_user.get('role') != 'student':
+        return jsonify({"message": "Access denied. Only students can change their password."}), 403
+    
+    data = request.get_json(silent=True) or {}
+    old_password = data.get("old_password", "").strip()
+    new_password = data.get("new_password", "").strip()
+    
+    # Validate inputs
+    if not old_password or not new_password:
+        return jsonify({"message": "Both current and new password are required"}), 400
+    
+    if len(new_password) < 4:
+        return jsonify({"message": "New password must be at least 4 characters"}), 400
+    
+    # Find the user and verify old password
+    user = students.find_one({"username": username})
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    
+    # Check if old password matches
+    if not check_password_hash(user.get("password", ""), old_password):
+        return jsonify({"message": "Current password is incorrect"}), 401
+    
+    # Hash the new password and update
+    new_hashed_pw = generate_password_hash(new_password, method=HASH_METHOD, salt_length=SALT_LENGTH)
+    
+    result = students.update_one(
+        {"username": username},
+        {"$set": {"password": new_hashed_pw}}
+    )
+    
+    if result.modified_count > 0:
+        return jsonify({"message": "Password changed successfully!"}), 200
+    else:
+        return jsonify({"message": "Failed to update password"}), 500
+
+
+# ----- Change Professional Password (UPDATE operation) -----
+@app.route("/api/professional/change-password", methods=["PUT"])
+@token_required
+def change_professional_password():
+    """
+    UPDATE operation: Change a professional's password.
+    
+    URL: PUT /api/professional/change-password
+    Headers: Authorization: Bearer <token>
+    
+    Request JSON:
+        {
+            "old_password": "current password",
+            "new_password": "new password"
+        }
+    
+    Response: Success or error message
+    """
+    if professionals is None:
+        return jsonify({"message": "Database unavailable"}), 503
+    
+    current_user = request.current_user
+    username = current_user.get('username')
+    
+    # Only professionals can change professional passwords
+    if current_user.get('role') != 'professional':
+        return jsonify({"message": "Access denied. Only professionals can change their password."}), 403
+    
+    data = request.get_json(silent=True) or {}
+    old_password = data.get("old_password", "").strip()
+    new_password = data.get("new_password", "").strip()
+    
+    # Validate inputs
+    if not old_password or not new_password:
+        return jsonify({"message": "Both current and new password are required"}), 400
+    
+    if len(new_password) < 4:
+        return jsonify({"message": "New password must be at least 4 characters"}), 400
+    
+    # Find the user and verify old password
+    user = professionals.find_one({"username": username})
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+    
+    # Check if old password matches
+    if not check_password_hash(user.get("password", ""), old_password):
+        return jsonify({"message": "Current password is incorrect"}), 401
+    
+    # Hash the new password and update
+    new_hashed_pw = generate_password_hash(new_password, method=HASH_METHOD, salt_length=SALT_LENGTH)
+    
+    result = professionals.update_one(
+        {"username": username},
+        {"$set": {"password": new_hashed_pw}}
+    )
+    
+    if result.modified_count > 0:
+        return jsonify({"message": "Password changed successfully!"}), 200
+    else:
+        return jsonify({"message": "Failed to update password"}), 500
+
+
 # ----- Update Student Profile (UPDATE operation) -----
 @app.route("/api/student/update", methods=["PUT"])  # PUT request for updating data
 @token_required  # User must be logged in

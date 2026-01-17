@@ -89,9 +89,19 @@
         <h4><i class="bi bi-lock"></i> Change Password</h4>
         <form>
           <label for="oldPass">Current Password</label>
-          <input type="password" id="oldPass" name="oldPass" placeholder="Enter current password" required>
+          <div class="password-input-wrapper">
+            <input type="password" id="oldPass" name="oldPass" placeholder="Enter current password" required>
+            <button type="button" class="toggle-password" data-target="oldPass" title="Show password">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
           <label for="newPass">New Password</label>
-          <input type="password" id="newPass" name="newPass" placeholder="Enter new password" required>
+          <div class="password-input-wrapper">
+            <input type="password" id="newPass" name="newPass" placeholder="Enter new password" required>
+            <button type="button" class="toggle-password" data-target="newPass" title="Show password">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
           <button type="submit" class="primary">
             <i class="bi bi-check-lg"></i> Update Password
           </button>
@@ -137,6 +147,37 @@
 
   </main>
 
+  <!-- Password toggle styles -->
+  <style>
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .password-input-wrapper input {
+      flex: 1;
+      padding-right: 40px;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #6b7055;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .toggle-password:hover {
+      color: #4a5d23;
+    }
+    .toggle-password i {
+      font-size: 1.1rem;
+    }
+  </style>
+
   <!-- Loading screen script -->
   <script>
     window.addEventListener('load', function() {
@@ -149,6 +190,29 @@
   
   <!-- External JS file for settings functionality -->
   <script src="{{ url_for('static', filename='Settings.js') }}"></script>
+  
+  <!-- Password visibility toggle -->
+  <script>
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        const icon = this.querySelector('i');
+        
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.remove('bi-eye');
+          icon.classList.add('bi-eye-slash');
+          this.title = 'Hide password';
+        } else {
+          input.type = 'password';
+          icon.classList.remove('bi-eye-slash');
+          icon.classList.add('bi-eye');
+          this.title = 'Show password';
+        }
+      });
+    });
+  </script>
   
   <!-- ==================== BOOTSTRAP JAVASCRIPT ==================== -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

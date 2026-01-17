@@ -78,4 +78,68 @@ document.addEventListener('DOMContentLoaded', () => {
   // === Delete account button ===
   // Note: Delete account functionality is handled in Settings.html inline script
   // which calls the actual API endpoint /api/student/delete or /api/professional/delete
+
+  // === Change Password Form Submission ===
+  const changePassForm = document.querySelector('#formChangePass form');
+  if (changePassForm) {
+    changePassForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const oldPass = document.getElementById('oldPass').value.trim();
+      const newPass = document.getElementById('newPass').value.trim();
+      
+      if (!oldPass || !newPass) {
+        alert('Please fill in both password fields.');
+        return;
+      }
+      
+      if (newPass.length < 4) {
+        alert('New password must be at least 4 characters.');
+        return;
+      }
+      
+      const token = localStorage.getItem('token');
+      const role = localStorage.getItem('role') || 'student';
+      
+      if (!token) {
+        alert('You must be logged in to change your password.');
+        return;
+      }
+      
+      // Determine the correct endpoint based on user role
+      const endpoint = role === 'professional' 
+        ? '/api/professional/change-password' 
+        : '/api/student/change-password';
+      
+      try {
+        const response = await fetch(endpoint, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({
+            old_password: oldPass,
+            new_password: newPass
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          alert(data.message || 'Password changed successfully!');
+          // Clear the form
+          document.getElementById('oldPass').value = '';
+          document.getElementById('newPass').value = '';
+          // Hide the form
+          formChangePass.style.display = 'none';
+        } else {
+          alert('Error: ' + (data.message || 'Failed to change password'));
+        }
+      } catch (error) {
+        console.error('Password change error:', error);
+        alert('Could not change password. Please try again.');
+      }
+    });
+  }
 });

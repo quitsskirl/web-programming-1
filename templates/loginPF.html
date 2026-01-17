@@ -6,10 +6,6 @@
   <title>Mental Health | Professor Login</title>
   <!-- Link to professor login styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='loginPF.css') }}">
-  <!-- Custom Leaf Cursor -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='custom-cursor.css') }}">
-</head>
-<body>
 
   <!-- ========== LOADING SCREEN ========== -->
   <div id="loadingScreen" class="loading-screen">
@@ -64,12 +60,7 @@
         <label for="login-password">Password</label>
         <input type="password" id="login-password" placeholder="Enter your password" required />
       </div>
-
-      <button class="login-btn" type="submit">LOGIN</button>
-
-      <!-- Link to registration page -->
-      <div class="links">
-        <p>New professor? 
+        <input type="password" id="login-password" placeholder="Enter your password" required /> professor? 
           <a href="{{ url_for('register_pf.register_professional_page') }}">Create an account</a>
         </p>
       </div>

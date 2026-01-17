@@ -13,6 +13,37 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='Settings1.css') }}">
   <!-- Custom Leaf Cursor -->
   <link rel="stylesheet" href="{{ url_for('static', filename='custom-cursor.css') }}">
+  
+  <!-- Password toggle styles -->
+  <style>
+    .password-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .password-input-wrapper input {
+      flex: 1;
+      padding-right: 40px;
+    }
+    .toggle-password {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #6b7055;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .toggle-password:hover {
+      color: #4a5d23;
+    }
+    .toggle-password i {
+      font-size: 1.1rem;
+    }
+  </style>
 </head>
 <body>
 
@@ -86,9 +117,19 @@
         <h4><i class="bi bi-lock"></i> Change Password</h4>
         <form id="changePassForm">
           <label for="oldPass">Current Password</label>
-          <input type="password" id="oldPass" name="oldPass" placeholder="Enter current password" required>
+          <div class="password-input-wrapper">
+            <input type="password" id="oldPass" name="oldPass" placeholder="Enter current password" required>
+            <button type="button" class="toggle-password" data-target="oldPass" title="Show password">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
           <label for="newPass">New Password</label>
-          <input type="password" id="newPass" name="newPass" placeholder="Enter new password" required>
+          <div class="password-input-wrapper">
+            <input type="password" id="newPass" name="newPass" placeholder="Enter new password" required>
+            <button type="button" class="toggle-password" data-target="newPass" title="Show password">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
           <button type="submit" class="primary">
             <i class="bi bi-check-lg"></i> Update Password
           </button>
@@ -247,6 +288,61 @@
       }
     });
 
+    // Change password form submission
+    document.getElementById('changePassForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const oldPass = document.getElementById('oldPass').value.trim();
+      const newPass = document.getElementById('newPass').value.trim();
+      
+      if (!oldPass || !newPass) {
+        alert('Please fill in both password fields.');
+        return;
+      }
+      
+      if (newPass.length < 4) {
+        alert('New password must be at least 4 characters.');
+        return;
+      }
+      
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        alert('You must be logged in to change your password.');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/professional/change-password', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({
+            old_password: oldPass,
+            new_password: newPass
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          alert(data.message || 'Password changed successfully!');
+          // Clear the form
+          document.getElementById('oldPass').value = '';
+          document.getElementById('newPass').value = '';
+          // Hide the form
+          formChangePass.style.display = 'none';
+        } else {
+          alert('Error: ' + (data.message || 'Failed to change password'));
+        }
+      } catch (error) {
+        console.error('Password change error:', error);
+        alert('Could not change password. Please try again.');
+      }
+    });
+
     // Update profile form submission
     document.getElementById('profileForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -309,6 +405,26 @@
       if (!userPopup.contains(e.target) && e.target !== userBtn) {
         userPopup.classList.remove('active');
       }
+    });
+    // Password visibility toggle
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const input = document.getElementById(targetId);
+        const icon = this.querySelector('i');
+        
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.classList.remove('bi-eye');
+          icon.classList.add('bi-eye-slash');
+          this.title = 'Hide password';
+        } else {
+          input.type = 'password';
+          icon.classList.remove('bi-eye-slash');
+          icon.classList.add('bi-eye');
+          this.title = 'Show password';
+        }
+      });
     });
   })();
   </script>
